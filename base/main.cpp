@@ -6,7 +6,7 @@
 #define endl '\n'
 using namespace std;
 
-/* author: Thawan Silva, 2024-08-14
+/* author: Thawan, 2024-08-14
  * problem: [14] - Name
  * url: https://github.com/thawan-xyz */
 
