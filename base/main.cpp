@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 #define array vector
-#define read cin
+#define stdin cin
 #define str string
-#define write cout
+#define stdout cout
 #define endl '\n'
 using namespace std;
 
@@ -11,6 +11,6 @@ using namespace std;
  * url: https://github.com/thawan-xyz */
 
 int main() {
-    write << "Thawan" << endl;
+    stdout << "Thawan" << endl;
     return 0;
 }
