@@ -1,17 +1,10 @@
-#include <bits/stdc++.h>
-#define array vector
-#define stdin cin
-#define str string
-#define stdout cout
-#define endl '\n'
-using namespace std;
-
 struct trie {
     struct node {
         array<int> child = array<int>(26);
         bool end = false;
         int sub = 0;
     };
+
     int id = 1;
     array<node> tree = array<node>(1);
 
