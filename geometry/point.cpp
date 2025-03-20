@@ -4,6 +4,10 @@ struct point {
     point operator - (const point &other) const {
         return {x - other.x, y - other.y};
     }
+    
+    bool operator == (const point &other) const {
+        return x == other.x and y == other.y;
+    }
 };
 
 int cross(point p1, point p2, point p3) {
