@@ -1,8 +1,8 @@
-bool between(point &p, point &q, point &r) {
+bool between(point p, point q, point r) {
     return r.x >= min(p.x, q.x) and r.x <= max(p.x, q.x) and r.y >= min(p.y, q.y) and r.y <= max(p.y, q.y);
 }
 
-bool intersect(point &p1, point &q1, point &p2, point &q2) {
+bool intersect(point p1, point q1, point p2, point q2) {
     int o1 = orientation(p1, p2, q1);
     if (o1 == 0 and between(p1, q1, p2)) return true;
 
