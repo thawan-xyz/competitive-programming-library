@@ -1,16 +1,19 @@
-int n, m;
-array<int> fact(n + 1), invf(n + 1);
+int N = 1e6 + 5, M = 1e9 + 7;
+array<int> fact(N, 1), inv(N, 1), invf(N, 1);
 
 void init() {
-    fact[0] = 1, fact[1] = 1;
-    invf[0] = 1, invf[1] = 1;
-    for (int i = 2; i <= n; ++i) {
-        fact[i] = (i * fact[i - 1]) % m;
-        invf[i] = inverse(fact[i], m);
+    for (int k = 2; k < N; ++k) {
+        inv[k] = M - (M / k) * inv[M % k] % M;
+    }
+
+    for (int i = 2; i < N; ++i) {
+        fact[i] = (i * fact[i - 1] % M);
+        invf[i] = (inv[i] * invf[i - 1]) % M;
     }
 }
 
 int combination(int n, int k) {
     if (k < 0 or k > n) return 0;
-    return ((fact[n] * invf[k] % m) * invf[n - k]) % m;
+
+    return ((fact[n] * invf[k] % M) * invf[n - k]) % M;
 }
