@@ -1,4 +1,3 @@
-int N = 1e6 + 5, M = 1e9 + 7;
 array<int> fact(N, 1), inv(N, 1), invf(N, 1);
 
 void init() {

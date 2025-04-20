@@ -1,9 +1,15 @@
-int power(int x, int y, int m) {
-    int n = 1;
-    x %= m;
-    while (y > 0) {
-        if (y & 1) n = (n * x) % m;
-        x = (x * x) % m, y >>= 1;
+int power(int base, int exp, int mod) {
+    int result = 1;
+    base %= mod;
+
+    while (exp > 0) {
+        if (exp & 1) {
+            result *= base;
+            result %= mod;
+        }
+        base *= base;
+        base %= mod;
+        exp >>= 1;
     }
-    return n;
+    return result;
 }
