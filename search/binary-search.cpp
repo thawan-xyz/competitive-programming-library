@@ -1,5 +1,5 @@
-int left_binary_search(array<int> a) {
-    int low = 0, high = a.size() - 1;
+int left_binary_search() {
+    int low = 0, high = n - 1;
     while (low < high) {
         int mid = (low + high) / 2;
         if (check(mid)) {
@@ -11,8 +11,8 @@ int left_binary_search(array<int> a) {
     return check(low) ? low : -1;
 }
 
-int right_binary_search(array<int> a) {
-    int low = 0, high = a.size() - 1;
+int right_binary_search() {
+    int low = 0, high = n - 1;
     while (low < high) {
         int mid = (low + high + 1) / 2;
         if (check(mid)) {
