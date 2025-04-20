@@ -5,7 +5,6 @@
 #define write cout
 #define endl '\n'
 using namespace std;
-#define repeat(x) while(x--)
 
 /* author: Thawan, 2024-08-14
  * problem: [14] - Name
