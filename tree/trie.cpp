@@ -14,6 +14,7 @@ struct trie {
         for (char &c : s) {
             tree[n].sub++;
             if (not tree[n].child[c - 'a']) {
+                tree.push_back(node());
                 tree[n].child[c - 'a'] = id++;
             }
             n = tree[n].child[c - 'a'];
