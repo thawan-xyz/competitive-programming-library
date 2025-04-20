@@ -1,19 +1,17 @@
-array<int> z(str &s) {
+array<int> z(str s) {
     int n = s.length();
-    array<int> a(n);
-
-    int l = 0, r = 0;
+    array<int> z(n);
+    int low = 0, high = 0;
     for (int i = 1; i < n; ++i) {
-        if (i <= r) {
-            a[i] = min(r - (i - 1), a[i - l]);
+        if (i <= high) {
+            z[i] = min(high - (i - 1), z[i - low]);
         }
-
-        while (a[i] + i < n and s[a[i]] == s[a[i] + i]) {
-            a[i]++;
+        while (z[i] + i < n and s[z[i]] == s[z[i] + i]) {
+            z[i]++;
         }
-        if (a[i] + (i - 1) > r) {
-            l = i, r = a[i] + (i - 1);
+        if (z[i] + (i - 1) > high) {
+            low = i, high = z[i] + (i - 1);
         }
     }
-    return a;
+    return z;
 }
