@@ -1,4 +1,4 @@
-void articulation_and_bridges() {
+void tarjan() {
     int timer = 0;
     array<array<int>> graph;
     array<int> tin, low;
