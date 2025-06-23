@@ -1,19 +1,34 @@
 struct suffix {
     int n;
     str s;
-    array<int> suf;
-    array<int> rank;
-    array<int> temp;
-    array<int> lcp;
+    array<int> suf, lcp;
     
-    suffix(str &t): s(t), n(t.length()), suf(n), rank(n), temp(n), lcp(n) {
+    suffix(str &t): n(t.length()), s(t), suf(n), lcp(n) {
+        array<int> rank(n), temp(n);
+        function<void(int)> csort = [&](int k) -> void {
+            int m = max(256, n) + 1;
+            array<int> f(m);
+            for (int i = 0; i < n; ++i) {
+                int r = suf[i] + k < n ? rank[suf[i] + k] : 0;
+                f[r] += 1;
+            }
+            for (int i = 1; i < m; ++i) {
+                f[i] += f[i - 1];
+            }
+            for (int i = n - 1; i >= 0; --i) {
+                int r = suf[i] + k < n ? rank[suf[i] + k] : 0;
+                f[r] -= 1;
+                temp[f[r]] = suf[i];
+            }
+            swap(suf, temp);
+        };
+        
         for (int i = 0; i < n; ++i) {
             suf[i] = i;
             rank[i] = s[i] + 1;
         }
         for (int k = 1; k < n; k <<= 1) {
-            csort(k);
-            csort(0);
+            csort(k), csort(0);
             temp[suf[0]] = 1;
             for (int i = 1; i < n; ++i) {
                 int prev = suf[i - 1];
@@ -25,6 +40,7 @@ struct suffix {
             swap(rank, temp);
             if (rank[suf[n - 1]] == n) break;
         }
+        
         array<int> inv(n);
         for (int i = 0; i < n; ++i) {
             inv[suf[i]] = i;
@@ -41,23 +57,5 @@ struct suffix {
                 if (h > 0) h--;
             }
         }
-    }
-    
-    void csort(int k) {
-        int m = max(256, n) + 1;
-        array<int> f(m);
-        for (int i = 0; i < n; ++i) {
-            int r = suf[i] + k < n ? rank[suf[i] + k] : 0;
-            f[r] += 1;
-        }
-        for (int i = 1; i < m; ++i) {
-            f[i] += f[i - 1];
-        }
-        for (int i = n - 1; i >= 0; --i) {
-            int r = suf[i] + k < n ? rank[suf[i] + k] : 0;
-            f[r] -= 1;
-            temp[f[r]] = suf[i];
-        }
-        swap(suf, temp);
     }
 };
