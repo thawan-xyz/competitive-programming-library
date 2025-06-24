@@ -4,7 +4,7 @@ using namespace __gnu_pbds;
 struct random_hash {
     const int random = chrono::high_resolution_clock::now().time_since_epoch().count();
 
-    int operator()(const int n) const {
+    int operator()(int n) const {
         return n ^ random;
     }
 };
