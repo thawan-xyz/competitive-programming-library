@@ -9,5 +9,5 @@ struct random_hash {
     }
 };
 
-template <typename k, typename v>
-using hash_table = gp_hash_table<k, v, random_hash>;
+template <typename K, typename V>
+using hash_table = gp_hash_table<K, V, random_hash>;
