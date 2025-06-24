@@ -21,7 +21,7 @@ struct sparse_table {
         }
     }
 
-    int query(int l, int r) {
+    int query(int l, int r) const {
         int k = log2[(r - l) + 1];
         return min(table[l][k], table[(r - pow2[k]) + 1][k]);
     }
