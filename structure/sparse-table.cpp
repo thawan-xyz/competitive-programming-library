@@ -2,7 +2,7 @@ struct sparse_table {
     int n;
     matrix<int> table;
     array<int> pow2, log2;
-    
+
     sparse_table(array<int> &a): n(a.size()), pow2(n + 1), log2(n + 1) {
         pow2[0] = 1;
         pow2[1] = 2;
@@ -20,7 +20,7 @@ struct sparse_table {
             }
         }
     }
-    
+
     int query(int l, int r) {
         int k = log2[(r - l) + 1];
         return min(table[l][k], table[(r - pow2[k]) + 1][k]);
