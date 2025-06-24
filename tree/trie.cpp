@@ -59,7 +59,7 @@ struct trie {
         }
         return tree[n].end;
     }
-    
+
     array<str> complete(str &s) {
         int n = 0;
         array<str> r;
