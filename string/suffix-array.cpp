@@ -2,7 +2,7 @@ struct suffix_array {
     int n;
     str s;
     array<int> suf, lcp;
-    
+
     suffix_array(str &t): n(t.length()), s(t), suf(n), lcp(n) {
         array<int> rank(n), temp(n);
         function<void(int)> csort = [&](int k) -> void {
@@ -22,7 +22,7 @@ struct suffix_array {
             }
             swap(suf, temp);
         };
-        
+
         for (int i = 0; i < n; ++i) {
             suf[i] = i;
             rank[i] = s[i] + 1;
@@ -40,7 +40,7 @@ struct suffix_array {
             swap(rank, temp);
             if (rank[suf[n - 1]] == n) break;
         }
-        
+
         array<int> inv(n);
         for (int i = 0; i < n; ++i) {
             inv[suf[i]] = i;
