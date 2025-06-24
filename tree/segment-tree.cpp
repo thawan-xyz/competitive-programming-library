@@ -1,8 +1,8 @@
-struct segtree {
+struct segment_tree {
     int size;
     array<int> tree;
 
-    segtree(array<int> &a): size(a.size()), tree((4 * size) + 1) {
+    segment_tree(array<int> &a): size(a.size()), tree((4 * size) + 1) {
         build(a);
     }
 
