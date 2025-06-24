@@ -1,4 +1,4 @@
-array<int> z(str s) {
+array<int> z_array(str &s) {
     int n = s.length();
     array<int> z(n);
     int low = 0, high = 0;
