@@ -10,4 +10,4 @@ struct random_hash {
 };
 
 template <typename k, typename v>
-using table = gp_hash_table<k, v, random_hash>;
+using hash_table = gp_hash_table<k, v, random_hash>;

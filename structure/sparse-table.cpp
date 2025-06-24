@@ -1,9 +1,9 @@
-struct table {
+struct sparse_table {
     int n;
     matrix<int> table;
     array<int> pow2, log2;
     
-    table(array<int> &a): n(a.size()), pow2(n + 1), log2(n + 1) {
+    sparse_table(array<int> &a): n(a.size()), pow2(n + 1), log2(n + 1) {
         pow2[0] = 1;
         pow2[1] = 2;
         for (int i = 2; i <= n; ++i) {
