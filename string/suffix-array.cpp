@@ -1,9 +1,9 @@
-struct suffix {
+struct suffix_array {
     int n;
     str s;
     array<int> suf, lcp;
     
-    suffix(str &t): n(t.length()), s(t), suf(n), lcp(n) {
+    suffix_array(str &t): n(t.length()), s(t), suf(n), lcp(n) {
         array<int> rank(n), temp(n);
         function<void(int)> csort = [&](int k) -> void {
             int m = max(256, n) + 1;
