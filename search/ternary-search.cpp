@@ -1,66 +1,35 @@
-int max_ternary_search() {
-    int low = 0, high = n - 1;
+template <typename F>
+int ternary_search(int low, int high, F value, bool min) {
     while (high - low > 3) {
-        int mid1 = low + (high - low) / 3;
-        int mid2 = high - (high - low) / 3;
-        if (f(mid1) < f(mid2)) {
-            low = mid1;
+        int mid_low = low + (high - low) / 3;
+        int mid_high = high - (high - low) / 3;
+
+        if (min == (value(mid_low) < value(mid_high))) {
+            high = mid_high;
         } else {
-            high = mid2;
+            low = mid_low;
         }
     }
-    int best = low;
+
+    int answer = low;
     for (int i = low + 1; i <= high; ++i) {
-        if (f(i) > f(best)) {
-            best = i;
+        if (min == (value(i) < value(answer))) {
+            answer = i;
         }
     }
-    return best;
+    return answer;
 }
 
-float max_ternary_search() {
-    float low = 0, high = n - 1;
-    while (high - low > E) {
-        float mid1 = low + (high - low) / 3;
-        float mid2 = high - (high - low) / 3;
-        if (f(mid1) < f(mid2)) {
-            low = mid1;
-        } else {
-            high = mid2;
-        }
-    }
-    return (low + high) / 2;
-}
+template <typename F>
+float ternary_search(float low, float high, F value, bool min, float eps = 1e-6) {
+    while (high - low > eps) {
+        float mid_low = low + (high - low) / 3;
+        float mid_high = high - (high - low) / 3;
 
-int min_ternary_search() {
-    int low = 0, high = n - 1;
-    while (high - low > 3) {
-        int mid1 = low + (high - low) / 3;
-        int mid2 = high - (high - low) / 3;
-        if (f(mid1) > f(mid2)) {
-            low = mid1;
+        if (min == (value(mid_low) < value(mid_high))) {
+            high = mid_high;
         } else {
-            high = mid2;
-        }
-    }
-    int best = low;
-    for (int i = low + 1; i <= high; ++i) {
-        if (f(i) < f(best)) {
-            best = i;
-        }
-    }
-    return best;
-}
-
-float min_ternary_search() {
-    float low = 0, high = n - 1;
-    while (high - low > E) {
-        float mid1 = low + (high - low) / 3;
-        float mid2 = high - (high - low) / 3;
-        if (f(mid1) > f(mid2)) {
-            low = mid1;
-        } else {
-            high = mid2;
+            low = mid_low;
         }
     }
     return (low + high) / 2;

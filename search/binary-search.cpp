@@ -3,6 +3,7 @@ int binary_search(int low, int high, F check, bool first) {
     int answer = -1;
     while (low <= high) {
         int mid = low + (high - low) / 2;
+
         if (check(mid)) {
             answer = mid;
             if (first) high = mid - 1;
@@ -20,6 +21,7 @@ float binary_search(float low, float high, F check, bool first, float eps = 1e-6
     float answer = -1;
     while (high - low > eps) {
         float mid = low + (high - low) / 2;
+
         if (check(mid)) {
             answer = mid;
             if (first) high = mid;
