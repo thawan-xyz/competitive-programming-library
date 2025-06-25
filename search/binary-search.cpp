@@ -1,53 +1,33 @@
-int left_binary_search() {
-    int low = 0, high = n - 1;
-    while (low < high) {
-        int mid = (low + high) / 2;
+template <typename F>
+int binary_search(int low, int high, F check, bool first) {
+    int answer = -1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
         if (check(mid)) {
-            high = mid;
+            answer = mid;
+            if (first) high = mid - 1;
+            else low = mid + 1;
         } else {
-            low = mid + 1;
+            if (first) low = mid + 1;
+            else high = mid - 1;
         }
     }
-    return check(low) ? low : -1;
+    return answer;
 }
 
-float left_binary_search() {
-    float low = 0, high = n - 1;
-    while (high - low > E) {
-        float mid = (low + high) / 2;
+template <typename F>
+float binary_search(float low, float high, F check, bool first, float eps = 1e-6) {
+    float answer = -1;
+    while (high - low > eps) {
+        float mid = low + (high - low) / 2;
         if (check(mid)) {
-            high = mid;
+            answer = mid;
+            if (first) high = mid;
+            else low = mid;
         } else {
-            low = mid;
+            if (first) low = mid;
+            else high = mid;
         }
     }
-    float best = (low + high) / 2;
-    return check(best) ? best : -1;
-}
-
-int right_binary_search() {
-    int low = 0, high = n - 1;
-    while (low < high) {
-        int mid = (low + high + 1) / 2;
-        if (check(mid)) {
-            low = mid;
-        } else {
-            high = mid - 1;
-        }
-    }
-    return check(low) ? low : -1;
-}
-
-float right_binary_search() {
-    float low = 0, high = n - 1;
-    while (high - low > E) {
-        float mid = (low + high) / 2;
-        if (check(mid)) {
-            low = mid;
-        } else {
-           high = mid;
-        }
-    }
-    float best = (low + high) / 2;
-    return check(best) ? best : -1;
+    return answer;
 }
