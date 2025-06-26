@@ -1,7 +1,7 @@
 template <typename T, typename F = function<bool(const T &, const T &)>>
 struct sparse_table {
     int n;
-    matrix<T> table;
+    array<array<T>> table;
     F compare;
     array<int> pow2, log2;
 
