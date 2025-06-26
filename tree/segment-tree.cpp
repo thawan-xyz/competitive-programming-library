@@ -9,16 +9,26 @@ struct segment_tree {
         build(a);
     }
 
+    int left(int n) {
+        return (n << 1) + 1;
+    }
+
+    int right(int n) {
+        return (n << 1) + 2;
+    }
+
     void build(array<T> &a, int l = 0, int r = -1, int n = 0) {
         if (r < 0) r = size - 1;
 
         if (l == r) {
             tree[n] = a[l];
-        } else {
-            int m = (l + r) / 2;
-            build(a, l, m, (2 * n) + 1), build(a, m + 1, r, (2 * n) + 2);
-            tree[n] = combine(tree[(2 * n) + 1], tree[(2 * n) + 2]);
+            return;
         }
+
+        int m = l + (r - l) / 2;
+        build(a, l, m, left(n));
+        build(a, m + 1, r, right(n));
+        tree[n] = combine(tree[left(n)], tree[right(n)]);
     }
 
     void update(int i, T v, int l = 0, int r = -1, int n = 0) {
@@ -27,22 +37,22 @@ struct segment_tree {
 
         if (l == r) {
             tree[n] = v;
-        } else {
-            int m = (l + r) / 2;
-            update(i, v, l, m, (2 * n) + 1), update(i, v, m + 1, r, (2 * n) + 2);
-            tree[n] = combine(tree[(2 * n) + 1], tree[(2 * n) + 2]);
+            return;
         }
+
+        int m = l + (r - l) / 2;
+        update(i, v, l, m, left(n));
+        update(i, v, m + 1, r, right(n));
+        tree[n] = combine(tree[left(n)], tree[right(n)]);
     }
 
     T query(int queryl, int queryr, int l = 0, int r = -1, int n = 0) {
         if (r < 0) r = size - 1;
         if (l > queryr or r < queryl) return neutral;
 
-        if (queryl <= l and queryr >= r) {
-            return tree[n];
-        } else {
-            int m = (l + r) / 2;
-            return combine(query(queryl, queryr, l, m, (2 * n) + 1), query(queryl, queryr, m + 1, r, (2 * n) + 2));
-        }
+        if (queryl <= l and queryr >= r) return tree[n];
+
+        int m = l + (r - l) / 2;
+        return combine(query(queryl, queryr, l, m, left(n)), query(queryl, queryr, m + 1, r, right(n)));
     }
 };
