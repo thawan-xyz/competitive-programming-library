@@ -47,7 +47,7 @@ struct trie {
         }
         tree[0].sub--;
     }
-    
+
     bool search(str &s) {
         int n = 0;
 
