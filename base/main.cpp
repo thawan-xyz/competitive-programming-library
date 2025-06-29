@@ -8,7 +8,7 @@ using namespace std;
  * problem: [14] - Name
  * url: https://github.com/thawan-xyz */
 
-int solve() {}
+void solve() {}
 
 signed main() {
     ios::sync_with_stdio(false), scan.tie(nullptr), print.tie(nullptr);
