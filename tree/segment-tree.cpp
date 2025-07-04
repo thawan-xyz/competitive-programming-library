@@ -9,50 +9,50 @@ struct segment_tree {
         build(a);
     }
 
-    int left(int n) {
-        return (n << 1) + 1;
-    }
+    void build(array<T> &a, int node = 0, int left = 0, int right = -1) {
+        if (right == -1) right = size - 1;
 
-    int right(int n) {
-        return (n << 1) + 2;
-    }
-
-    void build(array<T> &a, int l = 0, int r = -1, int n = 0) {
-        if (r < 0) r = size - 1;
-
-        if (l == r) {
-            tree[n] = a[l];
-            return;
+        if (left == right) {
+            tree[node] = a[left];
+        } else {
+            int middle = (left + right) / 2;
+            build(a, (2 * node) + 1, left, middle);
+            build(a, (2 * node) + 2, middle + 1, right);
+            tree[node] = combine(tree[(2 * node) + 1], tree[(2 * node) + 2]);
         }
-
-        int m = l + (r - l) / 2;
-        build(a, l, m, left(n));
-        build(a, m + 1, r, right(n));
-        tree[n] = combine(tree[left(n)], tree[right(n)]);
     }
 
-    void update(int i, T v, int l = 0, int r = -1, int n = 0) {
-        if (r < 0) r = size - 1;
-        if (i < l or i > r) return;
+    void update(int i, T value, int node = 0, int left = 0, int right = -1) {
+        if (right == -1) right = size - 1;
 
-        if (l == r) {
-            tree[n] = v;
-            return;
+        if (left == right) {
+            tree[node] = value;
+        } else {
+            int middle = (left + right) / 2;
+            if (i <= middle) {
+                update(i, value, (2 * node )+ 1, left, middle);
+            } else {
+                update(i, value, (2 * node) + 2, middle + 1, right);
+            }
+            tree[node] = combine(tree[(2 * node) + 1], tree[(2 * node) + 2]);
         }
-
-        int m = l + (r - l) / 2;
-        update(i, v, l, m, left(n));
-        update(i, v, m + 1, r, right(n));
-        tree[n] = combine(tree[left(n)], tree[right(n)]);
     }
 
-    T query(int queryl, int queryr, int l = 0, int r = -1, int n = 0) {
-        if (r < 0) r = size - 1;
-        if (l > queryr or r < queryl) return neutral;
+    T query(int i, int j, int node = 0, int left = 0, int right = -1) {
+        if (right == -1) right = size - 1;
 
-        if (queryl <= l and queryr >= r) return tree[n];
-
-        int m = l + (r - l) / 2;
-        return combine(query(queryl, queryr, l, m, left(n)), query(queryl, queryr, m + 1, r, right(n)));
+        if (i <= left and j >= right) {
+            return tree[node];
+        } else {
+            T answer = neutral;
+            int middle = (left + right) / 2;
+            if (i <= middle) {
+                answer = combine(answer, query(i, j, (2 * node) + 1, left, middle));
+            }
+            if (j > middle) {
+                answer = combine(answer, query(i, j, (2 * node) + 2, middle + 1, right));
+            }
+            return answer;
+        }
     }
 };
