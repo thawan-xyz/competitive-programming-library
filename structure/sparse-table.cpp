@@ -1,11 +1,11 @@
-template <typename T, typename F = function<bool(const T &, const T &)>>
+template <typename T, typename F = function<T(const T &, const T &)>>
 struct sparse_table {
     int n;
     array<array<T>> table;
     F compare;
     array<int> pow2, log2;
 
-    sparse_table(array<T> &a, F c = less<T>()): n(a.size()), compare(c), pow2(n + 1), log2(n + 1) {
+    sparse_table(array<T> &a, F compare): n(a.size()), compare(compare), pow2(n + 1), log2(n + 1) {
         pow2[0] = 1;
         pow2[1] = 2;
         for (int i = 2; i <= n; ++i) {
@@ -20,7 +20,7 @@ struct sparse_table {
             for (int i = 0; (i + pow2[k]) - 1 < n; ++i) {
                 const T &x = table[i][k - 1];
                 const T &y = table[i + pow2[k - 1]][k - 1];
-                table[i][k] = compare(x, y) ? x : y;
+                table[i][k] = compare(x, y);
             }
         }
     }
@@ -29,6 +29,6 @@ struct sparse_table {
         int k = log2[(r - l) + 1];
         const T &x = table[l][k];
         const T &y = table[(r - pow2[k]) + 1][k];
-        return compare(x, y) ? x : y;
+        return compare(x, y);
     }
 };
