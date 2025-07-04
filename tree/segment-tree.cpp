@@ -30,7 +30,7 @@ struct segment_tree {
         } else {
             int middle = (left + right) / 2;
             if (i <= middle) {
-                update(i, value, (2 * node )+ 1, left, middle);
+                update(i, value, (2 * node) + 1, left, middle);
             } else {
                 update(i, value, (2 * node) + 2, middle + 1, right);
             }
