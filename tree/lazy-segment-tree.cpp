@@ -7,15 +7,15 @@ struct lazy_segment_tree {
     F combine;
     G apply;
 
-    lazy_segment_tree(array<T> &a, T neutral, T empty, F combine, G apply): size(a.size()), tree(4 * size), lazy(4 * size, empty), neutral(neutral), empty(empty), combine(combine), apply(apply) {
-        build(a);
+    lazy_segment_tree(array<T> &base, T neutral, T empty, F combine, G apply): size(base.size()), tree(4 * size), lazy(4 * size, empty), neutral(neutral), empty(empty), combine(combine), apply(apply) {
+        build(base);
     }
 
-    void build(array<T> &a, int node = 0, int left = 0, int right = -1) {
+    void build(array<T> &base, int node = 0, int left = 0, int right = -1) {
         if (right == -1) right = size - 1;
 
         if (left == right) {
-            tree[node] = a[left];
+            tree[node] = base[left];
         } else {
             int middle = (left + right) / 2;
             build(a, (2 * node) + 1, left, middle);

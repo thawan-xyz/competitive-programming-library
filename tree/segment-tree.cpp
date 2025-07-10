@@ -5,15 +5,15 @@ struct segment_tree {
     T neutral;
     F combine;
 
-    segment_tree(array<T> &a, T neutral, F combine): size(a.size()), tree(4 * size), neutral(neutral), combine(combine) {
-        build(a);
+    segment_tree(array<T> &base, T neutral, F combine): size(base.size()), tree(4 * size), neutral(neutral), combine(move(combine)) {
+        build(base);
     }
 
-    void build(array<T> &a, int node = 0, int left = 0, int right = -1) {
+    void build(array<T> &base, int node = 0, int left = 0, int right = -1) {
         if (right == -1) right = size - 1;
 
         if (left == right) {
-            tree[node] = a[left];
+            tree[node] = base[left];
         } else {
             int middle = (left + right) / 2;
             build(a, (2 * node) + 1, left, middle);
