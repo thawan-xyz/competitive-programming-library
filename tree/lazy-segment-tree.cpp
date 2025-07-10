@@ -7,7 +7,7 @@ struct lazy_segment_tree {
     F combine;
     G apply;
 
-    lazy_segment_tree(array<T> &base, T neutral, T empty, F combine, G apply): size(base.size()), tree(4 * size), lazy(4 * size, empty), neutral(neutral), empty(empty), combine(combine), apply(apply) {
+    lazy_segment_tree(array<T> &base, T neutral, T empty, F combine, G apply): size(base.size()), tree(4 * size), lazy(4 * size, empty), neutral(neutral), empty(empty), combine(move(combine)), apply(move(apply)) {
         build(base);
     }
 
