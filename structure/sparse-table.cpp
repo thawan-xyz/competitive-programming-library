@@ -5,7 +5,7 @@ struct sparse_table {
     F compare;
     array<int> pow2, log2;
 
-    sparse_table(array<T> &a, F compare): n(a.size()), compare(compare), pow2(n + 1), log2(n + 1) {
+    sparse_table(array<T> &base, F compare): n(base.size()), compare(move(compare)), pow2(n + 1), log2(n + 1) {
         pow2[0] = 1;
         pow2[1] = 2;
         for (int i = 2; i <= n; ++i) {
@@ -14,7 +14,7 @@ struct sparse_table {
         }
         table.assign(n, array<T>(log2[n] + 1));
         for (int i = 0; i < n; ++i) {
-            table[i][0] = a[i];
+            table[i][0] = base[i];
         }
         for (int k = 1; k <= log2[n]; ++k) {
             for (int i = 0; (i + pow2[k]) - 1 < n; ++i) {
