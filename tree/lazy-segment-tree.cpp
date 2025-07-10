@@ -18,8 +18,8 @@ struct lazy_segment_tree {
             tree[node] = base[left];
         } else {
             int middle = (left + right) / 2;
-            build(a, (2 * node) + 1, left, middle);
-            build(a, (2 * node) + 2, middle + 1, right);
+            build(base, (2 * node) + 1, left, middle);
+            build(base, (2 * node) + 2, middle + 1, right);
             tree[node] = combine(tree[(2 * node) + 1], tree[(2 * node) + 2]);
         }
     }
