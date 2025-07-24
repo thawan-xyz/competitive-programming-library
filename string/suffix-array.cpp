@@ -47,17 +47,17 @@ struct suffix_array {
         for (int i = 0; i < n; ++i) {
             inverse[suffix[i]] = i;
         }
-        int h = 0;
+        int l = 0;
         for (int i = 0; i < n; ++i) {
             int p = inverse[i];
             if (p == 0) {
                 lcp[p] = 0;
-                h = 0;
+                l = 0;
             } else {
                 int j = suffix[p - 1];
-                while ((i + h < n and j + h < n) and s[i + h] == s[j + h]) h++;
-                lcp[p] = h;
-                if (h > 0) h--;
+                while ((i + l < n and j + l < n) and s[i + l] == s[j + l]) h++;
+                lcp[p] = l;
+                l = max(0, l - 1);
             }
         }
     }
