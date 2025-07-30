@@ -1,6 +1,6 @@
 struct suffix_array {
     int n;
-    str s;
+    str &s;
     array<int> suffix, lcp;
     array<int> rank, temp;
 
