@@ -55,7 +55,7 @@ struct suffix_array {
                 l = 0;
             } else {
                 int j = suffix[p - 1];
-                while ((i + l < n and j + l < n) and s[i + l] == s[j + l]) h++;
+                while ((i + l < n and j + l < n) and s[i + l] == s[j + l]) l++;
                 lcp[p] = l;
                 l = max(0, l - 1);
             }
