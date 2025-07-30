@@ -7,7 +7,7 @@ struct suffix_array {
     suffix_array(str &s): n(s.length()), s(s), suffix(n), lcp(n), rank(n), temp(n) {
         for (int i = 0; i < n; ++i) {
             suffix[i] = i;
-            rank[i] = s[i] + 1;
+            rank[i] = s[i];
         }
         for (int k = 1; k < n; k <<= 1) {
             counting_sort(k), counting_sort(0);
@@ -25,7 +25,7 @@ struct suffix_array {
     }
 
     void counting_sort(int k) {
-        int m = max(256, n) + 1;
+        int m = max(255, n) + 1;
         array<int> f(m);
         for (int i = 0; i < n; ++i) {
             int r = suffix[i] + k < n ? rank[suffix[i] + k] : 0;
