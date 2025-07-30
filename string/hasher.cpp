@@ -1,11 +1,11 @@
-struct hash {
+struct hasher {
     int n;
     static const int p1 = 41, p2 = 53;
     static const int m1 = 1e9 + 7, m2 = 1e9 + 9;
     array<int> hash1, hash2;
     array<int> pow1, pow2;
 
-    hash(str &s): n(s.length()), hash1(n + 1), hash2(n + 1), pow1(n + 1, 1), pow2(n + 1, 1) {
+    hasher(str &s): n(s.length()), hash1(n + 1), hash2(n + 1), pow1(n + 1, 1), pow2(n + 1, 1) {
         for (int i = 1; i <= n; ++i) {
             hash1[i] = (p1 * hash1[i - 1] + s[i - 1]) % m1;
             hash2[i] = (p2 * hash2[i - 1] + s[i - 1]) % m2;
