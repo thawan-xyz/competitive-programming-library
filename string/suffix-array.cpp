@@ -15,9 +15,11 @@ struct suffix_array {
             for (int i = 1; i < n; ++i) {
                 int prev = suffix[i - 1];
                 int curr = suffix[i];
-                temp[curr] = temp[prev];
-                bool same = rank[prev] == rank[curr] and ((curr + k < n ? rank[curr + k] : 0) == (prev + k < n ? rank[prev + k] : 0));
-                if (not same) temp[curr] += 1;
+                if (rank[prev] == rank[curr] and rank[(prev + k) % n] == rank[(curr + k) % n]) {
+                    temp[curr] = temp[prev];
+                } else {
+                    temp[curr] = temp[prev] + 1;
+                }
             }
             swap(rank, temp);
             if (rank[suffix[n - 1]] == n) break;
@@ -28,14 +30,14 @@ struct suffix_array {
         int m = max(255, n) + 1;
         array<int> f(m);
         for (int i = 0; i < n; ++i) {
-            int r = suffix[i] + k < n ? rank[suffix[i] + k] : 0;
+            int r = rank[(suffix[i] + k) % n];
             f[r] += 1;
         }
         for (int i = 1; i < m; ++i) {
             f[i] += f[i - 1];
         }
         for (int i = n - 1; i >= 0; --i) {
-            int r = suffix[i] + k < n ? rank[suffix[i] + k] : 0;
+            int r = rank[(suffix[i] + k) % n];
             f[r] -= 1;
             temp[f[r]] = suffix[i];
         }
@@ -55,7 +57,7 @@ struct suffix_array {
                 l = 0;
             } else {
                 int j = suffix[p - 1];
-                while ((i + l < n and j + l < n) and s[i + l] == s[j + l]) l++;
+                while (s[i + l] == s[j + l]) l++;
                 lcp[p] = l;
                 l = max(0, l - 1);
             }
