@@ -44,7 +44,7 @@ struct suffix_array {
         swap(suffix, temp);
     }
 
-    void compute_lcp() {
+    void longest_common_prefix() {
         array<int> inverse(n);
         for (int i = 0; i < n; ++i) {
             inverse[suffix[i]] = i;
