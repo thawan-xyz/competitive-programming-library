@@ -45,13 +45,13 @@ struct suffix_array {
     }
 
     void longest_common_prefix() {
-        array<int> inverse(n);
+        array<int> inv(n);
         for (int i = 0; i < n; ++i) {
-            inverse[suffix[i]] = i;
+            inv[suffix[i]] = i;
         }
         int l = 0;
         for (int i = 0; i < n; ++i) {
-            int p = inverse[i];
+            int p = inv[i];
             if (p == 0) {
                 lcp[p] = 0;
                 l = 0;
