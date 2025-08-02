@@ -53,14 +53,13 @@ struct suffix_array {
         for (int i = 0; i < n; ++i) {
             int p = inv[i];
             if (p == 0) {
-                lcp[p] = 0;
                 l = 0;
             } else {
                 int j = suffix[p - 1];
                 while (s[i + l] == s[j + l]) l++;
-                lcp[p] = l;
-                l = max(0, l - 1);
             }
+            lcp[p] = l;
+            l = max(0, l - 1);
         }
     }
 
