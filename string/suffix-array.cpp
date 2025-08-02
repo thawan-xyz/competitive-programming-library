@@ -50,14 +50,10 @@ struct suffix_array {
             inv[suffix[i]] = i;
         }
         int l = 0;
-        for (int i = 0; i < n; ++i) {
+        for (int i = 0; i < n - 1; ++i) {
             int p = inv[i];
-            if (p == 0) {
-                l = 0;
-            } else {
-                int j = suffix[p - 1];
-                while (s[i + l] == s[j + l]) l++;
-            }
+            int j = suffix[p - 1];
+            while (s[i + l] == s[j + l]) l++;
             lcp[p] = l;
             l = max(0, l - 1);
         }
