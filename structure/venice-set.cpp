@@ -8,11 +8,11 @@ struct venice_set {
     }
 
     void insert(T x) {
-        s.insert(x + k);
+        s.insert(x - k);
     }
 
     void remove(T x) {
-        auto i = s.find(x + k);
+        auto i = s.find(x - k);
         if (i != s.end()) s.erase(i);
     }
 
@@ -21,6 +21,6 @@ struct venice_set {
     }
 
     T min() {
-        return *s.begin() - k;
+        return *s.begin() + k;
     }
 };
