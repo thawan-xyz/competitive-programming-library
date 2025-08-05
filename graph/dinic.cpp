@@ -6,7 +6,7 @@ struct edge {
 };
 
 struct dinic {
-    int inf = 1e18;
+    int inf = 4e18;
     int v, e;
     array<edge> edges;
     array<array<int>> graph;
