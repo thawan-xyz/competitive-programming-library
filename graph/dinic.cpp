@@ -24,7 +24,7 @@ struct dinic {
     }
 
     bool bfs(int s, int t) {
-        ranges::fill(level, -1);
+        fill(level, -1);
         queue<int> q; q.push(s);
         level[s] = 0;
 
