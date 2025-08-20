@@ -1,4 +1,4 @@
-struct binary_lifting {
+struct xyz {
     int n, log;
     array<array<int>> &graph;
     array<int> depth;
