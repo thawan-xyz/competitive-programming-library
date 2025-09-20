@@ -25,7 +25,7 @@ int reverse(int i, int log) {
     return k;
 }
 
-array<complex<float>> FFT(array<complex<float>> p, bool inverse) {
+void FFT(array<complex<float>> &p, bool inverse) {
     int n = p.size();
     int log = log2(n);
     for (int i = 0; i < n; ++i) {
@@ -56,7 +56,6 @@ array<complex<float>> FFT(array<complex<float>> p, bool inverse) {
             z /= n;
         }
     }
-    return p;
 }
 
 array<int> multiply(array<int> &a, array<int> &b) {
