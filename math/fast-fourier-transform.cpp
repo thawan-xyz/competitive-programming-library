@@ -1,20 +1,3 @@
-int log2(int n) {
-    int c = 0;
-    while (n != 1) {
-        n >>= 1;
-        c++;
-    }
-    return c;
-}
-
-int pow2(int n) {
-    int p = 1;
-    while (p < n) {
-        p <<= 1;
-    }
-    return p;
-}
-
 int reverse(int i, int log) {
     int k = 0;
     for (int j = 0; j < log; ++j) {
