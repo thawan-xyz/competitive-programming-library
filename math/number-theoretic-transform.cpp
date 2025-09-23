@@ -1,18 +1,5 @@
 const int mod = 998244353, g = 3;
 
-array<int> build(int n) {
-    array<int> order(n);
-    int l = __builtin_ctzll(n);
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < l; ++j) {
-            if (i & (1 << j)) {
-                order[i] |= 1 << (l - (j + 1));
-            }
-        }
-    }
-    return order;
-}
-
 void permute(array<int> &p, array<int> &order) {
     int n = p.size();
     for (int i = 0; i < n; ++i) {
@@ -47,12 +34,20 @@ void number_theoretic_transform(array<int> &p, int sign, array<int> &order, int 
 array<int> convolution(array<int> a, array<int> b) {
     int n = a.size() + b.size() - 1;
     int m = 1 << (64 - __builtin_clzll(n - 1));
-    array<int> order = build(m);
-    int inv = power(m, mod - 2);
+    int l = __builtin_ctzll(m);
 
-    a.resize(m), b.resize(m);
-    number_theoretic_transform(a, 1, order, inv);
-    number_theoretic_transform(b, 1, order, inv);
+    array<int> order(m);
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < l; ++j) {
+            if (i & (1 << j)) {
+                order[i] |= 1 << (l - (j + 1));
+            }
+        }
+    }
+
+    int inv = power(m, mod - 2);
+    a.resize(m); number_theoretic_transform(a, 1, order, inv);
+    b.resize(m); number_theoretic_transform(b, 1, order, inv);
 
     array<int> c(m);
     for (int i = 0; i < m; ++i) c[i] = (a[i] * b[i]) % mod;

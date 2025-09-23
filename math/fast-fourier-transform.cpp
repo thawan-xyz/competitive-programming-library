@@ -1,16 +1,3 @@
-array<int> build(int n) {
-    array<int> order(n);
-    int l = __builtin_ctzll(n);
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < l; ++j) {
-            if (i & (1 << j)) {
-                order[i] |= 1 << (l - (j + 1));
-            }
-        }
-    }
-    return order;
-}
-
 void permute(array<complex<float>> &p, array<int> &order) {
     int n = p.size();
     for (int i = 0; i < n; ++i) {
@@ -45,7 +32,16 @@ void fast_fourier_transform(array<complex<float>> &p, int sign, array<int> &orde
 array<int> convolution(array<int> &a, array<int> &b) {
     int n = a.size() + b.size() - 1;
     int m = 1 << (64 - __builtin_clzll(n - 1));
-    array<int> order = build(m);
+    int l = __builtin_ctzll(m);
+
+    array<int> order(m);
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < l; ++j) {
+            if (i & (1 << j)) {
+                order[i] |= 1 << (l - (j + 1));
+            }
+        }
+    }
 
     array<complex<float>> x(a.begin(), a.end()); x.resize(m);
     array<complex<float>> y(b.begin(), b.end()); y.resize(m);
