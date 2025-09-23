@@ -37,7 +37,7 @@ array<int> convolution(array<int> &a, array<int> &b) {
     int l = __builtin_ctzll(m);
 
     array<int> order(m);
-    for (int i = 0; i < n; ++i) {
+    for (int i = 0; i < m; ++i) {
         for (int j = 0; j < l; ++j) {
             if (i & (1 << j)) {
                 order[i] |= 1 << (l - (j + 1));
