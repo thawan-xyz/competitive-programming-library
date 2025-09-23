@@ -33,7 +33,7 @@ void number_theoretic_transform(array<int> &p, int sign, array<int> &order, int 
 
 array<int> convolution(array<int> &a, array<int> &b) {
     int n = a.size() + b.size() - 1;
-    int m = 1 << (32 - __builtin_clz(n - 1));
+    int m = (n == 1) ? 1 : 1 << (32 - __builtin_clz(n - 1));
     int l = __builtin_ctz(m);
 
     array<int> order(m);
