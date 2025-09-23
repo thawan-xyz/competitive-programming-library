@@ -31,7 +31,7 @@ void number_theoretic_transform(array<int> &p, int sign, array<int> &order, int 
     if (sign == -1) for (int &i : p) i = (i * inv) % mod;
 }
 
-array<int> convolution(array<int> a, array<int> b) {
+array<int> convolution(array<int> &a, array<int> &b) {
     int n = a.size() + b.size() - 1;
     int m = 1 << (64 - __builtin_clzll(n - 1));
     int l = __builtin_ctzll(m);
