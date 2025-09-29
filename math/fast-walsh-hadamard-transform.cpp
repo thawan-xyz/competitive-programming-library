@@ -1,6 +1,5 @@
 void fast_walsh_hadamard_transform(array<int> &p, int sign) {
     int n = p.size();
-
     for (int l = 1; l < n; l <<= 1) {
         for (int i = 0; i < n; i += l << 1) {
             for (int j = 0; j < l; ++j) {
@@ -11,7 +10,12 @@ void fast_walsh_hadamard_transform(array<int> &p, int sign) {
             }
         }
     }
-    if (sign == -1) for (int &z : p) z /= n;
+
+    if (sign == -1) {
+        for (int &z : p) {
+            z /= n;
+        }
+    }
 }
 
 array<int> xor_convolution(array<int> &a, array<int> &b) {
