@@ -15,7 +15,7 @@ int linear_recurrence(int n, int k, array<int> &c, array<int> &f) {
     return answer;
 }
 
-int linear_recurrence_constant(int n, int k, array<int> &c, int x, array<int> &f) {
+int linear_recurrence_constant(int n, int k, array<int> &c, int constant, array<int> &f) {
     if (n < k) return f[n];
 
     matrix m(k + 1, array<int>(k + 1));
@@ -31,6 +31,6 @@ int linear_recurrence_constant(int n, int k, array<int> &c, int x, array<int> &f
         answer += (p[0][i] * f[i]) % mod;
         answer %= mod;
     }
-    answer += (p[0][k] * x) % mod;
+    answer += (p[0][k] * constant) % mod;
     return answer % mod;
 }
