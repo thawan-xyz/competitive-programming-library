@@ -3,9 +3,13 @@ int power(int base, int exponent) {
     base %= mod;
 
     while (exponent) {
-        if (exponent & 1) result = (result * base) % mod;
+        if (exponent & 1) {
+            result *= base;
+            result %= mod;
+        }
 
-        base = (base * base) % mod;
+        base *= base;
+        base %= mod;
         exponent >>= 1;
     }
     return result;
