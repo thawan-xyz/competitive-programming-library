@@ -10,22 +10,22 @@ struct trie {
 
     void insert(str &s) {
         int n = 0;
+        tree[0].sub++;
 
         for (char &c : s) {
-            tree[n].sub++;
             if (not tree[n].child[c - 'a']) {
                 tree.push_back(node());
                 tree[n].child[c - 'a'] = id++;
             }
             n = tree[n].child[c - 'a'];
+            tree[n].sub++;
         }
         tree[n].end = true;
     }
 
     void remove(str &s) {
         int n = 0;
-        array<int> path;
-        path.push_back(0);
+        array<int> path = {0};
 
         for (char &c : s) {
             if (not tree[n].child[c - 'a']) {
@@ -39,11 +39,11 @@ struct trie {
         tree[n].end = false;
 
         for (int i = path.size() - 1; i >= 1; --i) {
-            int p = path[i - 1], c = path[i];
-            tree[c].sub--;
-            if (tree[c].sub == 0 and not tree[c].end) {
-                tree[p].child[s[i - 1] - 'a'] = 0;
-            }
+            n = path[i];
+            tree[n].sub--;
+
+            int p = path[i - 1];
+            if (tree[n].sub == 0) tree[p].child[s[i - 1] - 'a'] = 0;
         }
         tree[0].sub--;
     }
