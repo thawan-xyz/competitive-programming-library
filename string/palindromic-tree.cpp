@@ -6,17 +6,17 @@ struct palindromic_tree {
         node(int length): length(length), link(0), next(26) {}
     };
 
-    str s;
-    array<node> tree;
     int last;
+    array<node> tree;
+    str s;
 
-    palindromic_tree(int n): last(1) {
+    palindromic_tree(int n): last(0) {
         s.reserve(n + 5);
         s.push_back('$');
         tree.reserve(n + 5);
-        tree.push_back(node(-1));
         tree.push_back(node(0));
-        tree[1].link = 0;
+        tree.push_back(node(-1));
+        tree[0].link = 1;
     }
 
     int suffix(int i) {
