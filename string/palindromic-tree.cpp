@@ -1,40 +1,40 @@
 struct palindromic_tree {
     struct node {
         int length, link;
-        array<int> next;
+        array<int> child;
 
-        node(int length): length(length), link(0), next(26) {}
+        node(int length): length(length), link(0), child(26) {}
     };
 
-    int last;
+    int suffix;
+    array<char> text;
     array<node> tree;
-    array<char> s;
 
-    palindromic_tree(int n): last(0) {
-        s.reserve(n + 5);
-        s.push_back('$');
+    palindromic_tree(int n): suffix(0) {
+        text.reserve(n + 5);
+        text.push_back('$');
         tree.reserve(n + 5);
         tree.push_back(node(0));
         tree.push_back(node(-1));
         tree[0].link = 1;
     }
 
-    int suffix(int i) {
-        while (s[(s.size() - tree[i].length) - 2] != s.back()) i = tree[i].link;
-        return i;
+    int follow(int id) {
+        while (text[(text.size() - tree[id].length) - 2] != text.back()) id = tree[id].link;
+        return id;
     }
 
     void insert(char c) {
-        s.push_back(c);
-        last = suffix(last);
+        text.push_back(c);
+        suffix = follow(suffix);
 
-        if (not tree[last].next[c - 'a']) {
-            int curr = tree.size();
-            tree.push_back(node(tree[last].length + 2));
+        if (not tree[suffix].child[c - 'a']) {
+            int id = tree.size();
+            tree.push_back(node(tree[suffix].length + 2));
 
-            tree[curr].link = tree[suffix(tree[last].link)].next[c - 'a'];
-            tree[last].next[c - 'a'] = curr;
+            tree[id].link = tree[follow(tree[suffix].link)].child[c - 'a'];
+            tree[suffix].child[c - 'a'] = id;
         }
-        last = tree[last].next[c - 'a'];
+        suffix = tree[suffix].child[c - 'a'];
     }
 };
