@@ -8,7 +8,7 @@ struct palindromic_tree {
 
     int last;
     array<node> tree;
-    str s;
+    array<char> s;
 
     palindromic_tree(int n): last(0) {
         s.reserve(n + 5);
