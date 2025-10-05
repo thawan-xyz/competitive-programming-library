@@ -22,7 +22,6 @@ struct binary_indexed_tree {
     }
 
     T query(int l, int r) {
-        if (l > r) return 0;
         return prefix(r) - prefix(l - 1);
     }
 
