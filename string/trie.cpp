@@ -1,16 +1,20 @@
 struct trie {
     struct node {
-        array<int> child = array<int>(26);
-        bool end = false;
-        int sub = 0;
+        array<int> child;
+        bool end;
+        int prefix;
+
+        node(): child(26), end(false), prefix(0) {}
     };
 
-    int id = 1;
-    array<node> tree = array<node>(1);
+    int id;
+    array<node> tree;
+
+    trie(): id(1), tree(1) {}
 
     void insert(str &s) {
         int n = 0;
-        tree[0].sub++;
+        tree[0].prefix++;
 
         for (char &c : s) {
             if (not tree[n].child[c - 'a']) {
@@ -18,7 +22,7 @@ struct trie {
                 tree[n].child[c - 'a'] = id++;
             }
             n = tree[n].child[c - 'a'];
-            tree[n].sub++;
+            tree[n].prefix++;
         }
         tree[n].end = true;
     }
@@ -40,12 +44,12 @@ struct trie {
 
         for (int i = path.size() - 1; i >= 1; --i) {
             n = path[i];
-            tree[n].sub--;
+            tree[n].prefix--;
 
             int p = path[i - 1];
-            if (tree[n].sub == 0) tree[p].child[s[i - 1] - 'a'] = 0;
+            if (tree[n].prefix == 0) tree[p].child[s[i - 1] - 'a'] = 0;
         }
-        tree[0].sub--;
+        tree[0].prefix--;
     }
 
     bool search(str &s) {
