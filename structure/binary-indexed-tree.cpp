@@ -11,6 +11,19 @@ struct binary_indexed_tree {
         for (int i = 0; i < n; ++i) update(i, base[i]);
     }
 
+    void update(int i, T d) {
+        i += 1;
+        while (i <= n) {
+            tree[i] += d;
+            i += lsb(i);
+        }
+    }
+
+    void set(int i, T v) {
+        T d = v - query(i, i);
+        update(i, d);
+    }
+
     T prefix(int i) {
         T s = 0;
         i += 1;
@@ -25,16 +38,14 @@ struct binary_indexed_tree {
         return prefix(r) - prefix(l - 1);
     }
 
-    void update(int i, T d) {
-        i += 1;
-        while (i <= n) {
-            tree[i] += d;
-            i += lsb(i);
+    int kth(int k) {
+        int i = 0;
+        for (int j = 1 << (31 - __builtin_clz(n)); j > 0; j >>= 1) {
+            if (i + j <= n and tree[i + j] < k) {
+                k -= tree[i + j];
+                i += j;
+            }
         }
-    }
-
-    void set(int i, T v) {
-        T d = v - query(i, i);
-        update(i, d);
+        return i;
     }
 };
