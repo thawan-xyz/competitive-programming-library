@@ -16,8 +16,8 @@ struct wavelet_tree {
                 prefix[node][k] = k + 1;
             }
         } else {
-            list<int> left; left.resize(base.size());
-            list<int> right; right.resize(base.size());
+            list<int> left; left.reserve(base.size());
+            list<int> right; right.reserve(base.size());
 
             int mid = (low[node] + high[node]) / 2;
             for (int k = 0; k < base.size(); ++k) {
