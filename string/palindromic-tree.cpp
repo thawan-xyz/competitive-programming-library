@@ -1,14 +1,14 @@
 struct palindromic_tree {
     struct node {
         int length, link;
-        array<int> child;
+        array<int, 26> child = {};
 
-        node(int length): length(length), link(0), child(26) {}
+        node(int length): length(length), link(0) {}
     };
 
     int suffix;
-    array<char> text;
-    array<node> tree;
+    list<char> text;
+    list<node> tree;
 
     palindromic_tree(int n): suffix(0) {
         text.reserve(n + 5);
