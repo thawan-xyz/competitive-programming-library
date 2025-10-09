@@ -16,21 +16,22 @@ struct wavelet_tree {
                 prefix[node][k] = k + 1;
             }
         } else {
-            list<int> l, r;
+            list<int> left; left.resize(base.size());
+            list<int> right; right.resize(base.size());
 
             int mid = (low[node] + high[node]) / 2;
             for (int k = 0; k < base.size(); ++k) {
                 prefix[node][k] = (k == 0) ? 0 : prefix[node][k - 1];
                 if (base[k] <= mid) {
                     prefix[node][k]++;
-                    l.push_back(base[k]);
+                    left.push_back(base[k]);
                 } else {
-                    r.push_back(base[k]);
+                    right.push_back(base[k]);
                 }
             }
 
-            if (not l.empty()) build(l, (2 * node) + 1, low[node], mid);
-            if (not r.empty()) build(r, (2 * node) + 2, mid + 1, high[node]);
+            if (not left.empty()) build(left, (2 * node) + 1, low[node], mid);
+            if (not right.empty()) build(right, (2 * node) + 2, mid + 1, high[node]);
         }
     }
 
