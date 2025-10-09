@@ -1,14 +1,14 @@
 struct trie {
     struct node {
-        array<int> child;
         bool end;
         int prefix;
+        array<int, 26> child = {};
 
-        node(): child(26), end(false), prefix(0) {}
+        node(): end(false), prefix(0) {}
     };
 
     int id;
-    array<node> tree;
+    list<node> tree;
 
     trie(): id(1), tree(1) {}
 
@@ -29,7 +29,7 @@ struct trie {
 
     void remove(str &s) {
         int n = 0;
-        array<int> path = {0};
+        list<int> path = {0};
 
         for (char &c : s) {
             if (not tree[n].child[c - 'a']) {
@@ -64,9 +64,9 @@ struct trie {
         return tree[n].end;
     }
 
-    array<str> complete(str &s) {
+    list<str> complete(str &s) {
         int n = 0;
-        array<str> r;
+        list<str> r;
 
         for (char &c : s) {
             if (not tree[n].child[c - 'a']) {
@@ -78,7 +78,7 @@ struct trie {
         return r;
     }
 
-    void dfs(int n, str &s, array<str> &r) {
+    void dfs(int n, str &s, list<str> &r) {
         if (tree[n].end) {
             r.push_back(s);
         }
