@@ -4,7 +4,7 @@ int nim(list<int> &piles, list<int> &moves) {
 
     for (int i = 1; i <= size; ++i) {
         set<int> reach;
-        for (int &move : moves) if (move <= i) {
+        for (int move : moves) if (move <= i) {
             reach.insert(grundy[i - move]);
         }
 
@@ -14,7 +14,7 @@ int nim(list<int> &piles, list<int> &moves) {
     }
 
     int result = 0;
-    for (int &pile : piles) {
+    for (int pile : piles) {
         result ^= grundy[pile];
     }
     return result;
