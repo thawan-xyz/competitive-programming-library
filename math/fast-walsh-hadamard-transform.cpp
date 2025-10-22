@@ -1,4 +1,4 @@
-void fast_walsh_hadamard_transform(array<int> &p, int sign) {
+void fast_walsh_hadamard_transform(list<int> &p, int sign) {
     int n = p.size();
     for (int l = 1; l < n; l <<= 1) {
         for (int i = 0; i < n; i += l << 1) {
@@ -18,14 +18,14 @@ void fast_walsh_hadamard_transform(array<int> &p, int sign) {
     }
 }
 
-array<int> xor_convolution(array<int> &a, array<int> &b) {
+list<int> xor_convolution(list<int> &a, list<int> &b) {
     int m = max(a.size(), b.size());
     int n = (m == 1) ? 1 : 1 << (32 - __builtin_clz(m - 1));
 
     a.resize(n), fast_walsh_hadamard_transform(a, 1);
     b.resize(n), fast_walsh_hadamard_transform(b, 1);
 
-    array<int> c(n);
+    list<int> c(n);
     for (int i = 0; i < n; ++i) c[i] = a[i] * b[i];
     fast_walsh_hadamard_transform(c, -1);
     return c;

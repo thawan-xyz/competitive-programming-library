@@ -1,4 +1,4 @@
-void permute(array<complex<float>> &p, array<int> &order) {
+void permute(list<complex<float>> &p, list<int> &order) {
     int n = p.size();
     for (int i = 0; i < n; ++i) {
         int j = order[i];
@@ -6,7 +6,7 @@ void permute(array<complex<float>> &p, array<int> &order) {
     }
 }
 
-void fast_fourier_transform(array<complex<float>> &p, int sign, array<int> &order) {
+void fast_fourier_transform(list<complex<float>> &p, int sign, list<int> &order) {
     int n = p.size();
     permute(p, order);
 
@@ -29,12 +29,12 @@ void fast_fourier_transform(array<complex<float>> &p, int sign, array<int> &orde
     if (sign == -1) for (complex<float> &c : p) c /= n;
 }
 
-array<int> convolution(array<int> &a, array<int> &b) {
+list<int> convolution(list<int> &a, list<int> &b) {
     int n = a.size() + b.size() - 1;
     int m = (n == 1) ? 1 : 1 << (32 - __builtin_clz(n - 1));
     int l = __builtin_ctz(m);
 
-    array<int> order(m);
+    list<int> order(m);
     for (int i = 0; i < m; ++i) {
         for (int j = 0; j < l; ++j) {
             if (i & (1 << j)) {
@@ -43,16 +43,16 @@ array<int> convolution(array<int> &a, array<int> &b) {
         }
     }
 
-    array<complex<float>> x(a.begin(), a.end()); x.resize(m);
-    array<complex<float>> y(b.begin(), b.end()); y.resize(m);
+    list<complex<float>> x(a.begin(), a.end()); x.resize(m);
+    list<complex<float>> y(b.begin(), b.end()); y.resize(m);
     fast_fourier_transform(x, 1, order);
     fast_fourier_transform(y, 1, order);
 
-    array<complex<float>> z(m);
+    list<complex<float>> z(m);
     for (int i = 0; i < m; ++i) z[i] = x[i] * y[i];
     fast_fourier_transform(z, -1, order);
 
-    array<int> c(n);
+    list<int> c(n);
     for (int i = 0; i < n; ++i) c[i] = round(z[i].real());
     return c;
 }
