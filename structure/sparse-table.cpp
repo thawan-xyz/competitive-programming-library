@@ -1,11 +1,11 @@
-template <typename T, typename F = function<T(const T &, const T &)>>
+template <typename T>
 struct sparse_table {
     int n;
     list<list<T>> table;
     F compare;
     list<int> pow2, log2;
 
-    sparse_table(list<T> &base, F compare): n(base.size()), compare(move(compare)), pow2(n + 1), log2(n + 1) {
+    sparse_table(list<T> &base): n(base.size()), pow2(n + 1), log2(n + 1) {
         pow2[0] = 1;
         pow2[1] = 2;
         for (int i = 2; i <= n; ++i) {

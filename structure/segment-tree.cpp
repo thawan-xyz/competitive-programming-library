@@ -1,11 +1,11 @@
-template <typename T, typename F = function<T(const T &, const T &)>>
+template <typename T>
 struct segment_tree {
     int size;
     list<T> tree;
     T neutral;
     F combine;
 
-    segment_tree(list<T> &base, T neutral, F combine): size(base.size()), tree(4 * size), neutral(neutral), combine(move(combine)) {
+    segment_tree(list<T> &base): size(base.size()), tree(4 * size) {
         build(base);
     }
 

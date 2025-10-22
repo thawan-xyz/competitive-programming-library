@@ -1,4 +1,4 @@
-template <typename T, typename F = function<T(const T &, const T &)>, typename G = function<T(const T &, const T &, const int &)>>
+template <typename T>
 struct lazy_segment_tree {
     int size;
     list<T> tree;
@@ -7,7 +7,7 @@ struct lazy_segment_tree {
     F combine;
     G apply;
 
-    lazy_segment_tree(list<T> &base, T neutral, T empty, F combine, G apply): size(base.size()), tree(4 * size), lazy(4 * size, empty), neutral(neutral), empty(empty), combine(move(combine)), apply(move(apply)) {
+    lazy_segment_tree(list<T> &base): size(base.size()), tree(4 * size), lazy(4 * size, empty) {
         build(base);
     }
 
