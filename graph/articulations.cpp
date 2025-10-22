@@ -1,8 +1,8 @@
-array<int> articulations(array<array<int>> &graph) {
+list<int> articulations(list<list<int>> &graph) {
     int n = graph.size() - 1, timer = 1;
-    array<int> id(n + 1), low(n + 1);
-    array<int> points;
-    array<bool> is_articulation(n + 1);
+    list<int> id(n + 1), low(n + 1);
+    list<int> points;
+    list<bool> is_articulation(n + 1);
 
     function<void(int, int)> dfs = [&](int a, int p) -> void {
         id[a] = low[a] = timer++;

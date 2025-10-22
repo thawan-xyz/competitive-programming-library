@@ -1,7 +1,7 @@
-array<pair<int, int>> bridges(array<array<int>> &graph) {
+list<pair<int, int>> bridges(list<list<int>> &graph) {
     int n = graph.size() - 1, timer = 1;
-    array<pair<int, int>> edges;
-    array<int> id(n + 1), low(n + 1);
+    list<pair<int, int>> edges;
+    list<int> id(n + 1), low(n + 1);
 
     function<void(int, int)> dfs = [&](int a, int p) -> void {
         id[a] = low[a] = timer++;

@@ -8,9 +8,9 @@ struct edge {
 struct dinic {
     int inf = 4e18;
     int v, e;
-    array<edge> edges;
-    array<array<int>> graph;
-    array<int> level, last;
+    list<edge> edges;
+    list<list<int>> graph;
+    list<int> level, last;
 
     dinic(int v): v(v), e(0), graph(v), level(v), last(v) {}
 

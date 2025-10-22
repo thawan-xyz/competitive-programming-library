@@ -1,9 +1,9 @@
-array<array<int>> tarjan(array<array<int>> &graph) {
+list<list<int>> tarjan(list<list<int>> &graph) {
     int n = graph.size() - 1, timer = 1;
-    array<array<int>> components;
-    array<int> id(n + 1), low(n + 1);
+    list<list<int>> components;
+    list<int> id(n + 1), low(n + 1);
     stack<int> trail;
-    array<bool> inside(n + 1);
+    list<bool> inside(n + 1);
 
     function<void(int)> dfs = [&](int a) -> void {
         id[a] = low[a] = timer++;
@@ -15,7 +15,7 @@ array<array<int>> tarjan(array<array<int>> &graph) {
         }
 
         if (id[a] == low[a]) {
-            array<int> component;
+            list<int> component;
             int b = 0;
             do {
                 b = trail.top();
