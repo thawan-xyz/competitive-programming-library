@@ -1,15 +1,15 @@
 template <typename T, typename F = function<T(const T &, const T &)>>
 struct segment_tree {
     int size;
-    array<T> tree;
+    list<T> tree;
     T neutral;
     F combine;
 
-    segment_tree(array<T> &base, T neutral, F combine): size(base.size()), tree(4 * size), neutral(neutral), combine(move(combine)) {
+    segment_tree(list<T> &base, T neutral, F combine): size(base.size()), tree(4 * size), neutral(neutral), combine(move(combine)) {
         build(base);
     }
 
-    void build(array<T> &base, int node = 0, int left = 0, int right = -1) {
+    void build(list<T> &base, int node = 0, int left = 0, int right = -1) {
         if (right == -1) right = size - 1;
 
         if (left == right) {

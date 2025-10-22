@@ -1,13 +1,13 @@
 template <typename T>
 struct binary_indexed_tree {
     int n;
-    array<T> tree;
+    list<T> tree;
 
     static int lsb(int i) {
         return i & -i;
     }
 
-    binary_indexed_tree(array<T> &base): n(base.size()), tree(n + 1) {
+    binary_indexed_tree(list<T> &base): n(base.size()), tree(n + 1) {
         for (int i = 0; i < n; ++i) update(i, base[i]);
     }
 

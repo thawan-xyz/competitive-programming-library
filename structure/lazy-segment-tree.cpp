@@ -1,17 +1,17 @@
 template <typename T, typename F = function<T(const T &, const T &)>, typename G = function<T(const T &, const T &, const int &)>>
 struct lazy_segment_tree {
     int size;
-    array<T> tree;
-    array<T> lazy;
+    list<T> tree;
+    list<T> lazy;
     T neutral, empty;
     F combine;
     G apply;
 
-    lazy_segment_tree(array<T> &base, T neutral, T empty, F combine, G apply): size(base.size()), tree(4 * size), lazy(4 * size, empty), neutral(neutral), empty(empty), combine(move(combine)), apply(move(apply)) {
+    lazy_segment_tree(list<T> &base, T neutral, T empty, F combine, G apply): size(base.size()), tree(4 * size), lazy(4 * size, empty), neutral(neutral), empty(empty), combine(move(combine)), apply(move(apply)) {
         build(base);
     }
 
-    void build(array<T> &base, int node = 0, int left = 0, int right = -1) {
+    void build(list<T> &base, int node = 0, int left = 0, int right = -1) {
         if (right == -1) right = size - 1;
 
         if (left == right) {

@@ -1,18 +1,18 @@
 template <typename T, typename F = function<T(const T &, const T &)>>
 struct sparse_table {
     int n;
-    array<array<T>> table;
+    list<list<T>> table;
     F compare;
-    array<int> pow2, log2;
+    list<int> pow2, log2;
 
-    sparse_table(array<T> &base, F compare): n(base.size()), compare(move(compare)), pow2(n + 1), log2(n + 1) {
+    sparse_table(list<T> &base, F compare): n(base.size()), compare(move(compare)), pow2(n + 1), log2(n + 1) {
         pow2[0] = 1;
         pow2[1] = 2;
         for (int i = 2; i <= n; ++i) {
             pow2[i] = pow2[i - 1] << 1;
             log2[i] = log2[i >> 1] + 1;
         }
-        table.assign(n, array<T>(log2[n] + 1));
+        table.assign(n, list<T>(log2[n] + 1));
         for (int i = 0; i < n; ++i) {
             table[i][0] = base[i];
         }

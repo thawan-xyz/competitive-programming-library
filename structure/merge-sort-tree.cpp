@@ -1,13 +1,13 @@
 template <typename T>
 struct merge_sort_tree {
     int size;
-    array<array<T>> tree;
+    list<list<T>> tree;
 
-    merge_sort_tree(array<T> &base): size(base.size()), tree(4 * size) {
+    merge_sort_tree(list<T> &base): size(base.size()), tree(4 * size) {
         build(base);
     }
 
-    void build(array<T> &base, int node = 0, int left = 0, int right = -1) {
+    void build(list<T> &base, int node = 0, int left = 0, int right = -1) {
         if (right == -1) right = size - 1;
 
         if (left == right) {
