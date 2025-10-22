@@ -1,8 +1,8 @@
 struct suffix_array {
     int n;
     str s;
-    array<int> suf, lcp;
-    array<int> rank, temp;
+    list<int> suf, lcp;
+    list<int> rank, temp;
 
     suffix_array(str &base): n(base.length() + 1), s(base + '$'), suf(n), lcp(n), rank(n), temp(n) {
         for (int i = 0; i < n; ++i) {
@@ -28,7 +28,7 @@ struct suffix_array {
 
     void counting_sort(int k) {
         int m = max(255, n) + 1;
-        array<int> f(m);
+        list<int> f(m);
         for (int i = 0; i < n; ++i) {
             int r = rank[(suf[i] + k) % n];
             f[r] += 1;
@@ -45,7 +45,7 @@ struct suffix_array {
     }
 
     void longest_common_prefix() {
-        array<int> inv(n);
+        list<int> inv(n);
         for (int i = 0; i < n; ++i) {
             inv[suf[i]] = i;
         }

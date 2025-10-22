@@ -1,6 +1,6 @@
-array<int> z_array(str &s) {
+list<int> z_array(str &s) {
     int n = s.length();
-    array<int> z(n);
+    list<int> z(n);
     int low = 0, high = 0;
     for (int i = 1; i < n; ++i) {
         if (i <= high) {
