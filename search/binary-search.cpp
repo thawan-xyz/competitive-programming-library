@@ -1,5 +1,4 @@
-template <typename F = function<bool(const int &)>>
-int binary_search(int low, int high, F check, bool first) {
+int binary_search(int low, int high, bool first) {
     int answer = -1;
     while (low <= high) {
         int mid = low + (high - low) / 2;
@@ -16,8 +15,7 @@ int binary_search(int low, int high, F check, bool first) {
     return answer;
 }
 
-template <typename F = function<bool(const float &)>>
-float binary_search(float low, float high, F check, bool first, float eps = 1e-6) {
+float binary_search(float low, float high, bool first, float eps = 1e-6) {
     float answer = -1;
     while (high - low > eps) {
         float mid = low + (high - low) / 2;

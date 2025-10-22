@@ -1,5 +1,4 @@
-template <typename F = function<int(const int &)>>
-int ternary_search(int low, int high, F value, bool max) {
+int ternary_search(int low, int high, bool max) {
     while (high - low > 3) {
         int mid_low = low + (high - low) / 3;
         int mid_high = high - (high - low) / 3;
@@ -20,8 +19,7 @@ int ternary_search(int low, int high, F value, bool max) {
     return answer;
 }
 
-template <typename F = function<float(const float &)>>
-float ternary_search(float low, float high, F value, bool max, float eps = 1e-6) {
+float ternary_search(float low, float high, bool max, float eps = 1e-6) {
     while (high - low > eps) {
         float mid_low = low + (high - low) / 3;
         float mid_high = high - (high - low) / 3;
