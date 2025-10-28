@@ -1,20 +1,20 @@
 struct line {
     int a, b;
-    mutable float end;
+    mutable int end;
 
     bool operator<(const line &other) const {
-        return a > other.a;
+        return tie(a, b) > tie(other.a, other.b);
     }
 
-    bool operator<(const float x) const {
+    bool operator<(const int x) const {
         return end < x;
     }
 };
 
 struct line_container : multiset<line, less<>> {
-    float intersect(iterator i, iterator j) {
-        float x = j->b - i->b, y = i->a - j->a;
-        return x / y;
+    int intersect(iterator i, iterator j) {
+        int x = j->b - i->b, y = i->a - j->a;
+        return x / y - ((x ^ y) < 0 and x % y != 0);
     }
 
     void update(iterator i) {
@@ -25,65 +25,48 @@ struct line_container : multiset<line, less<>> {
         }
     }
 
-    void insert_line(int a, int b) {
-        auto y = insert({a, b, 0});
-        auto x = (y == begin()) ? end() : prev(y);
-        auto z = next(y);
+    void include(int a, int b) {
+        iterator l = insert({a, b, 0});
 
-        if (x != end() and x->a == y->a) {
-            if (x->b > y->b) {
-                erase(x);
-            } else {
-                erase(y);
+        if (l != begin() and prev(l)->a == l->a) {
+            erase(prev(l));
+        }
+        if (next(l) != end() and next(l)->a == l->a) {
+            erase(l);
+            return;
+        }
+
+        if (l != begin() and next(l) != end()) {
+            iterator p = prev(l), n = next(l);
+            if (intersect(p, l) >= intersect(l, n)) {
+                erase(l);
                 return;
             }
         }
 
-        if (z != end() and y->a == z->a) {
-            if (y->b < z->b) {
-                erase(z);
-            } else {
-                erase(y);
-                return;
-            }
-        }
-
-        while (true) {
-            if (y == begin()) break;
-            auto p1 = prev(y);
-            if (p1 == begin()) break;
-            auto p2 = prev(p1);
-            if (intersect(p2, p1) >= intersect(p1, y)) {
-                erase(p1);
+        while (l != begin()) {
+            iterator p = prev(l);
+            if (p != begin() and intersect(prev(p), p) >= intersect(p, l)) {
+                erase(p);
                 continue;
             }
             break;
         }
 
-        while (true) {
-            auto n1 = next(y);
-            if (n1 == end()) break;
-            auto n2 = next(n1);
-            if (n2 != end() && intersect(y, n1) >= intersect(n1, n2)) {
-                erase(n1);
+        while (next(l) != end()) {
+            iterator n = next(l);
+            if (next(n) != end() and intersect(l, n) >= intersect(n, next(n))) {
+                erase(n);
                 continue;
-            }
-            if (y != begin()) {
-                auto p = prev(y);
-                if (intersect(p, y) >= intersect(y, n1)) {
-                    erase(y);
-                    y = p;
-                    continue;
-                }
             }
             break;
         }
 
-        if (y != begin()) update(prev(y));
-        update(y);
+        if (l != begin()) update(prev(l));
+        update(l);
     }
 
-    int query(int x) {
+    int min(int x) {
         auto l = lower_bound(x);
         return l->a * x + l->b;
     }
