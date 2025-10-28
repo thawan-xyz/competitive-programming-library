@@ -12,6 +12,7 @@ struct line {
 };
 
 struct line_container : multiset<line, less<>> {
+
     int intersect(iterator i, iterator j) {
         int x = j->b - i->b, y = i->a - j->a;
         return x / y - ((x ^ y) < 0 and x % y != 0);
