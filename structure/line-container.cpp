@@ -25,8 +25,8 @@ struct line_container : multiset<line, less<>> {
         }
     }
 
-    void include(int a, int b) {
-        iterator l = insert({a, b, 0});
+    void insert(int a, int b) {
+        iterator l = multiset::insert({a, b, 0});
 
         if (l != begin() and prev(l)->a == l->a) {
             erase(prev(l));
@@ -66,7 +66,7 @@ struct line_container : multiset<line, less<>> {
         update(l);
     }
 
-    int max(int x) {
+    int query(int x) {
         auto l = lower_bound(x);
         return l->a * x + l->b;
     }
