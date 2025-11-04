@@ -3,7 +3,7 @@ struct line {
     mutable int end;
 
     bool operator<(const line &other) const {
-        return tie(a, b) > tie(other.a, other.b);
+        return tie(a, b) < tie(other.a, other.b);
     }
 
     bool operator<(const int x) const {
@@ -12,7 +12,6 @@ struct line {
 };
 
 struct line_container : multiset<line, less<>> {
-
     int intersect(iterator i, iterator j) {
         int x = j->b - i->b, y = i->a - j->a;
         return x / y - ((x ^ y) < 0 and x % y != 0);
@@ -67,7 +66,7 @@ struct line_container : multiset<line, less<>> {
         update(l);
     }
 
-    int min(int x) {
+    int max(int x) {
         auto l = lower_bound(x);
         return l->a * x + l->b;
     }
