@@ -1,4 +1,4 @@
-struct preflow {
+struct flow {
     struct edge {
         int to, cap, i;
     };
@@ -10,7 +10,7 @@ struct preflow {
     array<bool> active;
     priority_queue<pair<int, int>> q;
 
-    preflow(int n): n(n), g(n), excess(n), height(n), count(2 * n), active(n) {}
+    flow(int n): n(n), g(n), excess(n), height(n), count(2 * n), active(n) {}
 
     void insert(int a, int b, int c) {
         g[a].push_back(edge(b, c, g[b].size()));
@@ -78,7 +78,7 @@ struct preflow {
         }
     }
 
-    int flow(int s, int t) {
+    int max(int s, int t) {
         count[0] = n - 1;
         height[s] = n;
         count[n] = 1;
