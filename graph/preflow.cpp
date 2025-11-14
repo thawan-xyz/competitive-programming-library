@@ -1,6 +1,6 @@
 struct preflow {
     struct edge {
-        int to, cap, rev;
+        int to, cap, i;
     };
 
     int n;
@@ -17,27 +17,29 @@ struct preflow {
         g[b].push_back(edge(a, 0, g[a].size() - 1));
     }
 
-    void push(int a, edge &e) {
-        auto &[b, c, r] = e;
+    bool push(int a, edge &e) {
+        auto &[b, c, i] = e;
 
-        int send = min(excess[a], c);
-        if (height[a] == height[b] + 1 and send) {
-            c -= send;
-            g[b][r].cap += send;
-            excess[a] -= send;
-            excess[b] += send;
+        int f = min(excess[a], c);
+        if (f and height[a] == height[b] + 1) {
+            excess[a] -= f;
+            excess[b] += f;
+            c -= f;
+            g[b][i].cap += f;
 
             if (not active[b] and excess[b]) {
                 active[b] = true;
                 q.push({height[b], b});
             }
+            return true;
         }
+        return false;
     }
 
     void relabel(int a) {
         count[height[a]]--;
         int h = 2 * n;
-        for (auto &[b, c, r] : g[a]) if (c) {
+        for (auto &[b, c, i] : g[a]) if (c) {
             h = min(h, height[b] + 1);
         }
         height[a] = h;
@@ -59,16 +61,33 @@ struct preflow {
         }
     }
 
+    void drain(int a, int s, int t) {
+        active[a] = false;
+        while (excess[a]) {
+            for (auto &e : g[a]) {
+                if (push(a, e) and not excess[a]) {
+                    return;
+                }
+            }
+
+            if (count[height[a]] == 1) {
+                gap(height[a], s, t);
+            } else {
+                relabel(a);
+            }
+        }
+    }
+
     int flow(int s, int t) {
         count[0] = n - 1;
         height[s] = n;
         count[n] = 1;
         active[s] = active[t] = true;
 
-        for (auto &[b, c, r] : g[s]) if (c) {
+        for (auto &[b, c, i] : g[s]) if (c) {
             excess[s] -= c;
             excess[b] += c;
-            g[b][r].cap = c;
+            g[b][i].cap = c;
             c = 0;
 
             if (b != t) {
@@ -77,27 +96,11 @@ struct preflow {
             }
         }
 
-        while (q.size()) {
-            int a = q.top().second;
-            active[a] = false;
-            q.pop();
-
-            while (excess[a]) {
-                for (auto &e : g[a]) {
-                    if (not excess[a]) break;
-                    push(a, e);
-                }
-
-                if (excess[a]) {
-                    if (count[height[a]] == 1) {
-                        gap(height[a], s, t);
-                    } else {
-                        relabel(a);
-                    }
-                }
-            }
+        while (not q.empty()) {
+            int a = q.top().second; q.pop();
+            drain(a, s, t);
         }
-        
+
         return excess[t];
     }
 };
