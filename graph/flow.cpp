@@ -8,10 +8,10 @@ struct flow {
     int n;
     array<array<edge>> g;
     array<int> f, h, c;
-    array<bool> s;
+    array<bool> v;
     priority_queue<pair<int, int>> q;
 
-    flow(int n): n(n), g(n), f(n), h(n), c(2 * n), s(n) {}
+    flow(int n): n(n), g(n), f(n), h(n), c(2 * n), v(n) {}
 
     void insert(int a, int b, int w) {
         g[a].push_back(edge(b, w, g[b].size()));
@@ -28,8 +28,8 @@ struct flow {
             w -= p;
             g[b][i].w += p;
 
-            if (not s[b] and f[b]) {
-                s[b] = true;
+            if (not v[b] and f[b]) {
+                v[b] = true;
                 q.push({h[b], b});
             }
             return true;
@@ -54,8 +54,8 @@ struct flow {
                 h[a] = n + 1;
                 c[h[a]]++;
 
-                if (not s[a] and f[a]) {
-                    s[a] = true;
+                if (not v[a] and f[a]) {
+                    v[a] = true;
                     q.push({h[a], a});
                 }
             }
@@ -63,7 +63,7 @@ struct flow {
     }
 
     void drain(int a, int s, int t) {
-        s[a] = false;
+        v[a] = false;
         while (f[a]) {
             for (auto &e : g[a]) {
                 if (push(a, e) and not f[a]) {
@@ -83,7 +83,7 @@ struct flow {
         c[0] = n - 1;
         h[s] = n;
         c[n] = 1;
-        s[s] = s[t] = true;
+        v[s] = v[t] = true;
 
         for (auto &[b, w, i] : g[s]) if (w) {
             int p = w;
@@ -93,7 +93,7 @@ struct flow {
             g[b][i].w = p;
 
             if (b != t) {
-                s[b] = true;
+                v[b] = true;
                 q.push({h[b], b});
             }
         }
