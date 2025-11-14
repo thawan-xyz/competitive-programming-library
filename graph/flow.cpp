@@ -1,6 +1,8 @@
 struct flow {
     struct edge {
         int t, w, i;
+
+        edge(int t, int w, int i): t(t), w(w), i(i) {}
     };
 
     int n;
