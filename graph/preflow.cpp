@@ -1,4 +1,4 @@
-struct push_relabel {
+struct preflow {
     struct edge {
         int to, cap, rev;
     };
@@ -10,7 +10,7 @@ struct push_relabel {
     array<bool> active;
     priority_queue<pair<int, int>> q;
 
-    push_relabel(int n): n(n), g(n), excess(n), height(n), count(2 * n), active(n) {}
+    preflow(int n): n(n), g(n), excess(n), height(n), count(2 * n), active(n) {}
 
     void insert(int a, int b, int c) {
         g[a].push_back(edge(b, c, g[b].size()));
@@ -99,13 +99,5 @@ struct push_relabel {
         }
         
         return excess[t];
-    }
-
-    void reset() {
-        excess = array<int>(n);
-        height = array<int>(n);
-        active = array<bool>(n);
-        count = array<int>(2 * n);
-        q = priority_queue<pair<int, int>>();
     }
 };
