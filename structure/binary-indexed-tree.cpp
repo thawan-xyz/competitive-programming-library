@@ -1,13 +1,14 @@
-template <typename T>
 struct binary_indexed_tree {
     int n;
-    list<T> tree;
+    array<T> tree;
 
     static int lsb(int i) {
         return i & -i;
     }
 
-    binary_indexed_tree(list<T> &base): n(base.size()), tree(n + 1) {
+    binary_indexed_tree(int n): n(n), tree(n + 1) {}
+
+    void build(array<T> &base) {
         for (int i = 0; i < n; ++i) update(i, base[i]);
     }
 
@@ -19,11 +20,6 @@ struct binary_indexed_tree {
         }
     }
 
-    void set(int i, T v) {
-        T d = v - query(i, i);
-        update(i, d);
-    }
-
     T prefix(int i) {
         T s = 0;
         i += 1;
@@ -32,10 +28,6 @@ struct binary_indexed_tree {
             i -= lsb(i);
         }
         return s;
-    }
-
-    T query(int l, int r) {
-        return prefix(r) - prefix(l - 1);
     }
 
     int kth(int k) {

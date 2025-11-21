@@ -6,6 +6,7 @@ struct compact_segment_tree {
 
     void build(array<int> &a) {
         for (int i = 0; i < n; ++i) t[i + n] = a[i];
+
         for (int i = n - 1; i > 0; --i) t[i] = t[i << 1] + t[(i << 1) | 1];
     }
 
