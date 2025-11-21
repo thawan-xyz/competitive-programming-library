@@ -1,10 +1,10 @@
 struct binary_lifting {
     int n, log;
-    list<list<int>> &graph;
-    list<int> depth;
-    list<list<int>> up;
+    array<array<int>> &graph;
+    array<int> depth;
+    array<array<int>> up;
 
-    binary_lifting(list<list<int>> &graph, int root = 1): n(graph.size()), log(31 - __builtin_clz(n)), graph(graph), depth(n), up(n, list<int>(log + 1)) {
+    binary_lifting(array<array<int>> &graph, int root = 1): n(graph.size() - 1), log(32 - __builtin_clz(n + 1)), graph(graph), depth(n + 1), up(n + 1, array<int>(log + 1)) {
         depth[root] = 0;
         build(root, 0);
     }
