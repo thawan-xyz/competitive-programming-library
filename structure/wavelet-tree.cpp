@@ -4,7 +4,7 @@ struct wavelet_tree {
     array<array<int>> prefix;
 
     wavelet_tree(array<int> &base): size(base.size()), low(4 * size), high(4 * size), prefix(4 * size) {
-        int left = 0, right = 0;
+        int left = inf, right = -inf;
         for (int k = 0; k < base.size(); ++k) {
             left = min(left, base[k]);
             right = max(right, base[k]);
