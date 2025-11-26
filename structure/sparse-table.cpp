@@ -1,18 +1,17 @@
-template <typename T>
 struct sparse_table {
     int n;
-    list<list<T>> table;
+    array<array<T>> table;
     F compare;
-    list<int> pow2, log2;
+    array<int> pow2, log2;
 
-    sparse_table(list<T> &base): n(base.size()), pow2(n + 1), log2(n + 1) {
+    sparse_table(array<T> &base): n(base.size()), pow2(n + 1), log2(n + 1) {
         pow2[0] = 1;
         pow2[1] = 2;
         for (int i = 2; i <= n; ++i) {
             pow2[i] = pow2[i - 1] << 1;
             log2[i] = log2[i >> 1] + 1;
         }
-        table.assign(n, list<T>(log2[n] + 1));
+        table.assign(n, array<T>(log2[n] + 1));
         for (int i = 0; i < n; ++i) {
             table[i][0] = base[i];
         }

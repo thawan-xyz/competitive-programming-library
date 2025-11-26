@@ -1,4 +1,3 @@
-template <typename T>
 struct venice_set {
     multiset<T> s;
     T k = 0;

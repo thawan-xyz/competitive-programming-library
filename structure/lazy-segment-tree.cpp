@@ -3,10 +3,9 @@ struct lazy_segment_tree {
     array<T> tree;
     array<T> lazy;
     T neutral, empty;
-    F combine;
-    G apply;
+    F combine, apply;
 
-    lazy_segment_tree(int n): size(n), tree(4 * size), lazy(4 * size, empty) {}
+    lazy_segment_tree(int n): size(n), tree(4 * size), lazy(4 * size) {}
 
     void build(array<T> &base, int node = 1, int left = 0, int right = -1) {
         if (right == -1) right = size - 1;
