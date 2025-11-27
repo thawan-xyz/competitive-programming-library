@@ -18,7 +18,7 @@ struct merge_sort_tree {
         }
     }
 
-    int query(int i, int j, T value, int node = 1, int left = 0, int right = -1) {
+    int query(T value, int i, int j, int node = 1, int left = 0, int right = -1) {
         if (right == -1) right = size - 1;
 
         if (i <= left and j >= right) {
@@ -27,10 +27,10 @@ struct merge_sort_tree {
             int answer = 0;
             int middle = (left + right) / 2;
             if (i <= middle) {
-                answer += query(i, j, value, node << 1, left, middle);
+                answer += query(value, i, j, node << 1, left, middle);
             }
             if (j > middle) {
-                answer += query(i, j, value, (node << 1) | 1, middle + 1, right);
+                answer += query(value, i, j, (node << 1) | 1, middle + 1, right);
             }
             return answer;
         }
