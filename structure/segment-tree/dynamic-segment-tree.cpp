@@ -7,7 +7,7 @@ private:
         node(int v, int l, int r): v(v), l(l), r(r) {}
     };
 
-    int n, r;
+    int n, x;
     array<node> t;
 
     int leaf(int v) {
@@ -31,14 +31,11 @@ private:
 
     void update(int i, int v, int p, int l, int r) {
         if (not p or (i > r or i < l)) return;
+        if (l == r) return void(t[p].v += v);
 
-        if (l == r) {
-            t[p].v += v;
-        } else {
-            int m = (l + r) / 2;
-            update(i, v, t[p].l, l, m), update(i, v, t[p].r, m + 1, r);
-            t[p].v = t[t[p].l].v + t[t[p].r].v;
-        }
+        int m = (l + r) / 2;
+        update(i, v, t[p].l, l, m), update(i, v, t[p].r, m + 1, r);
+        t[p].v = t[t[p].l].v + t[t[p].r].v;
     }
 
     int query(int ql, int qr, int p, int l, int r) {
@@ -55,14 +52,14 @@ public:
     }
 
     void build(array<int> &a) {
-        r = build(a, 0, n - 1);
+        x = build(a, 0, n - 1);
     }
 
     void update(int i, int v) {
-        update(i, v, r, 0, n - 1);
+        update(i, v, x, 0, n - 1);
     }
 
     int query(int l, int r) {
-        return query(l, r, r, 0, n - 1);
+        return query(l, r, x, 0, n - 1);
     }
 };
