@@ -1,18 +1,17 @@
 struct dynamic_segment_tree {
 private:
     struct node {
-        int v;
-        int l, r;
+        int v, l, r;
 
-        node(int v, int l, int r): v(v), l(l), r(r) {}
+        node(int v, int l = 0, int r = 0): v(v), l(l), r(r) {}
     };
 
     int n, x;
     array<node> t;
 
-    int leaf(int v) {
+    int terminal(int v) {
         int i = t.size();
-        t.push_back(node(v, 0, 0));
+        t.push_back(node(v));
         return i;
     }
 
@@ -23,7 +22,7 @@ private:
     }
 
     int build(array<int> &a, int l, int r) {
-        if (l == r) return leaf(a[l]);
+        if (l == r) return terminal(a[l]);
 
         int m = (l + r) / 2;
         return internal(build(a, l, m), build(a, m + 1, r));
