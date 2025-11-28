@@ -30,23 +30,19 @@ private:
     }
 
     void update(int i, int v, int p, int l, int r) {
+        if (not p or (i > r or i < l)) return;
+
         if (l == r) {
             t[p].v += v;
-            return;
-        }
-
-        int m = (l + r) / 2;
-        if (i <= m) {
-            update(i, v, t[p].l, l, m);
         } else {
-            update(i, v, t[p].r, m + 1, r);
+            int m = (l + r) / 2;
+            update(i, v, t[p].l, l, m), update(i, v, t[p].r, m + 1, r);
+            t[p].v = t[t[p].l].v + t[t[p].r].v;
         }
-        t[p].v = t[t[p].l].v + t[t[p].r].v;
     }
 
     int query(int ql, int qr, int p, int l, int r) {
-        if (not p) return 0;
-        if (ql > r or qr < l) return 0;
+        if (not p or (ql > r or qr < l)) return 0;
         if (ql <= l and qr >= r) return t[p].v;
 
         int m = (l + r) / 2;
@@ -66,7 +62,7 @@ public:
         update(i, v, r, 0, n - 1);
     }
 
-    int query(int ql, int qr) {
-        return query(ql, qr, r, 0, n - 1);
+    int query(int l, int r) {
+        return query(l, r, r, 0, n - 1);
     }
 };
