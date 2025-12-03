@@ -2,8 +2,8 @@ pair<int, array<int>> multi_extended_gcd(array<int> &a) {
     int n = a.size(), g = a[0];
     array<int> c(n, 1), h(n, 1);
     for (int i = 1; i < n; ++i) {
-        auto [_, x, y] = extended_gcd(g, a[i]);
-        g = _;
+        auto [f, x, y] = extended_gcd(g, a[i]);
+        g = f;
         h[i - 1] = x;
         c[i] = y;
     }
