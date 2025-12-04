@@ -26,7 +26,7 @@ bool between(point &a, point &b, point &p) {
     if (orient(a, b, p) != 0) return false;
 
     bool x = min(a.x, b.x) <= p.x and p.x <= max(a.x, b.x);
-    bool y = min(a.y, b.y) <= p.y and p.y <= max(a.y, b.y)
+    bool y = min(a.y, b.y) <= p.y and p.y <= max(a.y, b.y);
     return x and y;
 }
 
