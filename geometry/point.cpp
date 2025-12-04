@@ -6,6 +6,12 @@ struct point {
     }
 };
 
+float dist(point &a, point &b) {
+    float x = a.x - b.x;
+    float y = a.y - b.y;
+    return sqrt(x * x + y * y);
+}
+
 int orient(point &a, point &b, point &p) {
     point v = b - a;
     point w = p - a;
@@ -24,10 +30,14 @@ bool between(point &a, point &b, point &p) {
     return x and y;
 }
 
+float dot(point &a, point &b) {
+    return a.x * b.x + a.y * b.y;
+}
+
 point project(point &a, point &b, point &p) {
     point v = b - a;
     point w = p - a;
 
-    float t = (v.x * w.x + v.y * w.y) / (v.x * v.x + v.y * v.y);
+    float t = dot(v, w) / dot(v, v);
     return {a.x + t * v.x, a.y + t * v.y};
 }
