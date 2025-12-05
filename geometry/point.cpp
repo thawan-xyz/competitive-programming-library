@@ -7,9 +7,10 @@ struct point {
 };
 
 float dist(point &a, point &b) {
-    float x = a.x - b.x;
-    float y = a.y - b.y;
-    return sqrt(x * x + y * y);
+    float dx = a.x - b.x;
+    float dy = a.y - b.y;
+
+    return sqrt(dx * dx + dy * dy);
 }
 
 int orient(point &a, point &b, point &p) {
@@ -45,4 +46,13 @@ point project(point &a, point &b, point &p) {
 float dist(point &a, point &b, point &p) {
     point q = project(a, b, p);
     return dist(p, q);
+}
+
+pair<point, point> normal(point &a, point &b) {
+    point v = b - a;
+    v = {-v.y, v.x};
+
+    point c = {(a.x + b.x) / 2, (a.y + b.y) / 2};
+    point d = {c.x + v.x, c.y + v.y};
+    return {c, d};
 }
