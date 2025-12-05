@@ -41,3 +41,8 @@ point project(point &a, point &b, point &p) {
     float t = dot(v, w) / dot(v, v);
     return {a.x + t * v.x, a.y + t * v.y};
 }
+
+float dist(point &a, point &b, point &p) {
+    point q = project(a, b, p);
+    return dist(p, q);
+}
