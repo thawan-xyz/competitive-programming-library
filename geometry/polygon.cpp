@@ -1,3 +1,13 @@
+float area(array<point> &p) {
+    float a = 0;
+    int n = p.size();
+    for (int i = 0; i < n; ++i) {
+        int j = (i + 1) % n;
+        a += p[i].x * p[j].y - p[j].x * p[i].y;
+    }
+    return a / 2;
+}
+
 array<point> convex_hull(array<point> &p) {
     sort(p.begin(), p.end());
     p.erase(unique(p.begin(), p.end()), p.end());
