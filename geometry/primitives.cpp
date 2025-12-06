@@ -1,6 +1,10 @@
 struct point {
     float x, y;
 
+    bool operator==(const point &other) const {
+        return x == other.x and y == other.y;
+    }
+
     bool operator<(const point &other) const {
         return tie(x, y) < tie(other.x, other.y);
     }
