@@ -6,7 +6,7 @@ private:
         node(int v, int l = 0, int r = 0): v(v), l(l), r(r) {}
     };
 
-    int n, x;
+    int n, root;
     array<node> t;
 
     int terminal(int v) {
@@ -51,14 +51,14 @@ public:
     }
 
     void build(array<int> &a) {
-        x = build(a, 0, n - 1);
+        root = build(a, 0, n - 1);
     }
 
     void update(int i, int v) {
-        update(i, v, x, 0, n - 1);
+        update(i, v, root, 0, n - 1);
     }
 
     int query(int l, int r) {
-        return query(l, r, x, 0, n - 1);
+        return query(l, r, root, 0, n - 1);
     }
 };

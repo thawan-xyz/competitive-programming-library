@@ -53,19 +53,19 @@ private:
     }
 
 public:
-    array<int> x;
+    array<int> root;
 
     persistent_segment_tree(int n): n(n), t(1) {
-        x.reserve(n);
+        root.reserve(n);
         t.reserve(8 * n);
     }
 
     void build(array<int> &a) {
-        x.push_back(build(a, 0, n - 1));
+        root.push_back(build(a, 0, n - 1));
     }
 
     void update(int i, int v, int p) {
-        x.push_back(update(i, v, p, 0, n - 1));
+        root.push_back(update(i, v, p, 0, n - 1));
     }
 
     int query(int l, int r, int p) {
@@ -73,6 +73,6 @@ public:
     }
 
     void copy(int l, int r, int p, int q) {
-        x.push_back(copy(l, r, p, q, 0, n - 1));
+        root.push_back(copy(l, r, p, q, 0, n - 1));
     }
 };
