@@ -77,15 +77,15 @@ private:
         return i;
     }
 
-    int find(int i, int k) {
+    int index(int i, int k) {
         if (not i) return -1;
 
         if (k == t[i].k) return size(t[i].l);
-        if (k < t[i].k) return find(t[i].l, k);
+        if (k < t[i].k) return index(t[i].l, k);
 
-        int r = find(t[i].r, k);
+        int r = index(t[i].r, k);
         if (r == -1) return -1;
-        return size(t[i].l) + 1 + r;
+        return 1 + size(t[i].l) + r;
     }
 
     int kth(int i, int k) {
@@ -113,8 +113,8 @@ public:
         root = erase(root, k);
     }
 
-    int find(int k) {
-        return find(root, k);
+    int index(int k) {
+        return index(root, k);
     }
 
     int operator[](int i) {
