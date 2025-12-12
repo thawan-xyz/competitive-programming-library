@@ -3,7 +3,7 @@ private:
     struct node {
         int k, p, l, r, s;
 
-        node(int k, int p): k(k), p(p), l(0), r(0), s(1) {}
+        node(int k = 0, int p = 0): k(k), p(p), l(0), r(0), s(1) {}
     };
 
     int make(int k, int p) {
@@ -105,7 +105,7 @@ public:
     treap(): t(1), root(0) {}
 
     void insert(int k) {
-        int p = rand();
+        int p = random;
         root = insert(root, k, p);
     }
 
