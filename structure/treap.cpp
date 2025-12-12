@@ -120,4 +120,16 @@ public:
     int operator[](int i) {
         return kth(root, i);
     }
+
+    int unite(int i, int j) {
+        if (not i) return j;
+        if (not j) return i;
+
+        if (t[i].p < t[j].p) swap(i, j);
+        auto [l, r] = split(j, t[i].k);
+
+        t[i].l = unite(t[i].l, l);
+        t[i].r = unite(t[i].r, r);
+        return i;
+    }
 };
