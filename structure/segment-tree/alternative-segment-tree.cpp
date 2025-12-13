@@ -1,4 +1,4 @@
-struct dynamic_segment_tree {
+struct alternative_segment_tree {
 private:
     struct node {
         int v, l, r;
@@ -46,7 +46,7 @@ private:
     }
 
 public:
-    dynamic_segment_tree(int n): n(n), t(1) {
+    alternative_segment_tree(int n): n(n), t(1) {
         t.reserve(2 * n + 5);
     }
 
