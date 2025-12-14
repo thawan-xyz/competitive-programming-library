@@ -17,7 +17,7 @@ matrix product(matrix &a, matrix &b) {
     return c;
 }
 
-matrix power(matrix &base, int exponent) {
+matrix pow(matrix &base, int exponent) {
     int n = base.size();
 
     matrix result(n, list<int>(n));
