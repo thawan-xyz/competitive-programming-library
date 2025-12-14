@@ -1,4 +1,4 @@
-int power(int base, int exponent) {
+int pow(int base, int exponent) {
     int result = 1;
     base %= mod;
 
