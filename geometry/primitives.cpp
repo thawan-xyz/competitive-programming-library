@@ -27,7 +27,7 @@ struct point {
 struct line {
     point a, b;
 
-    int orient(point &p) {
+    int orientation(point &p) {
         point v = b - a;
         point w = p - a;
 
@@ -38,7 +38,7 @@ struct line {
     }
 
     bool between(point &p) {
-        if (orient(p) != 0) return false;
+        if (orientation(p) != 0) return false;
 
         bool x = min(a.x, b.x) <= p.x and p.x <= max(a.x, b.x);
         bool y = min(a.y, b.y) <= p.y and p.y <= max(a.y, b.y);
@@ -50,6 +50,9 @@ struct line {
         point w = p - a;
 
         float t = point::dot(v, w) / point::dot(v, v);
+        if (t < 0) t = 0;
+        if (t > 1) t = 1;
+
         return {a.x + t * v.x, a.y + t * v.y};
     }
 
@@ -65,5 +68,20 @@ struct line {
         point c = {(a.x + b.x) / 2, (a.y + b.y) / 2};
         point d = {c.x + v.x, c.y + v.y};
         return {c, d};
+    }
+
+    static bool intersect(line &s, line &t) {
+        if (s.between(t.a) or s.between(t.b)) return true;
+        if (t.between(s.a) or t.between(s.b)) return true;
+
+        if (s.orientation(t.a) == s.orientation(t.b)) return false;
+        if (t.orientation(s.a) == t.orientation(s.b)) return false;
+
+        return true;
+    }
+
+    static float dist(line &s, line &t) {
+        if (line::intersect(s, t)) return 0;
+        return min({s.dist(t.a), s.dist(t.b), t.dist(s.a), t.dist(s.b)});
     }
 };
