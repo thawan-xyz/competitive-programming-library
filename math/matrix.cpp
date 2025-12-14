@@ -17,17 +17,17 @@ matrix product(matrix &a, matrix &b) {
     return c;
 }
 
-matrix pow(matrix &base, int exponent) {
-    int n = base.size();
+matrix pow(matrix &b, int e) {
+    int n = b.size();
 
-    matrix result(n, list<int>(n));
-    for (int i = 0; i < n; ++i) result[i][i] = 1;
+    matrix a(n, list<int>(n));
+    for (int i = 0; i < n; ++i) a[i][i] = 1;
 
-    while (exponent) {
-        if (exponent & 1) result = product(base, result);
+    while (e) {
+        if (e & 1) a = product(a, b);
 
-        base = product(base, base);
-        exponent >>= 1;
+        b = product(b, b);
+        e >>= 1;
     }
-    return result;
+    return a;
 }
