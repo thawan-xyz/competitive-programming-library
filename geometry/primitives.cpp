@@ -40,9 +40,9 @@ struct line {
     bool between(point &p) {
         if (orientation(p) != 0) return false;
 
-        bool x = min(a.x, b.x) <= p.x and p.x <= max(a.x, b.x);
-        bool y = min(a.y, b.y) <= p.y and p.y <= max(a.y, b.y);
-        return x and y;
+        bool bx = min(a.x, b.x) <= p.x and p.x <= max(a.x, b.x);
+        bool by = min(a.y, b.y) <= p.y and p.y <= max(a.y, b.y);
+        return bx and by;
     }
 
     point project(point &p) {
