@@ -16,3 +16,15 @@ array<int> mobius(int n) {
     }
     return µ;
 }
+
+array<int> inclusion_exclusion(int n, array<int> &c) {
+    array<int> µ = mobius(n);
+
+    array<int> f(n + 1);
+    for (int i = 1; i <= n; ++i) if (µ[i] != 0) {
+        for (int j = i; j <= n; j += i) {
+            f[j] += µ[i] * c[i];
+        }
+    }
+    return f;
+}
