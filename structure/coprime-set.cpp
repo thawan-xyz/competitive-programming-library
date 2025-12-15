@@ -29,8 +29,8 @@ struct coprime_set {
     }
 
     int query(array<int> &p) {
-        array<pair<int, int>> a = divisors(p);
         int t = 0;
+        array<pair<int, int>> a = divisors(p);
         for (auto &[d, µ] : a) {
             t += n[d] * µ;
         }
