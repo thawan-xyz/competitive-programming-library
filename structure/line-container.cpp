@@ -1,30 +1,32 @@
 struct line {
     int a, b;
-    mutable int end;
+    mutable int i;
 
     bool operator<(const line &other) const {
         return tie(a, b) < tie(other.a, other.b);
     }
 
     bool operator<(const int x) const {
-        return end < x;
+        return i < x;
     }
 };
 
 struct line_container : multiset<line, less<>> {
-    int intersect(iterator i, iterator j) {
-        int x = j->b - i->b, y = i->a - j->a;
+private:
+    int intersect(iterator s, iterator t) {
+        int x = t->b - s->b, y = s->a - t->a;
         return x / y - ((x ^ y) < 0 and x % y != 0);
     }
 
-    void update(iterator i) {
-        if (next(i) == end()) {
-            i->end = inf;
+    void update(iterator s) {
+        if (next(s) == end()) {
+            s->i = inf;
         } else {
-            i->end = intersect(i, next(i));
+            s->i = intersect(s, next(s));
         }
     }
 
+public:
     void insert(int a, int b) {
         iterator l = multiset::insert({a, b, 0});
 
@@ -52,7 +54,6 @@ struct line_container : multiset<line, less<>> {
             }
             break;
         }
-
         while (next(l) != end()) {
             iterator n = next(l);
             if (next(n) != end() and intersect(l, n) >= intersect(n, next(n))) {
@@ -62,7 +63,9 @@ struct line_container : multiset<line, less<>> {
             break;
         }
 
-        if (l != begin()) update(prev(l));
+        if (l != begin()) {
+            update(prev(l));
+        }
         update(l);
     }
 
