@@ -1,4 +1,9 @@
 int log(int a, int b, int mod) {
+    if (a == 0) {
+        if (b == 0) return 1;
+        return -1;
+    }
+
     int k = 1, h = 0;
     for (int g = gcd(a, mod); g != 1; g = gcd(a, mod), ++h) {
         if (k == b) return h;
