@@ -70,6 +70,17 @@ struct line {
         return {c, d};
     }
 
+    static float angle(line &s, line &t) {
+        point v = s.b - s.a;
+        point w = t.b - t.a;
+
+        float c = point::dot(v, w) / sqrt(point::dot(v, v) * point::dot(w, w));
+        if (c < -1) c = -1;
+        if (c > 1) c = 1;
+
+        return acos(c);
+    }
+
     static bool intersect(line &s, line &t) {
         if (s.between(t.a) or s.between(t.b)) return true;
         if (t.between(s.a) or t.between(s.b)) return true;
