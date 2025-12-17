@@ -1,4 +1,4 @@
-int pow(int b, int e) {
+int pow(int b, int e, int mod) {
     int a = 1;
 
     while (e) {
