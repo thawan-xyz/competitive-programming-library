@@ -1,6 +1,6 @@
 int log(int a, int b, int mod) {
     if (a == 0) {
-        if (b == 0) return 1;
+        if (b == 0) return 1 % mod;
         return -1;
     }
 
@@ -29,7 +29,7 @@ int log(int a, int b, int mod) {
         if (f.contains(a)) {
             return (n * p - f[a]) + h;
         }
-         a = (a * s) % mod;
+        a = (a * s) % mod;
     }
     return -1;
 }
