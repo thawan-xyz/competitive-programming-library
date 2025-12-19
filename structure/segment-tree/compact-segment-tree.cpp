@@ -5,9 +5,12 @@ struct compact_segment_tree {
     compact_segment_tree(int n): n(n), t(2 * n) {}
 
     void build(array<int> &a) {
-        for (int i = 0; i < n; ++i) t[i + n] = a[i];
-
-        for (int i = n - 1; i > 0; --i) t[i] = t[i << 1] + t[(i << 1) | 1];
+        for (int i = 0; i < n; ++i) {
+            t[i + n] = a[i];
+        }
+        for (int i = n - 1; i > 0; --i) {
+            t[i] = t[i << 1] + t[(i << 1) | 1];
+        }
     }
 
     void update(int i, int v) {
@@ -19,13 +22,18 @@ struct compact_segment_tree {
     }
 
     int query(int l, int r) {
-        int a = 0;
+        int q = 0;
         l += n, r += n;
         while (l <= r) {
-            if (l & 1) a += t[l++];
-            if (!(r & 1)) a += t[r--];
-            l >>= 1, r >>= 1;
+            if (l & 1) {
+                q += t[l++];
+            }
+            l >>= 1;
+            if ((r & 1) == 0) {
+                q += t[r--];
+            }
+            r >>= 1;
         }
-        return a;
+        return q;
     }
 };
