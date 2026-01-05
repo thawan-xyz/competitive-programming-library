@@ -50,8 +50,8 @@ public:
 
     array<int> match(str &t) {
         array<int> a;
-        int i = 0;
-        for (int k = 0; k < t.length(); ++k) {
+        int n = t.length();
+        for (int i = 0, k = 0; k < n; ++k) {
             int x = t[k] - 'a';
             i = trie[i].next[x];
             for (int &l : trie[i].end) {
