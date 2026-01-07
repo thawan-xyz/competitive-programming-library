@@ -4,15 +4,15 @@ struct bit_set {
 
     uint word[size] = {};
 
-    inline void insert(int x) {
+    void insert(int x) {
         word[x >> 6] |= 1ULL << (x & 63);
     }
 
-    inline void remove(int x) {
+    void remove(int x) {
         word[x >> 6] &= ~(1ULL << (x & 63));
     }
 
-    inline void insert_range(int l, int r) {
+    void insert_range(int l, int r) {
         int i = l >> 6;
         int j = r >> 6;
         if (i == j) {
@@ -26,7 +26,7 @@ struct bit_set {
         }
     }
 
-    inline void remove_range(int l, int r) {
+    void remove_range(int l, int r) {
         int i = l >> 6;
         int j = r >> 6;
         if (i == j) {
@@ -40,7 +40,7 @@ struct bit_set {
         }
     }
 
-    inline int prev(int x) const {
+    int prev(int x) {
         int i = x >> 6;
         uint curr = word[i] & (~0ULL >> (63 - (x & 63)));
         if (curr) {
@@ -53,7 +53,7 @@ struct bit_set {
         return -1;
     }
 
-    inline int next(int x) const {
+    int next(int x) {
         int i = x >> 6;
         uint curr = word[i] & (~0ULL << (x & 63));
         if (curr) {
