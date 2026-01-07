@@ -65,4 +65,15 @@ struct bit_set {
         }
         return range;
     }
+
+    int segments() {
+        int total = 0;
+        for (int i = 0; i < size; ++i) {
+            uint starts = (word[i] >> 1) & ~word[i];
+            int count = __builtin_popcountll(starts) + (word[i] & 1ULL);
+            if (i > 0 and ((word[i - 1] & (1ULL << 63)) and (word[i] & 1ULL))) count -= 1;
+            total += count;
+        }
+        return total;
+    }
 };
