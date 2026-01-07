@@ -8,8 +8,8 @@ struct binary_indexed_tree {
 
     binary_indexed_tree(int n): n(n), tree(n + 1) {}
 
-    void build(array<int> &base) {
-        for (int i = 0; i < n; ++i) update(i, base[i]);
+    void build(array<int> &a) {
+        for (int i = 0; i < n; ++i) update(i, a[i]);
     }
 
     void update(int i, int d) {
