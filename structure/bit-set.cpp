@@ -4,6 +4,10 @@ struct bit_set {
 
     uint word[size] = {};
 
+    bool contains(int x) {
+        return word[x >> 6] & (1ULL << (x & 63));
+    }
+
     void insert(int x) {
         word[x >> 6] |= 1ULL << (x & 63);
     }
