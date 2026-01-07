@@ -1,23 +1,23 @@
 struct persistent_segment_tree {
 private:
     struct node {
-        int v, l, r;
+        int x, l, r;
 
-        node(int v, int l = 0, int r = 0): v(v), l(l), r(r) {}
+        node(int x, int l = 0, int r = 0): x(x), l(l), r(r) {}
     };
 
     int n;
-    array<node> t;
+    array<node> tree;
 
-    int terminal(int v) {
-        int i = t.size();
-        t.push_back(node(v));
+    int terminal(int x) {
+        int i = tree.size();
+        tree.push_back(node(x));
         return i;
     }
 
     int internal(int l, int r) {
-        int i = t.size();
-        t.push_back(node(t[l].v + t[r].v, l, r));
+        int i = tree.size();
+        tree.push_back(node(tree[l].x + tree[r].x, l, r));
         return i;
     }
 
@@ -28,44 +28,46 @@ private:
         return internal(build(a, l, m), build(a, m + 1, r));
     }
 
-    int update(int i, int v, int p, int l, int r) {
-        if (l == r) return terminal(t[p].v + v);
+    int update(int i, int x, int p, int l, int r) {
+        if (l == r) return terminal(tree[p].x + x);
 
         int m = (l + r) / 2;
-        if (i <= m) return internal(update(i, v, t[p].l, l, m), t[p].r);
-        else return internal(t[p].l, update(i, v, t[p].r, m + 1, r));
+        if (i <= m) return internal(update(i, x, tree[p].l, l, m), tree[p].r);
+        else return internal(tree[p].l, update(i, x, tree[p].r, m + 1, r));
     }
 
     int query(int ql, int qr, int p, int l, int r) {
         if (not p or (ql > r or qr < l)) return 0;
-        if (ql <= l and qr >= r) return t[p].v;
+
+        if (ql <= l and qr >= r) return tree[p].x;
 
         int m = (l + r) / 2;
-        return query(ql, qr, t[p].l, l, m) + query(ql, qr, t[p].r, m + 1, r);
+        return query(ql, qr, tree[p].l, l, m) + query(ql, qr, tree[p].r, m + 1, r);
     }
 
     int copy(int ql, int qr, int p, int q, int l, int r) {
         if (ql > r or qr < l) return p;
+
         if (ql <= l and qr >= r) return q;
 
         int m = (l + r) / 2;
-        return internal(copy(ql, qr, t[p].l, t[q].l, l, m), copy(ql, qr, t[p].r, t[q].r, m + 1, r));
+        return internal(copy(ql, qr, tree[p].l, tree[q].l, l, m), copy(ql, qr, tree[p].r, tree[q].r, m + 1, r));
     }
 
 public:
     array<int> root;
 
-    persistent_segment_tree(int n): n(n), t(1) {
+    persistent_segment_tree(int n): n(n), tree(1) {
         root.reserve(n);
-        t.reserve(8 * n);
+        tree.reserve(8 * n);
     }
 
     void build(array<int> &a) {
         root.push_back(build(a, 0, n - 1));
     }
 
-    void update(int i, int v, int p) {
-        root.push_back(update(i, v, p, 0, n - 1));
+    void update(int i, int x, int p) {
+        root.push_back(update(i, x, p, 0, n - 1));
     }
 
     int query(int l, int r, int p) {

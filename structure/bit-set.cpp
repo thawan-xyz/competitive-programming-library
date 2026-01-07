@@ -1,8 +1,8 @@
 struct bit_set {
-    static constexpr int range = 1024;
-    static constexpr int size = (range + 63) / 64;
+    static constexpr int size = 1024;
+    static constexpr int n = (size + 63) / 64;
 
-    uint word[size] = {};
+    uint word[n] = {};
 
     bool contains(int x) {
         return word[x >> 6] & (1ULL << (x & 63));
@@ -63,15 +63,15 @@ struct bit_set {
         if (curr) {
             return (i << 6) + __builtin_ctzll(curr);
         } else {
-            for (int k = i + 1; k < size; ++k) if (word[k]) {
+            for (int k = i + 1; k < n; ++k) if (word[k]) {
                 return (k << 6) + __builtin_ctzll(word[k]);
             }
         }
-        return range;
+        return size;
     }
 
     bool empty() {
-        for (int i = 0; i < size; ++i) {
+        for (int i = 0; i < n; ++i) {
             if (word[i]) return false;
         }
         return true;
@@ -79,7 +79,7 @@ struct bit_set {
 
     int segments() {
         int total = 0;
-        for (int i = 0; i < size; ++i) {
+        for (int i = 0; i < n; ++i) {
             int count = __builtin_popcountll((word[i] >> 1) & ~word[i]);
             if ((word[i] & 1ULL) and (i == 0 or not (word[i - 1] & (1ULL << 63)))) count += 1;
             total += count;

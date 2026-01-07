@@ -1,23 +1,23 @@
 struct compact_segment_tree {
     int n;
-    array<int> t;
+    array<int> tree;
 
-    compact_segment_tree(int n): n(n), t(2 * n) {}
+    compact_segment_tree(int n): n(n), tree(2 * n) {}
 
     void build(array<int> &a) {
         for (int i = 0; i < n; ++i) {
-            t[i + n] = a[i];
+            tree[i + n] = a[i];
         }
         for (int i = n - 1; i > 0; --i) {
-            t[i] = t[i << 1] + t[(i << 1) | 1];
+            tree[i] = tree[i << 1] + tree[(i << 1) | 1];
         }
     }
 
-    void update(int i, int v) {
-        i += n, t[i] = v;
+    void update(int i, int x) {
+        i += n, tree[i] = x;
         while (i > 1) {
             i >>= 1;
-            t[i] = t[i << 1] + t[(i << 1) | 1];
+            tree[i] = tree[i << 1] + tree[(i << 1) | 1];
         }
     }
 
@@ -26,11 +26,11 @@ struct compact_segment_tree {
         l += n, r += n;
         while (l <= r) {
             if (l & 1) {
-                q += t[l++];
+                q += tree[l++];
             }
             l >>= 1;
             if ((r & 1) == 0) {
-                q += t[r--];
+                q += tree[r--];
             }
             r >>= 1;
         }
