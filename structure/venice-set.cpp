@@ -1,25 +1,25 @@
 struct venice_set {
-    multiset<T> s;
-    T k = 0;
+    int k = 0;
+    multiset<int> s;
 
     int size() {
         return s.size();
     }
 
-    void insert(T x) {
+    void insert(int x) {
         s.insert(x - k);
     }
 
-    void remove(T x) {
+    void remove(int x) {
         auto i = s.find(x - k);
         if (i != s.end()) s.erase(i);
     }
 
-    void update(T x) {
+    void update(int x) {
         k += x;
     }
 
-    T min() {
+    int min() {
         return *s.begin() + k;
     }
 };
