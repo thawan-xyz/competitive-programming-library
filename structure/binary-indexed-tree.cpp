@@ -30,14 +30,7 @@ struct binary_indexed_tree {
         return s;
     }
 
-    int kth(int k) {
-        int i = 0;
-        for (int j = 1 << (31 - __builtin_clz(n)); j > 0; j >>= 1) {
-            if (i + j <= n and tree[i + j] < k) {
-                k -= tree[i + j];
-                i += j;
-            }
-        }
-        return i;
+    int query(int i, int j) {
+        return prefix(j) - prefix(i - 1);
     }
 };
