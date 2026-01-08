@@ -1,4 +1,4 @@
-struct bit_set {
+struct range_set {
     static constexpr int size = 1024;
     static constexpr int n = (size + 63) / 64;
 
@@ -23,7 +23,7 @@ struct bit_set {
         return true;
     }
 
-    void insert_range(int l, int r) {
+    void insert(int l, int r) {
         int i = l >> 6;
         int j = r >> 6;
         if (i == j) {
@@ -37,7 +37,7 @@ struct bit_set {
         }
     }
 
-    void remove_range(int l, int r) {
+    void remove(int l, int r) {
         int i = l >> 6;
         int j = r >> 6;
         if (i == j) {
