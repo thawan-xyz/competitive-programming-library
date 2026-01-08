@@ -16,6 +16,13 @@ struct bit_set {
         word[x >> 6] &= ~(1ULL << (x & 63));
     }
 
+    bool empty() {
+        for (int i = 0; i < n; ++i) {
+            if (word[i]) return false;
+        }
+        return true;
+    }
+
     void insert_range(int l, int r) {
         int i = l >> 6;
         int j = r >> 6;
@@ -68,13 +75,6 @@ struct bit_set {
             }
         }
         return size;
-    }
-
-    bool empty() {
-        for (int i = 0; i < n; ++i) {
-            if (word[i]) return false;
-        }
-        return true;
     }
 
     int segments() {
