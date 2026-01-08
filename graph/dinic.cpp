@@ -17,7 +17,7 @@ struct dinic {
     }
 
     bool bfs(int s, int t) {
-        ranges::fill(l, -1);
+        fill(l.begin(), l.end(), -1);
         l[s] = 0;
         queue<int> q;
         q.push(s);
@@ -54,7 +54,7 @@ struct dinic {
     int flow(int s, int t) {
         int f = 0;
         while (bfs(s, t)) {
-            ranges::fill(p, 0);
+            fill(p.begin(), p.end(), 0);
             int d = 0;
             while ((d = dfs(s, t, inf)) > 0) {
                 f += d;
