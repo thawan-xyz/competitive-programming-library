@@ -1,61 +1,79 @@
 struct wavelet_tree {
-    int size;
-    array<int> low, high;
-    array<array<int>> prefix;
+private:
+    struct node {
+        int l, r, low, high;
+        array<int> pref;
 
-    wavelet_tree(array<int> &base): size(base.size()), low(4 * size), high(4 * size), prefix(4 * size) {
-        int left = inf, right = -inf;
-        for (int k = 0; k < base.size(); ++k) {
-            left = min(left, base[k]);
-            right = max(right, base[k]);
-        }
-        build(base, left, right);
-    }
+        node(int low = 0, int high = 0, int size = 0): l(0), r(0), low(low), high(high), pref(size + 1) {}
+    };
 
-    void build(array<int> &base, int i, int j, int node = 1) {
-        low[node] = i, high[node] = j;
-        prefix[node].resize(base.size());
+    int root;
+    array<node> tree;
 
-        if (low[node] == high[node]) {
-            for (int k = 0; k < base.size(); ++k) {
-                prefix[node][k] = k + 1;
+    int build(array<int> &a, int low, int high) {
+        int p = tree.size();
+        tree.push_back(node(low, high, a.size()));
+
+        if (low == high) {
+            for (int i = 0; i < a.size(); ++i) {
+                tree[p].pref[i + 1] = tree[p].pref[i] + 1;
             }
         } else {
-            array<int> left; left.reserve(base.size());
-            array<int> right; right.reserve(base.size());
+            int mid = (low + high) / 2;
+            array<int> l; l.reserve(a.size());
+            array<int> r; r.reserve(a.size());
 
-            int mid = (low[node] + high[node]) / 2;
-            for (int k = 0; k < base.size(); ++k) {
-                prefix[node][k] = (k == 0) ? 0 : prefix[node][k - 1];
-                if (base[k] <= mid) {
-                    prefix[node][k]++;
-                    left.push_back(base[k]);
+            for (int i = 0; i < a.size(); ++i) {
+                tree[p].pref[i + 1] = tree[p].pref[i];
+                if (a[i] <= mid) {
+                    tree[p].pref[i + 1] += 1;
+                    l.push_back(a[i]);
                 } else {
-                    right.push_back(base[k]);
+                    r.push_back(a[i]);
                 }
             }
 
-            if (not left.empty()) build(left, low[node], mid, node << 1);
-            if (not right.empty()) build(right, mid + 1, high[node], (node << 1) | 1);
+            if (l.size()) tree[p].l = build(l, low, mid);
+            if (r.size()) tree[p].r = build(r, mid + 1, high);
         }
+        return p;
     }
 
-    int query(int value, int left, int right, int node = 1) {
-        if (left > right or value < low[node]) return 0;
-        if (value >= high[node]) return (right - left) + 1;
+    int count_less_equal(int ql, int qr, int x, int p) {
+        if (not p or (tree[p].low > x or ql > qr)) return 0;
 
-        int i = (left == 0) ? 0 : prefix[node][left - 1], j = prefix[node][right];
-        return query(value, i, j - 1, node << 1) + query(value, left - i, right - j, (node << 1) | 1);
+        if (tree[p].high <= x) return (qr - ql) + 1;
+
+        int prev = tree[p].pref[ql];
+        int curr = tree[p].pref[qr + 1] - tree[p].pref[ql];
+
+        return count_less_equal(prev, (curr + prev) - 1, x, tree[p].l) + count_less_equal(ql - prev, qr - (prev + curr), x, tree[p].r);
     }
 
-    int kth(int k, int left, int right, int node = 1) {
-        if (low[node] == high[node]) return low[node];
+    int kth(int ql, int qr, int k, int p) {
+        if (tree[p].low == tree[p].high) return tree[p].low;
 
-        int i = (left == 0) ? 0 : prefix[node][left - 1], j = prefix[node][right];
-        if (k <= j - i) {
-            return kth(k, i, j - 1, node << 1);
+        int prev = tree[p].pref[ql];
+        int curr = tree[p].pref[qr + 1] - tree[p].pref[ql];
+
+        if (k < curr) {
+            return kth(prev, (curr + prev) - 1, k, tree[p].l);
         } else {
-            return kth(k - (j - i), left - i, right - j, (node << 1) | 1);
+            return kth(ql - prev, qr - (curr + prev), k - curr, tree[p].r);
         }
+    }
+
+public:
+    wavelet_tree(array<int> &a): tree(1) {
+        tree.reserve(2 * a.size() + 5);
+        root = build(a, *min_element(a.begin(), a.end()), *max_element(a.begin(), a.end()));
+    }
+
+    int count_less_equal(int l, int r, int x) {
+        return count_less_equal(l, r, x, root);
+    }
+
+    int kth(int l, int r, int k) {
+        return kth(l, r, k, root);
     }
 };

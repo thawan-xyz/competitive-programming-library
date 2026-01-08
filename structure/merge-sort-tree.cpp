@@ -41,11 +41,8 @@ private:
     }
 
 public:
-    segment_tree(int n): n(n), tree(1) {
+    segment_tree(array<int> &a): n(a.size()), tree(1) {
         tree.reserve(2 * n + 5);
-    }
-
-    void build(array<int> &a) {
         root = build(a, 0, n - 1);
     }
 
