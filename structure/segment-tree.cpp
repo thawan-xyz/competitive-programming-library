@@ -3,7 +3,7 @@ private:
     struct node {
         int x, l, r;
 
-        node(int x, int l = 0, int r = 0): x(x), l(l), r(r) {}
+        node(int x = 0, int l = 0, int r = 0): x(x), l(l), r(r) {}
     };
 
     int n, root;
