@@ -1,4 +1,4 @@
-int euler_totient(int n) {
+int totient(int n) {
     int phi = n;
     for (int i = 2; i * i <= n; ++i) if (n % i == 0) {
         phi -= phi / i;
@@ -8,7 +8,7 @@ int euler_totient(int n) {
     return phi;
 }
 
-array<int> euler_totient_sieve(int n) {
+array<int> totient_sieve(int n) {
     array<int> phi(n + 1);
     for (int i = 1; i <= n; ++i) {
         phi[i] = i;
