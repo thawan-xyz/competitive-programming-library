@@ -40,9 +40,10 @@ private:
     }
 
     void update(int ql, int qr, int x, int p, int l, int r) {
+        push(p, l, r);
+
         if (not p or (ql > r or qr < l)) return;
 
-        push(p, l, r);
         if (ql <= l and qr >= r) {
             tree[p].lazy += x;
             push(p, l, r);
@@ -55,9 +56,10 @@ private:
     }
 
     int query(int ql, int qr, int p, int l, int r) {
+        push(p, l, r);
+
         if (not p or (ql > r or qr < l)) return 0;
 
-        push(p, l, r);
         if (ql <= l and qr >= r) return tree[p].x;
 
         int m = (l + r) / 2;
