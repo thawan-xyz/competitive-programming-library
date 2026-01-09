@@ -31,7 +31,10 @@ private:
     void update(int i, int x, int p, int l, int r) {
         if (not p or (i > r or i < l)) return;
 
-        if (l == r) return void(tree[p].x += x);
+        if (l == r) {
+            tree[p].x += x;
+            return;
+        }
 
         int m = (l + r) / 2;
         update(i, x, tree[p].l, l, m), update(i, x, tree[p].r, m + 1, r);

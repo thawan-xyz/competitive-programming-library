@@ -43,7 +43,11 @@ private:
         if (not p or (ql > r or qr < l)) return;
 
         push(p, l, r);
-        if (ql <= l and qr >= r) return void(tree[p].lazy += x);
+        if (ql <= l and qr >= r) {
+            tree[p].lazy += x;
+            push(p, l, r);
+            return;
+        }
 
         int m = (l + r) / 2;
         update(ql, qr, x, tree[p].l, l, m), update(ql, qr, x, tree[p].r, m + 1, r);
