@@ -52,7 +52,7 @@ private:
 
 public:
     segment_tree(int n): n(n), tree(1) {
-        tree.reserve(2 * n + 5);
+        tree.reserve(2 * n);
     }
 
     void build(array<int> &a) {

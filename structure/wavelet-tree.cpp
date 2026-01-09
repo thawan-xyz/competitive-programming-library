@@ -65,7 +65,7 @@ private:
 
 public:
     wavelet_tree(array<int> &a): tree(1) {
-        tree.reserve(2 * a.size() + 5);
+        tree.reserve(2 * a.size());
         root = build(a, *min_element(a.begin(), a.end()), *max_element(a.begin(), a.end()));
     }
 

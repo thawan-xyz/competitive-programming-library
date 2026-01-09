@@ -42,7 +42,7 @@ private:
 
 public:
     segment_tree(array<int> &a): n(a.size()), tree(1) {
-        tree.reserve(2 * n + 5);
+        tree.reserve(2 * n);
         root = build(a, 0, n - 1);
     }
 
