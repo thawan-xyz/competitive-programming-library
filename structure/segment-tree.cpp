@@ -1,69 +1,38 @@
 struct segment_tree {
-private:
-    struct node {
-        int x, l, r;
+    int n;
+    array<int> tree;
 
-        node(int x = 0, int l = 0, int r = 0): x(x), l(l), r(r) {}
-    };
+    segment_tree(int n): n(n), tree(2 * n) {}
 
-    int n, root;
-    array<node> tree;
-
-    int terminal(int x) {
-        int i = tree.size();
-        tree.push_back(node(x));
-        return i;
-    }
-
-    int internal(int l, int r) {
-        int i = tree.size();
-        tree.push_back(node(tree[l].x + tree[r].x, l, r));
-        return i;
-    }
-
-    int build(array<int> &a, int l, int r) {
-        if (l == r) return terminal(a[l]);
-
-        int m = (l + r) / 2;
-        return internal(build(a, l, m), build(a, m + 1, r));
-    }
-
-    void update(int i, int x, int p, int l, int r) {
-        if (not p or (i > r or i < l)) return;
-
-        if (l == r) {
-            tree[p].x += x;
-            return;
-        }
-
-        int m = (l + r) / 2;
-        update(i, x, tree[p].l, l, m), update(i, x, tree[p].r, m + 1, r);
-        tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
-    }
-
-    int query(int ql, int qr, int p, int l, int r) {
-        if (not p or (ql > r or qr < l)) return 0;
-
-        if (ql <= l and qr >= r) return tree[p].x;
-
-        int m = (l + r) / 2;
-        return query(ql, qr, tree[p].l, l, m) + query(ql, qr, tree[p].r, m + 1, r);
-    }
-
-public:
-    segment_tree(int n): n(n), tree(1) {
-        tree.reserve(2 * n);
+    int combine(int a, int b) {
+        return a + b;
     }
 
     void build(array<int> &a) {
-        root = build(a, 0, n - 1);
+        for (int i = 0; i < n; ++i) {
+            tree[n + i] = a[i];
+        }
+
+        for (int i = n - 1; i > 0; --i) {
+            tree[i] = combine(tree[i << 1], tree[(i << 1) | 1]);
+        }
     }
 
     void update(int i, int x) {
-        update(i, x, root, 0, n - 1);
+        i += n;
+        tree[i] = x;
+        for (i >>= 1; i > 0; i >>= 1) {
+            tree[i] = combine(tree[i << 1], tree[(i << 1) | 1]);
+        }
     }
 
-    int query(int l, int r) {
-        return query(l, r, root, 0, n - 1);
+    int query(int i, int j) {
+        int l = 0;
+        int r = 0;
+        for (i += n, j += n + 1; i < j; i >>= 1, j >>= 1) {
+            if (i & 1) l = combine(l, tree[i++]);
+            if (j & 1) r = combine(tree[--j], r);
+        }
+        return combine(l, r);
     }
 };
