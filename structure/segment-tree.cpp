@@ -12,7 +12,6 @@ struct segment_tree {
         for (int i = 0; i < n; ++i) {
             tree[n + i] = a[i];
         }
-
         for (int i = n - 1; i > 0; --i) {
             tree[i] = combine(tree[i << 1], tree[(i << 1) | 1]);
         }
@@ -30,8 +29,14 @@ struct segment_tree {
         int l = 0;
         int r = 0;
         for (i += n, j += n + 1; i < j; i >>= 1, j >>= 1) {
-            if (i & 1) l = combine(l, tree[i++]);
-            if (j & 1) r = combine(tree[--j], r);
+            if (i & 1) {
+                l = combine(l, tree[i]);
+                ++i;
+            }
+            if (j & 1) {
+                --j;
+                r = combine(tree[j], r);
+            }
         }
         return combine(l, r);
     }
