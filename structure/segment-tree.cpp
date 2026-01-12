@@ -17,7 +17,7 @@ struct segment_tree {
         }
     }
 
-    void update(int i, int x) {
+    void modify(int i, int x) {
         i += n;
         tree[i] = x;
         for (i >>= 1; i > 0; i >>= 1) {

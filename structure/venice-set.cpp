@@ -15,7 +15,7 @@ struct venice_set {
         if (i != s.end()) s.erase(i);
     }
 
-    void update(int x) {
+    void modify(int x) {
         k += x;
     }
 

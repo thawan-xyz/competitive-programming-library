@@ -28,12 +28,12 @@ private:
         return internal(build(a, l, m), build(a, m + 1, r));
     }
 
-    int update(int i, int x, int p, int l, int r) {
+    int modify(int i, int x, int p, int l, int r) {
         if (l == r) return terminal(tree[p].x + x);
 
         int m = (l + r) / 2;
-        if (i <= m) return internal(update(i, x, tree[p].l, l, m), tree[p].r);
-        else return internal(tree[p].l, update(i, x, tree[p].r, m + 1, r));
+        if (i <= m) return internal(modify(i, x, tree[p].l, l, m), tree[p].r);
+        else return internal(tree[p].l, modify(i, x, tree[p].r, m + 1, r));
     }
 
     int query(int ql, int qr, int p, int l, int r) {
@@ -66,8 +66,8 @@ public:
         root.push_back(build(a, 0, n - 1));
     }
 
-    void update(int i, int x, int p) {
-        root.push_back(update(i, x, p, 0, n - 1));
+    void modify(int i, int x, int p) {
+        root.push_back(modify(i, x, p, 0, n - 1));
     }
 
     int query(int l, int r, int p) {

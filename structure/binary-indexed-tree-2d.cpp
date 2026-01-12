@@ -11,12 +11,12 @@ struct binary_indexed_tree_2d {
     void build(array<array<int>> &a) {
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < m; ++j) {
-                update(i, j, a[i][j]);
+                modify(i, j, a[i][j]);
             }
         }
     }
 
-    void update(int i, int j, int d) {
+    void modify(int i, int j, int d) {
         int p = i + 1;
         while (p <= n) {
             int q = j + 1;

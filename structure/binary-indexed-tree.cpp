@@ -9,10 +9,10 @@ struct binary_indexed_tree {
     binary_indexed_tree(int n): n(n), tree(n + 1) {}
 
     void build(array<int> &a) {
-        for (int i = 0; i < n; ++i) update(i, a[i]);
+        for (int i = 0; i < n; ++i) modify(i, a[i]);
     }
 
-    void update(int i, int d) {
+    void modify(int i, int d) {
         i += 1;
         while (i <= n) {
             tree[i] += d;

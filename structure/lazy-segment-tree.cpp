@@ -8,7 +8,7 @@ struct lazy_segment_tree {
         return a + b;
     }
 
-    int apply(int a, int x, int l) {
+    int update(int a, int x, int l) {
         return a + x * l;
     }
 
@@ -27,9 +27,9 @@ struct lazy_segment_tree {
             int l = 1 << (k - 1);
             if (lazy[p] != 0) {
                 lazy[p << 1] = combine(lazy[p << 1], lazy[p]);
-                tree[p << 1] = apply(tree[p << 1], lazy[p], l);
+                tree[p << 1] = update(tree[p << 1], lazy[p], l);
                 lazy[(p << 1) | 1] = combine(lazy[(p << 1) | 1], lazy[p]);
-                tree[(p << 1) | 1] = apply(tree[(p << 1) | 1], lazy[p], l);
+                tree[(p << 1) | 1] = update(tree[(p << 1) | 1], lazy[p], l);
             }
             lazy[p] = 0;
         }
@@ -38,21 +38,21 @@ struct lazy_segment_tree {
     void pull(int i) {
         for (int p = i >> 1, l = 2; p > 0; p >>= 1, l <<= 1) {
             tree[p] = combine(tree[p << 1], tree[(p << 1) | 1]);
-            tree[p] = apply(tree[p], lazy[p], l);
+            tree[p] = update(tree[p], lazy[p], l);
         }
     }
 
-    void update(int i, int j, int x) {
+    void modify(int i, int j, int x) {
         for (int p = i + n, q = j + (n + 1), l = 1; p < q; p >>= 1, q >>= 1, l <<= 1) {
             if (p & 1) {
                 lazy[p] = combine(lazy[p], x);
-                tree[p] = apply(tree[p], x, l);
+                tree[p] = update(tree[p], x, l);
                 ++p;
             }
             if (q & 1) {
                 --q;
                 lazy[q] = combine(lazy[q], x);
-                tree[q] = apply(tree[q], x, l);
+                tree[q] = update(tree[q], x, l);
             }
         }
         pull(i + n);
