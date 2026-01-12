@@ -43,8 +43,6 @@ struct lazy_segment_tree {
     }
 
     void update(int i, int j, int x) {
-        push(i + n);
-        push(j + n);
         for (int p = i + n, q = j + (n + 1), l = 1; p < q; p >>= 1, q >>= 1, l <<= 1) {
             if (p & 1) {
                 lazy[p] = combine(lazy[p], x);
