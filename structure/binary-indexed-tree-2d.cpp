@@ -16,36 +16,36 @@ struct binary_indexed_tree_2d {
         }
     }
 
-    void update(int i_, int j_, int d) {
-        int i = i_ + 1;
-        while (i <= n) {
-            int j = j_ + 1;
-            while (j <= m) {
-                tree[i][j] += d;
-                j += lsb(j);
+    void update(int i, int j, int d) {
+        int p = i + 1;
+        while (p <= n) {
+            int q = j + 1;
+            while (q <= m) {
+                tree[p][q] += d;
+                q += lsb(q);
             }
-            i += lsb(i);
+            p += lsb(p);
         }
     }
 
-    int prefix(int i_, int j_) {
+    int prefix(int i, int j) {
         int s = 0;
-        int i = i_ + 1;
-        while (i > 0) {
-            int j = j_ + 1;
-            while (j > 0) {
-                s += tree[i][j];
-                j -= lsb(j);
+        int p = i + 1;
+        while (p > 0) {
+            int q = j + 1;
+            while (q > 0) {
+                s += tree[p][q];
+                q -= lsb(q);
             }
-            i -= lsb(i);
+            p -= lsb(p);
         }
         return s;
     }
 
-    int query(int i1, int j1, int i2, int j2) {
-        return prefix(i2, j2)
-             - prefix(i1 - 1, j2)
-             - prefix(i2, j1 - 1)
-             + prefix(i1 - 1, j1 - 1);
+    int query(int i, int j, int p, int q) {
+        return prefix(p, q)
+             - prefix(i - 1, q)
+             - prefix(p, j - 1)
+             + prefix(i - 1, j - 1);
     }
 };
