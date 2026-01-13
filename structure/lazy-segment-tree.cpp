@@ -34,19 +34,23 @@ struct lazy_segment_tree {
                 tree[p << 1] = update(tree[p << 1], lazy[p], l);
                 lazy[(p << 1) | 1] = compose(lazy[(p << 1) | 1], lazy[p]);
                 tree[(p << 1) | 1] = update(tree[(p << 1) | 1], lazy[p], l);
+                lazy[p] = 0;
             }
-            lazy[p] = 0;
         }
     }
 
     void pull(int i) {
         for (int p = i >> 1, l = 2; p > 0; p >>= 1, l <<= 1) {
             tree[p] = merge(tree[p << 1], tree[(p << 1) | 1]);
-            tree[p] = update(tree[p], lazy[p], l);
+            if (lazy[p] != 0) {
+                tree[p] = update(tree[p], lazy[p], l);
+            }
         }
     }
 
     void modify(int i, int j, int x) {
+        push(i + n);
+        push(j + n);
         for (int p = i + n, q = j + (n + 1), l = 1; p < q; p >>= 1, q >>= 1, l <<= 1) {
             if (p & 1) {
                 lazy[p] = compose(lazy[p], x);
