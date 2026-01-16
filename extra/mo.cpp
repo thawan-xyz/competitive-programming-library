@@ -2,14 +2,15 @@ struct mo {
 private:
     struct query {
         inline static int block_size;
-        int l, r, k;
+        int l, r, k, block;
+
+        query(int l, int r, int k): l(l), r(r), k(k) {
+            block = l / block_size;
+        }
 
         bool operator<(const query &other) const {
-            int a = l / block_size;
-            int b = other.l / block_size;
-
-            if (a != b) return a < b;
-            return ((a & 1) == 0) ? r < other.r : r > other.r;
+            if (block != other.block) return block < other.block;
+            return ((block & 1) == 0) ? r < other.r : r > other.r;
         }
     };
 
