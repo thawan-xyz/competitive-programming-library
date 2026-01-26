@@ -28,7 +28,7 @@ private:
         return internal(build(a, l, m), build(a, m + 1, r));
     }
 
-    void update(int i, int x, int p, int l, int r) {
+    void modify(int i, int x, int p, int l, int r) {
         if (not p or (i > r or i < l)) return;
 
         if (l == r) {
@@ -37,7 +37,7 @@ private:
         }
 
         int m = (l + r) / 2;
-        update(i, x, tree[p].l, l, m), update(i, x, tree[p].r, m + 1, r);
+        modify(i, x, tree[p].l, l, m), modify(i, x, tree[p].r, m + 1, r);
         tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
     }
 
@@ -59,8 +59,8 @@ public:
         root = build(a, 0, n - 1);
     }
 
-    void update(int i, int x) {
-        update(i, x, root, 0, n - 1);
+    void modify(int i, int x) {
+        modify(i, x, root, 0, n - 1);
     }
 
     int query(int l, int r) {

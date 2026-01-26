@@ -39,7 +39,7 @@ private:
         tree[p].lazy = 0;
     }
 
-    void update(int ql, int qr, int x, int p, int l, int r) {
+    void modify(int ql, int qr, int x, int p, int l, int r) {
         push(p, l, r);
 
         if (not p or (ql > r or qr < l)) return;
@@ -51,7 +51,7 @@ private:
         }
 
         int m = (l + r) / 2;
-        update(ql, qr, x, tree[p].l, l, m), update(ql, qr, x, tree[p].r, m + 1, r);
+        modify(ql, qr, x, tree[p].l, l, m), modify(ql, qr, x, tree[p].r, m + 1, r);
         tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
     }
 
@@ -75,8 +75,8 @@ public:
         root = build(a, 0, n - 1);
     }
 
-    void update(int l, int r, int x) {
-        update(l, r, x, root, 0, n - 1);
+    void modify(int l, int r, int x) {
+        modify(l, r, x, root, 0, n - 1);
     }
 
     int query(int l, int r) {
