@@ -2,12 +2,12 @@ struct aho_corasick {
 private:
     struct node {
         int fail;
-        array<int> next, end;
+        list<int> next, end;
 
         node(): fail(0), next(26), end() {}
     };
 
-    array<node> trie;
+    list<node> trie;
 
 public:
     aho_corasick(): trie(1) {}
@@ -48,8 +48,8 @@ public:
         }
     }
 
-    array<int> match(str &t) {
-        array<int> a;
+    list<int> match(str &t) {
+        list<int> a;
         int n = t.length();
         for (int i = 0, k = 0; k < n; ++k) {
             int x = t[k] - 'a';

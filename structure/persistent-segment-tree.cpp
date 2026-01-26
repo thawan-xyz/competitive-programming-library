@@ -7,7 +7,7 @@ private:
     };
 
     int n;
-    array<node> tree;
+    list<node> tree;
 
     int terminal(int x) {
         int i = tree.size();
@@ -21,7 +21,7 @@ private:
         return i;
     }
 
-    int build(array<int> &a, int l, int r) {
+    int build(list<int> &a, int l, int r) {
         if (l == r) return terminal(a[l]);
 
         int m = (l + r) / 2;
@@ -55,14 +55,14 @@ private:
     }
 
 public:
-    array<int> root;
+    list<int> root;
 
     persistent_segment_tree(int n): n(n), tree(1) {
         root.reserve(n);
         tree.reserve(8 * n);
     }
 
-    void build(array<int> &a) {
+    void build(list<int> &a) {
         root.push_back(build(a, 0, n - 1));
     }
 

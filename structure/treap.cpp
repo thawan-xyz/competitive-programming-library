@@ -99,7 +99,7 @@ private:
     }
 
 public:
-    array<node> tree;
+    list<node> tree;
     int root;
 
     treap(): tree(1), root(0) {}

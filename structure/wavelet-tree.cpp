@@ -2,15 +2,15 @@ struct wavelet_tree {
 private:
     struct node {
         int l, r, low, high;
-        array<int> pref;
+        list<int> pref;
 
         node(int low = 0, int high = 0, int size = 0): l(0), r(0), low(low), high(high), pref(size + 1) {}
     };
 
     int root;
-    array<node> tree;
+    list<node> tree;
 
-    int build(array<int> &a, int low, int high) {
+    int build(list<int> &a, int low, int high) {
         int p = tree.size();
         tree.push_back(node(low, high, a.size()));
 
@@ -20,8 +20,8 @@ private:
             }
         } else {
             int mid = (low + high) / 2;
-            array<int> l; l.reserve(a.size());
-            array<int> r; r.reserve(a.size());
+            list<int> l; l.reserve(a.size());
+            list<int> r; r.reserve(a.size());
 
             for (int i = 0; i < a.size(); ++i) {
                 tree[p].pref[i + 1] = tree[p].pref[i];
@@ -64,7 +64,7 @@ private:
     }
 
 public:
-    wavelet_tree(array<int> &a): tree(1) {
+    wavelet_tree(list<int> &a): tree(1) {
         tree.reserve(2 * a.size());
         root = build(a, *min_element(a.begin(), a.end()), *max_element(a.begin(), a.end()));
     }

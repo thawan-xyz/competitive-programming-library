@@ -1,6 +1,6 @@
 struct segment_tree {
     int n;
-    array<int> tree;
+    list<int> tree;
 
     segment_tree(int n): n(n), tree(2 * n) {}
 
@@ -8,7 +8,7 @@ struct segment_tree {
         return a + b;
     }
 
-    void build(array<int> &a) {
+    void build(list<int> &a) {
         for (int i = 0; i < n; ++i) {
             tree[n + i] = a[i];
         }

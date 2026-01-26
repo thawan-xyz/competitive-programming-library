@@ -1,6 +1,6 @@
 struct binary_indexed_tree {
     int n;
-    array<int> tree;
+    list<int> tree;
 
     static int lsb(int i) {
         return i & -i;
@@ -8,7 +8,7 @@ struct binary_indexed_tree {
 
     binary_indexed_tree(int n): n(n), tree(n + 1) {}
 
-    void build(array<int> &a) {
+    void build(list<int> &a) {
         for (int i = 0; i < n; ++i) modify(i, a[i]);
     }
 

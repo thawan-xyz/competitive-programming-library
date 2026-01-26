@@ -2,9 +2,9 @@ struct hasher {
     int n;
     int a = 41, b = 53;
     int m1 = 1e9 + 7, m2 = 1e9 + 9;
-    array<int> p1, p2;
-    array<int> h1, h2;
-    array<int> r1, r2;
+    list<int> p1, p2;
+    list<int> h1, h2;
+    list<int> r1, r2;
 
     hasher(str &s): n(s.length()), p1(n + 1), p2(n + 1), h1(n), h2(n), r1(n), r2(n) {
         p1[0] = 1;

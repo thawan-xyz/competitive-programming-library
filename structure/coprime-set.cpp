@@ -1,9 +1,9 @@
 struct coprime_set {
     map<int, int> n;
 
-    array<pair<int, int>> divisors(array<int> &p) {
+    list<pair<int, int>> divisors(list<int> &p) {
         int k = p.size();
-        array<pair<int, int>> a; a.reserve(1 << k);
+        list<pair<int, int>> a; a.reserve(1 << k);
         for (int m = 0; m < (1 << k); ++m) {
             int d = 1, mu = 1;
             for (int i = 0; i < k; ++i) if (m & (1 << i)) {
@@ -14,23 +14,23 @@ struct coprime_set {
         return a;
     }
 
-    void insert(array<int> &p) {
-        array<pair<int, int>> a = divisors(p);
+    void insert(list<int> &p) {
+        list<pair<int, int>> a = divisors(p);
         for (auto &[d, mu] : a) {
             n[d]++;
         }
     }
 
-    void remove(array<int> &p) {
-        array<pair<int, int>> a = divisors(p);
+    void remove(list<int> &p) {
+        list<pair<int, int>> a = divisors(p);
         for (auto &[d, mu] : a) {
             n[d]--;
         }
     }
 
-    int query(array<int> &p) {
+    int query(list<int> &p) {
         int t = 0;
-        array<pair<int, int>> a = divisors(p);
+        list<pair<int, int>> a = divisors(p);
         for (auto &[d, mu] : a) {
             t += n[d] * mu;
         }
