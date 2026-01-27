@@ -1,16 +1,12 @@
 list<int> z_array(str &s) {
     int n = s.length();
     list<int> z(n);
-    int low = 0, high = 0;
-    for (int i = 1; i < n; ++i) {
-        if (i <= high) {
-            z[i] = min(high - (i - 1), z[i - low]);
-        }
-        while (z[i] + i < n and s[z[i]] == s[z[i] + i]) {
-            z[i]++;
-        }
-        if (z[i] + (i - 1) > high) {
-            low = i, high = z[i] + (i - 1);
+    for (int i = 1, l = 0, r = 0; i < n; ++i) {
+        z[i] = max(0, min(z[i - l], r - (i + 1)));
+        while (i + z[i] < n and s[i + z[i]] == s[z[i]]) {
+            l = i;
+            r = i + z[i];
+            z[i] += 1;
         }
     }
     return z;
