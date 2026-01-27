@@ -13,9 +13,9 @@ int nim(list<int> &piles, list<int> &moves) {
         grundy[i] = mex;
     }
 
-    int x = 0;
+    int answer = 0;
     for (int pile : piles) {
-        x ^= grundy[pile];
+        answer ^= grundy[pile];
     }
-    return x;
+    return answer;
 }
