@@ -1,9 +1,9 @@
 struct lazy_sparse_segment_tree {
 private:
     struct node {
-        int x, lazy, l, r;
+        int x, l, r, lazy;
 
-        node(int x = 0, int lazy = 0, int l = 0, int r = 0): x(x), lazy(lazy), l(l), r(r) {}
+        node(int x = 0, int l = 0, int r = 0, int lazy = 0): x(x), l(l), r(r), lazy(lazy) {}
     };
 
     int n, root;
