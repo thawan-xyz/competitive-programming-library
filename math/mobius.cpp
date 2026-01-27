@@ -24,15 +24,3 @@ array<int> mobius_sieve(int n) {
     }
     return mu;
 }
-
-array<int> inclusion_exclusion(int n, array<int> &c) {
-    array<int> mu = mobius_sieve(n);
-
-    array<int> f(n + 1);
-    for (int i = 1; i <= n; ++i) if (mu[i] != 0) {
-        for (int j = i; j <= n; j += i) {
-            f[j] += mu[i] * c[j / i];
-        }
-    }
-    return f;
-}
