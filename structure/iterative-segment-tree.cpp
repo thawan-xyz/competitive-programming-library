@@ -1,8 +1,8 @@
-struct segment_tree {
+struct iterative_segment_tree {
     int n;
     list<int> tree;
 
-    segment_tree(int n): n(n), tree(2 * n) {}
+    iterative_segment_tree(int n): n(n), tree(2 * n) {}
 
     int merge(int a, int b) {
         return a + b;

@@ -1,8 +1,8 @@
 int nim(list<int> &piles, list<int> &moves) {
-    int size = max(piles);
-    list<int> grundy(size + 1);
+    int n = *max(piles.begin(), piles.end());
+    list<int> grundy(n + 1);
 
-    for (int i = 1; i <= size; ++i) {
+    for (int i = 1; i <= n; ++i) {
         set<int> reach;
         for (int move : moves) if (move <= i) {
             reach.insert(grundy[i - move]);
@@ -13,9 +13,9 @@ int nim(list<int> &piles, list<int> &moves) {
         grundy[i] = mex;
     }
 
-    int result = 0;
+    int x = 0;
     for (int pile : piles) {
-        result ^= grundy[pile];
+        x ^= grundy[pile];
     }
-    return result;
+    return x;
 }
