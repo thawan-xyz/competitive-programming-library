@@ -9,7 +9,7 @@ private:
     int n, root;
     list<node> tree;
 
-    int update(int i, int x, int p, int l, int r) {
+    int modify(int i, int x, int p, int l, int r) {
         if (i > r or i < l) return p;
 
         if (not p) {
@@ -23,8 +23,8 @@ private:
         }
 
         int m = (l + r) / 2;
-        tree[p].l = update(i, x, tree[p].l, l, m);
-        tree[p].r = update(i, x, tree[p].r, m + 1, r);
+        tree[p].l = modify(i, x, tree[p].l, l, m);
+        tree[p].r = modify(i, x, tree[p].r, m + 1, r);
         tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
         return p;
     }
@@ -40,11 +40,11 @@ private:
 
 public:
     sparse_segment_tree(int n): n(n), root(0), tree(1) {
-        tree.reserve(2 * n);
+        tree.reserve(2e5);
     }
 
-    void update(int i, int x) {
-        root = update(i, x, root, 0, n - 1);
+    void modify(int i, int x) {
+        root = modify(i, x, root, 0, n - 1);
     }
 
     int query(int l, int r) {

@@ -72,7 +72,7 @@ private:
 
 public:
     lazy_sparse_segment_tree(int n): n(n), root(0), tree(1) {
-        tree.reserve(2 * n);
+        tree.reserve(2e5);
     }
 
     void modify(int l, int r, int x) {
