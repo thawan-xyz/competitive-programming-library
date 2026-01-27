@@ -9,27 +9,22 @@ private:
     int n, root;
     list<node> tree;
 
-    int terminal(int x) {
-        int i = tree.size();
-        tree.push_back(node(x));
-        return i;
-    }
-
-    int internal(int l, int r) {
-        int i = tree.size();
-        tree.push_back(node(tree[l].x + tree[r].x, l, r));
-        return i;
-    }
-
     int build(list<int> &a, int l, int r) {
-        if (l == r) return terminal(a[l]);
-
-        int m = (l + r) / 2;
-        return internal(build(a, l, m), build(a, m + 1, r));
+        int p = tree.size();
+        tree.push_back(node());
+        if (l == r) {
+            tree[p].x = a[l];
+        } else {
+            int m = (l + r) / 2;
+            tree[p].l = build(a, l, m);
+            tree[p].r = build(a, m + 1, r);
+            tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
+        }
+        return p;
     }
 
     void push(int p, int l, int r) {
-        if (not p or tree[p].lazy == 0) return;
+        if (tree[p].lazy == 0) return;
 
         tree[p].x += (r - l + 1) * tree[p].lazy;
         if (l != r) {
@@ -40,25 +35,23 @@ private:
     }
 
     void modify(int ql, int qr, int x, int p, int l, int r) {
-        push(p, l, r);
-
         if (not p or (ql > r or qr < l)) return;
+        push(p, l, r);
 
         if (ql <= l and qr >= r) {
             tree[p].lazy += x;
             push(p, l, r);
-            return;
+        } else {
+            int m = (l + r) / 2;
+            modify(ql, qr, x, tree[p].l, l, m);
+            modify(ql, qr, x, tree[p].r, m + 1, r);
+            tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
         }
-
-        int m = (l + r) / 2;
-        modify(ql, qr, x, tree[p].l, l, m), modify(ql, qr, x, tree[p].r, m + 1, r);
-        tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
     }
 
     int query(int ql, int qr, int p, int l, int r) {
-        push(p, l, r);
-
         if (not p or (ql > r or qr < l)) return 0;
+        push(p, l, r);
 
         if (ql <= l and qr >= r) return tree[p].x;
 

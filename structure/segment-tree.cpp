@@ -9,23 +9,18 @@ private:
     int n, root;
     list<node> tree;
 
-    int terminal(int x) {
-        int i = tree.size();
-        tree.push_back(node(x));
-        return i;
-    }
-
-    int internal(int l, int r) {
-        int i = tree.size();
-        tree.push_back(node(tree[l].x + tree[r].x, l, r));
-        return i;
-    }
-
     int build(list<int> &a, int l, int r) {
-        if (l == r) return terminal(a[l]);
-
-        int m = (l + r) / 2;
-        return internal(build(a, l, m), build(a, m + 1, r));
+        int p = tree.size();
+        tree.push_back(node());
+        if (l == r) {
+            tree[p].x = a[l];
+        } else {
+            int m = (l + r) / 2;
+            tree[p].l = build(a, l, m);
+            tree[p].r = build(a, m + 1, r);
+            tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
+        }
+        return p;
     }
 
     void modify(int i, int x, int p, int l, int r) {
@@ -33,12 +28,12 @@ private:
 
         if (l == r) {
             tree[p].x += x;
-            return;
+        } else {
+            int m = (l + r) / 2;
+            modify(i, x, tree[p].l, l, m);
+            modify(i, x, tree[p].r, m + 1, r);
+            tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
         }
-
-        int m = (l + r) / 2;
-        modify(i, x, tree[p].l, l, m), modify(i, x, tree[p].r, m + 1, r);
-        tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
     }
 
     int query(int ql, int qr, int p, int l, int r) {
