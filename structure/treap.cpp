@@ -1,14 +1,14 @@
 struct treap {
 private:
     struct node {
-        int x, p, l, r, s;
+        int x, y, l, r, s;
 
-        node(int x = 0, int p = 0): x(x), p(p), l(0), r(0), s(1) {}
+        node(int x = 0, int y = 0): x(x), y(y), l(0), r(0), s(1) {}
     };
 
-    int make(int x, int p) {
+    int make(int x, int y) {
         int i = tree.size();
-        tree.push_back(node(x, p));
+        tree.push_back(node(x, y));
         return i;
     }
 
@@ -40,7 +40,7 @@ private:
         if (not l) return r;
         if (not r) return l;
 
-        if (tree[l].p > tree[r].p) {
+        if (tree[l].y > tree[r].y) {
             tree[l].r = merge(tree[l].r, r);
             update(l);
             return l;
@@ -51,17 +51,17 @@ private:
         }
     }
 
-    int insert(int i, int x, int p) {
-        if (not i) return make(x, p);
+    int insert(int i, int x, int y) {
+        if (not i) return make(x, y);
 
-        if (tree[i].p < p) {
+        if (tree[i].y < y) {
             auto [l, r] = split(i, x);
-            i = make(x, p);
+            i = make(x, y);
             tree[i].l = l;
             tree[i].r = r;
         } else {
-            if (x <= tree[i].x) tree[i].l = insert(tree[i].l, x, p);
-            if (x > tree[i].x) tree[i].r = insert(tree[i].r, x, p);
+            if (x <= tree[i].x) tree[i].l = insert(tree[i].l, x, y);
+            if (x > tree[i].x) tree[i].r = insert(tree[i].r, x, y);
         }
         update(i);
         return i;
@@ -105,8 +105,8 @@ public:
     treap(): tree(1), root(0) {}
 
     void insert(int x) {
-        int p = random;
-        root = insert(root, x, p);
+        int y = random;
+        root = insert(root, x, y);
     }
 
     void erase(int x) {
@@ -125,7 +125,7 @@ public:
         if (not i) return j;
         if (not j) return i;
 
-        if (tree[i].p < tree[j].p) swap(i, j);
+        if (tree[i].y < tree[j].y) swap(i, j);
         auto [l, r] = split(j, tree[i].x);
 
         tree[i].l = unite(tree[i].l, l);
