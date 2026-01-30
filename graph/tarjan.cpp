@@ -31,5 +31,6 @@ list<list<int>> tarjan(list<list<int>> &graph) {
     };
 
     for (int i = 1; i <= n; ++i) if (in[i] == 0) dfs(i);
+    reverse(components.begin(), components.end());
     return components;
 }
