@@ -1,5 +1,5 @@
 struct hasher {
-    static array<int, 2> base;
+    static constexpr array<int, 2> base = {41, 53};
     static constexpr array<int, 2> mod = {1000000007, 1000000009};
 
     int n;
@@ -24,31 +24,23 @@ struct hasher {
 
     int hash(int l, int r) {
         ++l, ++r;
-        int res = 0;
+        int total = 0;
         for (int k = 0; k < 2; ++k) {
             int curr = (pref[k][r] - (pow[k][r - l + 1] * pref[k][l - 1]) % mod[k]) % mod[k];
             if (curr < 0) curr += mod[k];
-            res = (res << 32) | curr;
+            total = (total << 32) | curr;
         }
-        return res;
+        return total;
     }
 
     int reverse(int l, int r) {
         ++l, ++r;
-        int res = 0;
+        int total = 0;
         for (int k = 0; k < 2; ++k) {
             int curr = (suf[k][l] - (pow[k][r - l + 1] * suf[k][r + 1]) % mod[k]) % mod[k];
             if (curr < 0) curr += mod[k];
-            res = (res << 32) | curr;
+            total = (total << 32) | curr;
         }
-        return res;
+        return total;
     }
 };
-
-array<int, 2> hasher::base = []{
-    mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-    array<int, 2> base;
-    base[0] = 41;
-    base[1] = uniform_int_distribution<int>(256, hasher::mod[1] - 1)(rng);
-    return base;
-}();

@@ -1,10 +1,11 @@
 struct aho_corasick {
 private:
     struct node {
+        array<int, 26> next = {};
         int fail;
-        list<int> next, end;
+        list<int> end;
 
-        node(): fail(0), next(26), end() {}
+        node(): fail(0), end() {}
     };
 
     list<node> trie;
