@@ -1,55 +1,54 @@
 struct hasher {
+    static array<int, 2> base;
+    static constexpr array<int, 2> mod = {1e9 + 7, 1e9 + 9};
+
     int n;
-    int a = 41, b = 53;
-    int m1 = 1e9 + 7, m2 = 1e9 + 9;
-    list<int> p1, p2;
-    list<int> h1, h2;
-    list<int> r1, r2;
+    array<list<int>, 2> pow, hash, rev;
 
-    hasher(str &s): n(s.length()), p1(n + 1), p2(n + 1), h1(n), h2(n), r1(n), r2(n) {
-        p1[0] = 1;
-        p2[0] = 1;
-        for (int i = 1; i <= n; ++i) {
-            p1[i] = (a * p1[i - 1]) % m1;
-            p2[i] = (b * p2[i - 1]) % m2;
-        }
+    hasher(str &s): n(s.length()) {
+        for (int k = 0; k < 2; ++k) {
+            pow[k].assign(n + 1, 1);
+            hash[k].assign(n + 1, 0);
+            rev[k].assign(n + 2, 0);
 
-        h1[0] = s[0];
-        h2[0] = s[0];
-        for (int i = 1; i < n; ++i) {
-            h1[i] = (a * h1[i - 1] + s[i]) % m1;
-            h2[i] = (b * h2[i - 1] + s[i]) % m2;
-        }
+            for (int i = 1; i <= n; ++i) {
+                pow[k][i] = (base[k] * pow[k][i - 1]) % mod[k];
+                hash[k][i] = (s[i - 1] + base[k] * hash[k][i - 1]) % mod[k];
+            }
 
-        r1[n - 1] = s[n - 1];
-        r2[n - 1] = s[n - 1];
-        for (int i = n - 2; i >= 0; --i) {
-            r1[i] = (a * r1[i + 1] + s[i]) % m1;
-            r2[i] = (b * r2[i + 1] + s[i]) % m2;
+            for (int i = n; i >= 1; --i) {
+                rev[k][i] = (s[i - 1] + base[k] * rev[k][i + 1]) % mod[k];
+            }
         }
     }
 
     int hash(int l, int r) {
-        int x = h1[r];
-        if (l > 0) x = (h1[r] - h1[l - 1] * p1[r - l + 1]) % m1;
-        if (x < 0) x += m1;
-
-        int y = h2[r];
-        if (l > 0) y = (h2[r] - h2[l - 1] * p2[r - l + 1]) % m2;
-        if (y < 0) y += m2;
-
-        return (x << 32) | y;
+        ++l, ++r;
+        int res = 0;
+        for (int k = 0; k < 2; ++k) {
+            int curr = (hash[k][r] - (pow[k][r - l + 1] * hash[k][l - 1]) % mod[k]) % mod[k];
+            if (curr < 0) curr += mod[k];
+            res = (res << 32) | curr;
+        }
+        return res;
     }
 
     int reverse(int l, int r) {
-        int x = r1[l];
-        if (r + 1 < n) x = (r1[l] - r1[r + 1] * p1[r - l + 1]) % m1;
-        if (x < 0) x += m1;
-
-        int y = r2[l];
-        if (r + 1 < n) y = (r2[l] - r2[r + 1] * p2[r - l + 1]) % m2;
-        if (y < 0) y += m2;
-
-        return (x << 32) | y;
+        ++l, ++r;
+        int res = 0;
+        for (int k = 0; k < 2; ++k) {
+            int curr = (rev[k][l] - (pow[k][r - l + 1] * rev[k][r + 1]) % mod[k]) % mod[k];
+            if (curr < 0) curr += mod[k];
+            res = (res << 32) | curr;
+        }
+        return res;
     }
 };
+
+array<int, 2> hasher::base = []{
+    mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+    array<int, 2> base;
+    base[0] = 41;
+    base[1] = uniform_int_distribution<int>(256, hasher::mod[1] - 1)(rng);
+    return base;
+}();
