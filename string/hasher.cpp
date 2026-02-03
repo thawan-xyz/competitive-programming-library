@@ -1,23 +1,23 @@
 struct hasher {
     static array<int, 2> base;
-    static constexpr array<int, 2> mod = {1e9 + 7, 1e9 + 9};
+    static constexpr array<int, 2> mod = {1000000007, 1000000009};
 
     int n;
-    array<list<int>, 2> pow, hash, rev;
+    array<list<int>, 2> pow, pref, suf;
 
     hasher(str &s): n(s.length()) {
         for (int k = 0; k < 2; ++k) {
             pow[k].assign(n + 1, 1);
-            hash[k].assign(n + 1, 0);
-            rev[k].assign(n + 2, 0);
+            pref[k].assign(n + 1, 0);
+            suf[k].assign(n + 2, 0);
 
             for (int i = 1; i <= n; ++i) {
                 pow[k][i] = (base[k] * pow[k][i - 1]) % mod[k];
-                hash[k][i] = (s[i - 1] + base[k] * hash[k][i - 1]) % mod[k];
+                pref[k][i] = (s[i - 1] + base[k] * pref[k][i - 1]) % mod[k];
             }
 
             for (int i = n; i >= 1; --i) {
-                rev[k][i] = (s[i - 1] + base[k] * rev[k][i + 1]) % mod[k];
+                suf[k][i] = (s[i - 1] + base[k] * suf[k][i + 1]) % mod[k];
             }
         }
     }
@@ -26,7 +26,7 @@ struct hasher {
         ++l, ++r;
         int res = 0;
         for (int k = 0; k < 2; ++k) {
-            int curr = (hash[k][r] - (pow[k][r - l + 1] * hash[k][l - 1]) % mod[k]) % mod[k];
+            int curr = (pref[k][r] - (pow[k][r - l + 1] * pref[k][l - 1]) % mod[k]) % mod[k];
             if (curr < 0) curr += mod[k];
             res = (res << 32) | curr;
         }
@@ -37,7 +37,7 @@ struct hasher {
         ++l, ++r;
         int res = 0;
         for (int k = 0; k < 2; ++k) {
-            int curr = (rev[k][l] - (pow[k][r - l + 1] * rev[k][r + 1]) % mod[k]) % mod[k];
+            int curr = (suf[k][l] - (pow[k][r - l + 1] * suf[k][r + 1]) % mod[k]) % mod[k];
             if (curr < 0) curr += mod[k];
             res = (res << 32) | curr;
         }
