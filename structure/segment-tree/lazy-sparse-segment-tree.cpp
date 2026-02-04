@@ -1,9 +1,9 @@
 struct lazy_sparse_segment_tree {
 private:
     struct node {
-        int x, l, r, lazy;
+        int x, y, l, r;
 
-        node(int x = 0, int l = 0, int r = 0, int lazy = 0): x(x), l(l), r(r), lazy(lazy) {}
+        node(int x = 0, int y = 0, int l = 0, int r = 0): x(x), y(y), l(l), r(r) {}
     };
 
     int n, root;
@@ -15,11 +15,11 @@ private:
 
     void update(int p, int x, int l) {
         tree[p].x += x * l;
-        tree[p].lazy += x;
+        tree[p].y += x;
     }
 
     void push(int p, int l, int r) {
-        if (not p or tree[p].lazy == 0) return;
+        if (not p or tree[p].y == 0) return;
 
         if (not tree[p].l) {
             tree[p].l = tree.size();
@@ -31,10 +31,10 @@ private:
         }
 
         int m = (l + r) / 2;
-        update(tree[p].l, tree[p].lazy, (m - l) + 1);
-        update(tree[p].r, tree[p].lazy, r - m);
+        update(tree[p].l, tree[p].y, (m - l) + 1);
+        update(tree[p].r, tree[p].y, r - m);
 
-        tree[p].lazy = 0;
+        tree[p].y = 0;
     }
 
     int modify(int ql, int qr, int x, int p, int l, int r) {

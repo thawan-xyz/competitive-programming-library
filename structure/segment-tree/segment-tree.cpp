@@ -3,7 +3,7 @@ private:
     struct node {
         int x, l, r;
 
-        node(int x = 0, int l = 0, int r = 0): x(x), l(l), r(r) {}
+        node(): x(0), l(0), r(0) {}
     };
 
     int n, root;
@@ -24,7 +24,7 @@ private:
     }
 
     void modify(int i, int x, int p, int l, int r) {
-        if (not p or (i > r or i < l)) return;
+        if (i > r or i < l) return;
 
         if (l == r) {
             tree[p].x += x;
@@ -37,12 +37,14 @@ private:
     }
 
     int query(int ql, int qr, int p, int l, int r) {
-        if (not p or (ql > r or qr < l)) return 0;
+        if (ql > r or qr < l) return 0;
 
-        if (ql <= l and qr >= r) return tree[p].x;
-
-        int m = (l + r) / 2;
-        return query(ql, qr, tree[p].l, l, m) + query(ql, qr, tree[p].r, m + 1, r);
+        if (ql <= l and qr >= r) {
+            return tree[p].x;
+        } else {
+            int m = (l + r) / 2;
+            return query(ql, qr, tree[p].l, l, m) + query(ql, qr, tree[p].r, m + 1, r);
+        }
     }
 
 public:

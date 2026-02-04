@@ -1,9 +1,9 @@
 struct lazy_segment_tree {
 private:
     struct node {
-        int x, l, r, lazy;
+        int x, y, l, r;
 
-        node(int x = 0, int l = 0, int r = 0, int lazy = 0): x(x), l(l), r(r), lazy(lazy) {}
+        node(): x(0), y(0), l(0), r(0) {}
     };
 
     int n, root;
@@ -24,22 +24,22 @@ private:
     }
 
     void push(int p, int l, int r) {
-        if (tree[p].lazy == 0) return;
+        if (tree[p].y == 0) return;
 
-        tree[p].x += (r - l + 1) * tree[p].lazy;
+        tree[p].x += (r - l + 1) * tree[p].y;
         if (l != r) {
-            tree[tree[p].l].lazy += tree[p].lazy;
-            tree[tree[p].r].lazy += tree[p].lazy;
+            tree[tree[p].l].y += tree[p].y;
+            tree[tree[p].r].y += tree[p].y;
         }
-        tree[p].lazy = 0;
+        tree[p].y = 0;
     }
 
     void modify(int ql, int qr, int x, int p, int l, int r) {
-        if (not p or (ql > r or qr < l)) return;
+        if (ql > r or qr < l) return;
         push(p, l, r);
 
         if (ql <= l and qr >= r) {
-            tree[p].lazy += x;
+            tree[p].y += x;
             push(p, l, r);
         } else {
             int m = (l + r) / 2;
@@ -50,13 +50,15 @@ private:
     }
 
     int query(int ql, int qr, int p, int l, int r) {
-        if (not p or (ql > r or qr < l)) return 0;
+        if (ql > r or qr < l) return 0;
         push(p, l, r);
 
-        if (ql <= l and qr >= r) return tree[p].x;
-
-        int m = (l + r) / 2;
-        return query(ql, qr, tree[p].l, l, m) + query(ql, qr, tree[p].r, m + 1, r);
+        if (ql <= l and qr >= r) {
+            return tree[p].x;
+        } else {
+            int m = (l + r) / 2;
+            return query(ql, qr, tree[p].l, l, m) + query(ql, qr, tree[p].r, m + 1, r);
+        }
     }
 
 public:
