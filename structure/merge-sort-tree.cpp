@@ -4,31 +4,25 @@ private:
         list<int> a;
         int l, r;
 
-        node(list<int> a = {}, int l = 0, int r = 0): a(move(a)), l(l), r(r) {}
+        node(int l = 0, int r = 0): l(l), r(r) {}
     };
 
     int n, root;
     list<node> tree;
 
-    int terminal(int x) {
-        int i = tree.size();
-        tree.push_back(node({x}));
-        return i;
-    }
-
-    int internal(int l, int r) {
-        int i = tree.size();
-        list<int> a; a.reserve(tree[l].a.size() + tree[r].a.size());
-        merge(tree[l].a.begin(), tree[l].a.end(), tree[r].a.begin(), tree[r].a.end(), back_inserter(a));
-        tree.push_back(node(move(a), l, r));
-        return i;
-    }
-
     int build(list<int> &a, int l, int r) {
-        if (l == r) return terminal(a[l]);
-
-        int m = (l + r) / 2;
-        return internal(build(a, l, m), build(a, m + 1, r));
+        int p = tree.size();
+        tree.push_back(node());
+        if (l == r) {
+            tree[p].a = {a[l]};
+        } else {
+            int m = (l + r) / 2;
+            tree[p].l = build(a, l, m);
+            tree[p].r = build(a, m + 1, r);
+            tree[p].a.resize(tree[tree[p].l].a.size() + tree[tree[p].r].a.size());
+            merge(tree[tree[p].l].a.begin(), tree[tree[p].l].a.end(), tree[tree[p].r].a.begin(), tree[tree[p].r].a.end(), tree[p].a.begin());
+        }
+        return p;
     }
 
     int count_less_equal(int ql, int qr, int x, int p, int l, int r) {
