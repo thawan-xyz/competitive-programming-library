@@ -1,10 +1,10 @@
 struct heavy_light_decomposition {
     int n, t;
-    array<array<int>> &g;
-    array<int> p, s, d, h, l;
+    list<list<int>> &g;
+    list<int> p, s, d, h, l;
     segment_tree q;
 
-    heavy_light_decomposition(array<array<int>> &g, int r = 1): n(g.size() - 1), t(0), g(g), p(n + 1), s(n + 1), d(n + 1), h(n + 1), l(n + 1), q(n + 1) {
+    heavy_light_decomposition(list<list<int>> &g, int r = 1): n(g.size() - 1), t(0), g(g), p(n + 1), s(n + 1), d(n + 1), h(n + 1), l(n + 1), q(n + 1) {
         d[r] = 1;
         dfs(r);
         h[r] = r;

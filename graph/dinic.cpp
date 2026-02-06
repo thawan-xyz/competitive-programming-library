@@ -6,8 +6,8 @@ struct dinic {
     };
 
     int n;
-    array<array<edge>> g;
-    array<int> l, p;
+    list<list<edge>> g;
+    list<int> l, p;
 
     dinic(int n): n(n), g(n), l(n), p(n) {}
 
