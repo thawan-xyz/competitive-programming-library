@@ -40,7 +40,7 @@ public:
                 int b = trie[a].next[c];
                 if (b) {
                     trie[b].fail = trie[trie[a].fail].next[c];
-                    trie[b].end.insert(trie[b].end.end(), trie[trie[b].fail].end.begin(), trie[trie[b].fail].end.end());
+                    trie[b].end += trie[trie[b].fail].end;
                     q.push(b);
                 } else {
                     trie[a].next[c] = trie[trie[a].fail].next[c];
