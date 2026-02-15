@@ -1,33 +1,29 @@
-using matrix = array<array<int>>;
+using matrix = list<list<int>>;
 
-matrix product(matrix &a, matrix &b) {
+matrix operator*(const matrix &a, const matrix &b) {
     int n = a.size();
     int m = b[0].size();
-    int s = a[0].size();
-
-    matrix c(n, array<int>(m));
+    int h = b.size();
+    matrix r(n, list<int>(m));
     for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            for (int k = 0; k < s; ++k) {
-                c[i][j] += (a[i][k] * b[k][j]) % mod;
-                c[i][j] %= mod;
+        for (int k = 0; k < h; ++k) {
+            for (int j = 0; j < m; ++j) {
+                r[i][j] += (a[i][k] * b[k][j]) % mod;
+                r[i][j] %= mod;
             }
         }
     }
-    return c;
+    return r;
 }
 
-matrix pow(matrix &b, int e) {
-    int n = b.size();
-
-    matrix a(n, array<int>(n));
-    for (int i = 0; i < n; ++i) a[i][i] = 1;
-
-    while (e) {
-        if (e & 1) a = product(a, b);
-
-        b = product(b, b);
-        e >>= 1;
+matrix operator^(matrix a, int b) {
+    int n = a.size();
+    matrix r(n, list<int>(n));
+    for (int i = 0; i < n; ++i) r[i][i] = 1;
+    while (b != 0) {
+        if (b & 1) r = r * a;
+        a = a * a;
+        b >>= 1;
     }
-    return a;
+    return r;
 }
