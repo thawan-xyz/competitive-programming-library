@@ -8,8 +8,7 @@ matrix operator*(const matrix &a, const matrix &b) {
     for (int i = 0; i < n; ++i) {
         for (int k = 0; k < h; ++k) {
             for (int j = 0; j < m; ++j) {
-                r[i][j] += (a[i][k] * b[k][j]) % mod;
-                r[i][j] %= mod;
+                r[i][j] = (r[i][j] + a[i][k] * b[k][j]) % mod;
             }
         }
     }
