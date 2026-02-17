@@ -1,5 +1,5 @@
 int hilbert(int i, int j) {
-    static const array<int> d = {3, 0, 0, 1};
+    static const array<int, 4> d = {3, 0, 0, 1};
 
     int h = 0, b = 1 << 20, r = 0;
     while (b) {
@@ -28,16 +28,16 @@ struct query {
 
 struct mo {
     int n, q, i, j, t;
-    array<int> &a;
+    list<int> &a;
 
     void insert(int k) {}
 
     void remove(int k) {}
 
-    array<int> answer;
-    array<query> queries;
+    list<int> answer;
+    list<query> queries;
 
-    mo(array<int> &a, int q): n(a.size()), q(q), i(0), j(-1), t(0), a(a) {
+    mo(list<int> &a, int q): n(a.size()), q(q), i(0), j(-1), t(0), a(a) {
         answer.resize(q);
         queries.reserve(q);
     }
