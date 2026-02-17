@@ -2,9 +2,9 @@ int hilbert(int i, int j) {
     static const array<int, 4> d = {3, 0, 0, 1};
 
     int h = 0, b = 1 << 20, r = 0;
-    while (b) {
-        int x = (i & b) != 0;
-        int y = (j & b) != 0;
+    while (b != 0) {
+        bool x = (i & b) != 0;
+        bool y = (j & b) != 0;
         int q = (((x << 1) | y) + r) & 3;
 
         h = (h << 2) | q;
