@@ -36,12 +36,14 @@ struct mo {
     list<int> run(list<int> &a, list<query> &q) {
         list<int> answer(q.size());
         sort(q.begin(), q.end());
+
         int i = 0, j = -1;
         for (auto &[l, r, k, h] : q) {
             while (i > l) insert(--i, a);
             while (j < r) insert(++j, a);
             while (i < l) remove(i++, a);
             while (j > r) remove(j--, a);
+
             answer[k] = t;
         }
         return answer;
