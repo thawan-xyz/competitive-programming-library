@@ -15,9 +15,9 @@ int hilbert(int i, int j) {
 }
 
 struct query {
-    int l, r, k, h;
+    int l, r, i, h;
 
-    query(int l, int r, int k): l(l), r(r), k(k) {
+    query(int l, int r, int i): l(l), r(r), i(i) {
         h = hilbert(l, r);
     }
 
@@ -27,30 +27,23 @@ struct query {
 };
 
 struct mo {
-    int n, t = 0;
-    int i = 0, j = -1;
-    list<int> a;
+    int t = 0;
 
-    void insert(int k) {}
+    void insert(int i, list<int> &a) {}
 
-    void remove(int k) {}
+    void remove(int i, list<int> &a) {}
 
-    list<int> answer;
-    list<query> queries;
-
-    mo(list<int> a, int q): n(a.size()), a(move(a)) {
-        answer.resize(q);
-        queries.reserve(q);
-    }
-
-    void run() {
-        sort(queries.begin(), queries.end());
-        for (auto &[l, r, k, h] : queries) {
-            while (i > l) insert(--i);
-            while (j < r) insert(++j);
-            while (i < l) remove(i++);
-            while (j > r) remove(j--);
+    list<int> run(list<int> &a, list<query> &q) {
+        list<int> answer(q.size());
+        sort(q.begin(), q.end());
+        int i = 0, j = -1;
+        for (auto &[l, r, k, h] : q) {
+            while (i > l) insert(--i, a);
+            while (j < r) insert(++j, a);
+            while (i < l) remove(i++, a);
+            while (j > r) remove(j--, a);
             answer[k] = t;
         }
+        return answer;
     }
 };
