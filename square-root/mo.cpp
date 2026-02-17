@@ -27,8 +27,9 @@ struct query {
 };
 
 struct mo {
-    int n, q, i, j, t;
-    list<int> &a;
+    int n, t = 0;
+    int i = 0, j = -1;
+    list<int> a;
 
     void insert(int k) {}
 
@@ -37,20 +38,18 @@ struct mo {
     list<int> answer;
     list<query> queries;
 
-    mo(list<int> &a, int q): n(a.size()), q(q), i(0), j(-1), t(0), a(a) {
+    mo(list<int> a, int q): n(a.size()), a(move(a)) {
         answer.resize(q);
         queries.reserve(q);
     }
 
     void run() {
         sort(queries.begin(), queries.end());
-
-        for (auto &[l, r, k, _] : queries) {
+        for (auto &[l, r, k, h] : queries) {
             while (i > l) insert(--i);
             while (j < r) insert(++j);
             while (i < l) remove(i++);
             while (j > r) remove(j--);
-
             answer[k] = t;
         }
     }
