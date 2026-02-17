@@ -29,9 +29,9 @@ struct query {
 struct mo {
     int t = 0;
 
-    void insert(int i, list<int> &a) {}
+    void insert(int x) {}
 
-    void remove(int i, list<int> &a) {}
+    void remove(int x) {}
 
     list<int> run(list<int> &a, list<query> &q) {
         list<int> answer(q.size());
@@ -39,10 +39,10 @@ struct mo {
 
         int i = 0, j = -1;
         for (auto &[l, r, k, h] : q) {
-            while (i > l) insert(--i, a);
-            while (j < r) insert(++j, a);
-            while (i < l) remove(i++, a);
-            while (j > r) remove(j--, a);
+            while (i > l) insert(a[--i]);
+            while (j < r) insert(a[++j]);
+            while (i < l) remove(a[i++]);
+            while (j > r) remove(a[j--]);
 
             answer[k] = t;
         }
