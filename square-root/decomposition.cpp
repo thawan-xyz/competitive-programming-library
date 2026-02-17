@@ -1,8 +1,8 @@
-struct block_decomposition {
+struct decomposition {
     int n, m;
     list<int> a, b;
 
-    block_decomposition(list<int> &base) {
+    decomposition(list<int> &base) {
         n = base.size();
         m = max<int>(1, sqrt(n));
         a.resize(n);
