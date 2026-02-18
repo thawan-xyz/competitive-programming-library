@@ -33,7 +33,7 @@ pair<bool, list<int>> shortest_path_faster_algorithm(int s, int n, list<list<pai
         for (auto &[b, w] : g[a]) if (d[a] + w < d[b]) {
             d[b] = d[a] + w;
             if (not in[b]) {
-                if (++c[b] == n) return {true, d};
+                if (++c[b] >= n) return {true, d};
                 q.push(b);
                 in[b] = true;
             }
