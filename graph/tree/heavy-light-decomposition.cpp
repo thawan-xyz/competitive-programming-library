@@ -1,31 +1,32 @@
 struct heavy_light_decomposition {
-    int n, t;
+    int n, timer = 0;
     list<list<int>> &g;
-    list<int> p, s, d, h, l;
-    segment_tree q;
+    list<int> p, d, h;
+    segment_tree s;
+    list<int> size, id;
 
-    heavy_light_decomposition(list<list<int>> &g, int r = 1): n(g.size() - 1), t(0), g(g), p(n + 1), s(n + 1), d(n + 1), h(n + 1), l(n + 1), q(n + 1) {
-        d[r] = 1;
-        dfs(r);
-        h[r] = r;
-        decompose(r);
+    heavy_light_decomposition(list<list<int>> &g, int root = 1): n(g.size()), g(g), p(n), d(n), h(n), s(n), size(n), id(n) {
+        d[root] = 1;
+        dfs(root);
+        h[root] = root;
+        decompose(root);
     }
 
     void dfs(int a) {
-        s[a] = 1;
+        size[a] = 1;
         for (int &b : g[a]) if (b != p[a]) {
             p[b] = a;
             d[b] = d[a] + 1;
             dfs(b);
-            s[a] += s[b];
-            if (g[a][0] == p[a] or s[b] > s[g[a][0]]) {
+            size[a] += size[b];
+            if (g[a][0] == p[a] or size[b] > size[g[a][0]]) {
                 swap(g[a][0], b);
             }
         }
     }
 
     void decompose(int a) {
-        l[a] = ++t;
+        id[a] = ++timer;
         for (int b : g[a]) if (b != p[a]) {
             if (b == g[a][0]) {
                 h[b] = h[a];
@@ -37,14 +38,26 @@ struct heavy_light_decomposition {
     }
 
     int query(int a, int b) {
-        int r = q.neutral;
+        int l = s.neutral;
+        int r = s.neutral;
         while (h[a] != h[b]) {
-            if (d[h[a]] < d[h[b]]) swap(a, b);
-            r = q.combine(r, q.query(l[h[a]], l[a]));
-            a = p[h[a]];
+            if (d[h[a]] > d[h[b]]) {
+                l = s.combine(l, s.query(id[h[a]], id[a]));
+                a = p[h[a]];
+            } else {
+                r = s.combine(s.query_reverse(id[h[b]], id[b]), r);
+                b = p[h[b]];
+            }
         }
-        if (d[a] > d[b]) swap(a, b);
-        r = q.combine(r, q.query(l[a], l[b]));
-        return r;
+        if (d[a] > d[b]) {
+            l = s.combine(l, s.query(id[b], id[a]));
+        } else {
+            r = s.combine(s.query_reverse(id[a], id[b]), r);
+        }
+        return s.combine(l, r);
+    }
+
+    void modify(int a, int x) {
+        s.modify(id[a], x);
     }
 };

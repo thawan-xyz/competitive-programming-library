@@ -1,11 +1,11 @@
 struct binary_lifting {
     int n, log;
-    list<list<int>> &graph;
-    list<int> depth;
+    list<list<int>> &g;
+    list<int> d;
     list<list<int>> up;
 
-    binary_lifting(list<list<int>> &graph, int root = 1): n(graph.size() - 1), log(32 - __builtin_clz(n + 1)), graph(graph), depth(n + 1), up(n + 1, list<int>(log + 1)) {
-        depth[root] = 0;
+    binary_lifting(list<list<int>> &g, int root = 1): n(g.size()), log(32 - __builtin_clz(n)), g(g), d(n), up(n, list<int>(log + 1)) {
+        d[root] = 0;
         build(root, 0);
     }
 
@@ -15,14 +15,14 @@ struct binary_lifting {
             up[a][i] = up[up[a][i - 1]][i - 1];
         }
 
-        for (int b : graph[a]) if (b != p) {
-            depth[b] = depth[a] + 1;
+        for (int b : g[a]) if (b != p) {
+            d[b] = d[a] + 1;
             build(b, a);
         }
     }
 
     int kth_ancestor(int a, int k) {
-        if (depth[a] < k) return -1;
+        if (d[a] < k) return -1;
 
         for (int i = log; i >= 0; --i) {
             if (k & (1 << i)) {
@@ -33,8 +33,8 @@ struct binary_lifting {
     }
 
     int lowest_common_ancestor(int a, int b) {
-        if (depth[a] < depth[b]) swap(a, b);
-        a = kth_ancestor(a, depth[a] - depth[b]);
+        if (d[a] < d[b]) swap(a, b);
+        a = kth_ancestor(a, d[a] - d[b]);
 
         if (a == b) return a;
         for (int i = log; i >= 0; --i) {
