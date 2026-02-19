@@ -4,7 +4,7 @@ struct binary_lifting {
     list<int> d;
     list<list<int>> up;
 
-    binary_lifting(list<list<int>> &g, int root = 1): n(g.size()), log(32 - __builtin_clz(n)), g(g), d(n), up(n, list<int>(log + 1)) {
+    binary_lifting(list<list<int>> &g, int root = 1): n(g.size()), log(31 - __builtin_clz(n)), g(g), d(n), up(n, list<int>(log + 1)) {
         d[root] = 0;
         build(root, 0);
     }
