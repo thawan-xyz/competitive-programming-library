@@ -34,11 +34,12 @@ struct binary_lifting {
     int lowest_common_ancestor(int a, int b) {
         if (d[a] < d[b]) swap(a, b);
         a = kth_ancestor(a, d[a] - d[b]);
-
         if (a == b) return a;
+
         for (int i = log; i >= 0; --i) {
             if (up[a][i] != up[b][i]) {
-                a = up[a][i], b = up[b][i];
+                a = up[a][i];
+                b = up[b][i];
             }
         }
         return up[a][0];
