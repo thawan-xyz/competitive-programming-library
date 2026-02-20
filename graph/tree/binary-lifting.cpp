@@ -44,4 +44,14 @@ struct binary_lifting {
         }
         return up[a][0];
     }
+
+    int kth_node(int a, int b, int k) {
+        int lca = lowest_common_ancestor(a, b);
+        int l = d[a] - d[lca];
+        int r = d[b] - d[lca];
+        if (k > l + r) return -1;
+
+        if (k <= l) return kth_ancestor(a, k);
+        return kth_ancestor(b, r - (k - l));
+    }
 };
