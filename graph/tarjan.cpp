@@ -1,28 +1,28 @@
-list<list<int>> tarjan(list<list<int>> &graph) {
-    int n = graph.size() - 1, timer = 1;
+list<list<int>> tarjan(list<list<int>> &g) {
+    int n = g.size(), timer = 1;
     list<list<int>> components;
-    list<int> in(n + 1), low(n + 1);
+    list<int> id(n), low(n);
     stack<int> trail;
-    list<bool> inside(n + 1);
+    list<bool> in(n);
 
-    function<void(int)> dfs = [&](int a) -> void {
-        in[a] = low[a] = timer++;
+    auto dfs = [&](auto &&self, int a) -> void {
+        id[a] = low[a] = timer++;
         trail.push(a);
-        inside[a] = true;
-        for (int b : graph[a]) {
-            if (in[b] == 0) {
-                dfs(b);
+        in[a] = true;
+        for (int b : g[a]) {
+            if (id[b] == 0) {
+                self(self, b);
                 low[a] = min(low[a], low[b]);
-            } else if (inside[b]) {
-                low[a] = min(low[a], in[b]);
+            } else if (in[b]) {
+                low[a] = min(low[a], id[b]);
             }
         }
 
-        if (in[a] == low[a]) {
+        if (id[a] == low[a]) {
             list<int> component;
             while (true) {
                 int b = trail.top(); trail.pop();
-                inside[b] = false;
+                in[b] = false;
                 component.push_back(b);
                 if (b == a) break;
             }
@@ -30,7 +30,12 @@ list<list<int>> tarjan(list<list<int>> &graph) {
         }
     };
 
-    for (int i = 1; i <= n; ++i) if (in[i] == 0) dfs(i);
+    for (int i = 1; i < n; ++i) {
+        if (id[i] == 0) {
+            dfs(dfs, i);
+        }
+    }
+
     reverse(components.begin(), components.end());
     return components;
 }
