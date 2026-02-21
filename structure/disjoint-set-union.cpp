@@ -14,18 +14,22 @@ struct disjoint_set_union {
         return p[a] = find(p[a]);
     }
 
+    bool same(int a, int b) {
+        return find(a) == find(b);
+    }
+
     void unite(int a, int b) {
+        if (same(a, b)) return;
         a = find(a);
         b = find(b);
-        if (a == b) return;
         if (s[a] < s[b]) swap(a, b);
         p[b] = a;
         s[a] += s[b];
     }
 
     void move(int a, int b) {
+        if (same(a, b)) return;
         b = find(b);
-        if (find(a) == b) return;
         s[find(a)]--;
         s[b]++;
         p[a] = b;
