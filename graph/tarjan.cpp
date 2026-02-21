@@ -1,4 +1,4 @@
-list<list<int>> tarjan(list<list<int>> &g, int one) {
+list<list<int>> tarjan(list<list<int>> &g, bool one) {
     int n = g.size(), timer = 1;
     list<list<int>> components;
     list<int> id(n), low(n);
