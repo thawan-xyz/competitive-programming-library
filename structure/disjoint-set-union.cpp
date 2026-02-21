@@ -2,8 +2,8 @@ struct disjoint_set_union {
     list<int> p;
     list<int> s;
 
-    disjoint_set_union(int n): p(2 * n + 1), s(2 * n + 1) {
-        for (int i = 1; i <= n; ++i) {
+    disjoint_set_union(int n): p(2 * n), s(2 * n) {
+        for (int i = 0; i < n; ++i) {
             p[i] = n + i;
             s[n + i] = 1;
         }
