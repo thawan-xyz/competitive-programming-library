@@ -1,4 +1,4 @@
-list<list<int>> tarjan(list<list<int>> &g) {
+list<list<int>> tarjan(list<list<int>> &g, int one) {
     int n = g.size(), timer = 1;
     list<list<int>> components;
     list<int> id(n), low(n);
@@ -30,7 +30,7 @@ list<list<int>> tarjan(list<list<int>> &g) {
         }
     };
 
-    for (int i = 1; i < n; ++i) {
+    for (int i = one; i < n; ++i) {
         if (id[i] == 0) {
             dfs(dfs, i);
         }
