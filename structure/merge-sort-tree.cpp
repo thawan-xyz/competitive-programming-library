@@ -1,10 +1,8 @@
-struct segment_tree {
+struct merge_sort_tree {
 private:
     struct node {
+        int l = 0, r = 0;
         list<int> a;
-        int l, r;
-
-        node(int l = 0, int r = 0): l(l), r(r) {}
     };
 
     int n, root;
@@ -12,7 +10,7 @@ private:
 
     int build(list<int> &a, int l, int r) {
         int p = tree.size();
-        tree.push_back(node());
+        tree.emplace_back();
         if (l == r) {
             tree[p].a = {a[l]};
         } else {
@@ -26,8 +24,7 @@ private:
     }
 
     int count_less_equal(int ql, int qr, int x, int p, int l, int r) {
-        if (not p or (ql > r or qr < l)) return 0;
-
+        if (ql > r or qr < l) return 0;
         if (ql <= l and qr >= r) return upper_bound(tree[p].a.begin(), tree[p].a.end(), x) - tree[p].a.begin();
 
         int m = (l + r) / 2;
@@ -35,8 +32,9 @@ private:
     }
 
 public:
-    segment_tree(list<int> &a): n(a.size()), tree(1) {
+    merge_sort_tree(list<int> &a): n(a.size()) {
         tree.reserve(2 * n);
+        tree.emplace_back();
         root = build(a, 0, n - 1);
     }
 
