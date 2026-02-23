@@ -5,10 +5,11 @@ struct trie {
         array<int, 26> child = {};
     };
 
-    int id;
     list<node> tree;
 
-    trie(): id(1), tree(1) {}
+    trie() {
+        tree.emplace_back();
+    }
 
     void insert(str &s) {
         int n = 0;
@@ -16,8 +17,8 @@ struct trie {
 
         for (char &c : s) {
             if (not tree[n].child[c - 'a']) {
-                tree.push_back(node());
-                tree[n].child[c - 'a'] = id++;
+                tree[n].child[c - 'a'] = tree.size();
+                tree.emplace_back();
             }
             n = tree[n].child[c - 'a'];
             tree[n].prefix++;
