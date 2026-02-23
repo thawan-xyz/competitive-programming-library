@@ -1,4 +1,4 @@
-list<list<int>> tarjan(list<list<int>> &g, bool one_based) {
+list<list<int>> tarjan(list<list<int>> &g, int one_based) {
     int n = g.size(), timer = 1;
     list<list<int>> components;
     list<int> id(n), low(n);
@@ -40,7 +40,7 @@ list<list<int>> tarjan(list<list<int>> &g, bool one_based) {
     return components;
 }
 
-pair<list<list<int>>, list<int>> condensed_graph(list<list<int>> &g, bool one_based) {
+pair<list<list<int>>, list<int>> condensed_graph(list<list<int>> &g, int one_based) {
     int n = g.size();
     list<list<int>> components = tarjan(g, one_based);
     int m = components.size();
