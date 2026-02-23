@@ -1,9 +1,8 @@
 struct lazy_segment_tree {
 private:
     struct node {
-        int x, y, l, r;
-
-        node(): x(0), y(0), l(0), r(0) {}
+        int x = 0, y = 0;
+        int l = 0, r = 0;
     };
 
     int n, root;
@@ -11,7 +10,7 @@ private:
 
     int build(list<int> &a, int l, int r) {
         int p = tree.size();
-        tree.push_back(node());
+        tree.emplace_back();
         if (l == r) {
             tree[p].x = a[l];
         } else {
@@ -62,8 +61,9 @@ private:
     }
 
 public:
-    lazy_segment_tree(int n): n(n), tree(1) {
+    lazy_segment_tree(int n): n(n) {
         tree.reserve(2 * n);
+        tree.emplace_back();
     }
 
     void build(list<int> &a) {
