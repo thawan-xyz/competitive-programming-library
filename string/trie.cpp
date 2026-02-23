@@ -1,10 +1,8 @@
 struct trie {
     struct node {
-        bool end;
-        int prefix;
+        int prefix = 0;
+        int end = 0;
         array<int, 26> child = {};
-
-        node(): end(false), prefix(0) {}
     };
 
     int id;
@@ -24,7 +22,7 @@ struct trie {
             n = tree[n].child[c - 'a'];
             tree[n].prefix++;
         }
-        tree[n].end = true;
+        tree[n].end++;
     }
 
     void remove(str &s) {
@@ -39,15 +37,17 @@ struct trie {
             path.push_back(n);
         }
 
-        if (not tree[n].end) return;
-        tree[n].end = false;
+        if (tree[n].end == 0) return;
+        tree[n].end--;
 
         for (int i = path.size() - 1; i >= 1; --i) {
             n = path[i];
             tree[n].prefix--;
 
             int p = path[i - 1];
-            if (tree[n].prefix == 0) tree[p].child[s[i - 1] - 'a'] = 0;
+            if (tree[n].prefix == 0) {
+                tree[p].child[s[i - 1] - 'a'] = 0;
+            }
         }
         tree[0].prefix--;
     }
@@ -61,7 +61,7 @@ struct trie {
             }
             n = tree[n].child[c - 'a'];
         }
-        return tree[n].end;
+        return tree[n].end != 0;
     }
 
     list<str> complete(str &s) {
@@ -79,7 +79,7 @@ struct trie {
     }
 
     void dfs(int n, str &s, list<str> &r) {
-        if (tree[n].end) {
+        if (tree[n].end != 0) {
             r.push_back(s);
         }
 
