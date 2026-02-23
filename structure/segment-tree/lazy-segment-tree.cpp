@@ -25,9 +25,11 @@ private:
     void push(int p, int l, int r) {
         if (tree[p].y == 0) return;
 
-        tree[p].x += (r - l + 1) * tree[p].y;
         if (l != r) {
+            int m = (l + r) / 2;
+            tree[tree[p].l].x += (m - l + 1) * tree[p].y;
             tree[tree[p].l].y += tree[p].y;
+            tree[tree[p].r].x += (r - m) * tree[p].y;
             tree[tree[p].r].y += tree[p].y;
         }
         tree[p].y = 0;
@@ -35,12 +37,12 @@ private:
 
     void modify(int ql, int qr, int x, int p, int l, int r) {
         if (ql > r or qr < l) return;
-        push(p, l, r);
 
         if (ql <= l and qr >= r) {
+            tree[p].x += (r - l + 1) * x;
             tree[p].y += x;
-            push(p, l, r);
         } else {
+            push(p, l, r);
             int m = (l + r) / 2;
             modify(ql, qr, x, tree[p].l, l, m);
             modify(ql, qr, x, tree[p].r, m + 1, r);
@@ -50,11 +52,11 @@ private:
 
     int query(int ql, int qr, int p, int l, int r) {
         if (ql > r or qr < l) return 0;
-        push(p, l, r);
 
         if (ql <= l and qr >= r) {
             return tree[p].x;
         } else {
+            push(p, l, r);
             int m = (l + r) / 2;
             return query(ql, qr, tree[p].l, l, m) + query(ql, qr, tree[p].r, m + 1, r);
         }
