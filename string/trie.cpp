@@ -29,7 +29,6 @@ struct trie {
     void remove(str &s) {
         int i = 0;
         list<int> path = {0};
-
         for (char c : s) {
             int j = c - 'a';
             if (tree[i].child[j] == 0) {
@@ -38,7 +37,6 @@ struct trie {
             i = tree[i].child[j];
             path.push_back(i);
         }
-
         if (tree[i].end == 0) return;
         tree[i].end--;
 
