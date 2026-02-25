@@ -1,66 +1,54 @@
 struct segment_tree {
 private:
-    struct node {
-        int x, l, r;
+    int n;
+    list<int> tree;
 
-        node(): x(0), l(0), r(0) {}
-    };
-
-    int n, root;
-    list<node> tree;
-
-    int build(list<int> &a, int l, int r) {
-        int p = tree.size();
-        tree.push_back(node());
+    void build(list<int> &a, int p, int l, int r) {
         if (l == r) {
-            tree[p].x = a[l];
+            tree[p] = a[l];
         } else {
             int m = (l + r) / 2;
-            tree[p].l = build(a, l, m);
-            tree[p].r = build(a, m + 1, r);
-            tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
+            build(a, 2 * p, l, m);
+            build(a, (2 * p) + 1, m + 1, r);
+            tree[p] = tree[2 * p] + tree[(2 * p) + 1];
         }
-        return p;
     }
 
-    void modify(int i, int x, int p, int l, int r) {
-        if (i > r or i < l) return;
-
+    void update(int i, int x, int p, int l, int r) {
         if (l == r) {
-            tree[p].x += x;
+            tree[p] += x;
         } else {
             int m = (l + r) / 2;
-            modify(i, x, tree[p].l, l, m);
-            modify(i, x, tree[p].r, m + 1, r);
-            tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
+            if (i <= m) update(i, x, 2 * p, l, m);
+            if (i > m) update(i, x, (2 * p) + 1, m + 1, r);
+            tree[p] = tree[2 * p] + tree[(2 * p) + 1];
         }
     }
 
     int query(int ql, int qr, int p, int l, int r) {
-        if (ql > r or qr < l) return 0;
-
-        if (ql <= l and qr >= r) {
-            return tree[p].x;
+        if (ql <= l and r <= qr) {
+            return tree[p];
         } else {
             int m = (l + r) / 2;
-            return query(ql, qr, tree[p].l, l, m) + query(ql, qr, tree[p].r, m + 1, r);
+            int answer = 0;
+            if (ql <= m) answer += query(ql, qr, 2 * p, l, m);
+            if (qr > m) answer += query(ql, qr, (2 * p) + 1, m + 1, r);
+            return answer;
         }
     }
 
 public:
-    segment_tree(int n): n(n), tree(1) {
-        tree.reserve(2 * n);
+    segment_tree(int n): n(n), tree(4 * n) {}
+
+    segment_tree(list<int> &a): n(a.size()), tree(4 * n) {
+        build(a, 1, 0, n - 1);
     }
 
-    void build(list<int> &a) {
-        root = build(a, 0, n - 1);
-    }
-
-    void modify(int i, int x) {
-        modify(i, x, root, 0, n - 1);
+    void update(int i, int x) {
+        update(i, x, 1, 0, n - 1);
     }
 
     int query(int l, int r) {
-        return query(l, r, root, 0, n - 1);
+        return query(l, r, 1, 0, n - 1);
     }
 };

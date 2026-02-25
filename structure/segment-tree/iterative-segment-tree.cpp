@@ -1,14 +1,16 @@
 struct iterative_segment_tree {
+private:
     int n;
     list<int> tree;
-
-    iterative_segment_tree(int n): n(n), tree(2 * n) {}
 
     int merge(int a, int b) {
         return a + b;
     }
 
-    void build(list<int> &a) {
+public:
+    iterative_segment_tree(int n): n(n), tree(2 * n) {}
+
+    iterative_segment_tree(list<int> &a): n(a.size()), tree(2 * n) {
         for (int i = 0; i < n; ++i) tree[n + i] = a[i];
         for (int i = n - 1; i > 0; --i) tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
     }

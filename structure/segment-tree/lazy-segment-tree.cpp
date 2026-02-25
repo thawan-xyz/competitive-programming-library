@@ -1,82 +1,69 @@
 struct lazy_segment_tree {
 private:
-    struct node {
-        int x = 0, y = 0;
-        int l = 0, r = 0;
-    };
+    int n;
+    list<int> tree;
+    list<int> lazy;
 
-    int n, root;
-    list<node> tree;
-
-    int build(list<int> &a, int l, int r) {
-        int p = tree.size();
-        tree.emplace_back();
+    void build(list<int> &a, int p, int l, int r) {
         if (l == r) {
-            tree[p].x = a[l];
+            tree[p] = a[l];
         } else {
             int m = (l + r) / 2;
-            tree[p].l = build(a, l, m);
-            tree[p].r = build(a, m + 1, r);
-            tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
+            build(a, 2 * p, l, m);
+            build(a, (2 * p) + 1, m + 1, r);
+            tree[p] = tree[2 * p] + tree[(2 * p) + 1];
         }
-        return p;
     }
 
     void push(int p, int l, int r) {
-        if (tree[p].y == 0) return;
-
-        if (l != r) {
+        if (lazy[p] != 0) {
             int m = (l + r) / 2;
-            tree[tree[p].l].x += (m - l + 1) * tree[p].y;
-            tree[tree[p].l].y += tree[p].y;
-            tree[tree[p].r].x += (r - m) * tree[p].y;
-            tree[tree[p].r].y += tree[p].y;
+            tree[2 * p] += lazy[p] * (m - l + 1);
+            lazy[2 * p] += lazy[p];
+            tree[(2 * p) + 1] += lazy[p] * (r - m);
+            lazy[(2 * p) + 1] += lazy[p];
+            lazy[p] = 0;
         }
-        tree[p].y = 0;
     }
 
-    void modify(int ql, int qr, int x, int p, int l, int r) {
-        if (ql > r or qr < l) return;
-
-        if (ql <= l and qr >= r) {
-            tree[p].x += (r - l + 1) * x;
-            tree[p].y += x;
+    void update(int ql, int qr, int x, int p, int l, int r) {
+        if (ql <= l and r <= qr) {
+            tree[p] += x * (r - l + 1);
+            lazy[p] += x;
         } else {
             push(p, l, r);
             int m = (l + r) / 2;
-            modify(ql, qr, x, tree[p].l, l, m);
-            modify(ql, qr, x, tree[p].r, m + 1, r);
-            tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
+            if (ql <= m) update(ql, qr, x, 2 * p, l, m);
+            if (qr > m) update(ql, qr, x, (2 * p) + 1, m + 1, r);
+            tree[p] = tree[2 * p] + tree[(2 * p) + 1];
         }
     }
 
     int query(int ql, int qr, int p, int l, int r) {
-        if (ql > r or qr < l) return 0;
-
-        if (ql <= l and qr >= r) {
-            return tree[p].x;
+        if (ql <= l and r <= qr) {
+            return tree[p];
         } else {
             push(p, l, r);
             int m = (l + r) / 2;
-            return query(ql, qr, tree[p].l, l, m) + query(ql, qr, tree[p].r, m + 1, r);
+            int answer = 0;
+            if (ql <= m) answer += query(ql, qr, 2 * p, l, m);
+            if (qr > m) answer += query(ql, qr, (2 * p) + 1, m + 1, r);
+            return answer;
         }
     }
 
 public:
-    lazy_segment_tree(int n): n(n) {
-        tree.reserve(2 * n);
-        tree.emplace_back();
+    lazy_segment_tree(int n): n(n), tree(4 * n), lazy(4 * n) {}
+
+    lazy_segment_tree(list<int> &a): n(a.size()), tree(4 * n), lazy(4 * n) {
+        build(a, 1, 0, n - 1);
     }
 
-    void build(list<int> &a) {
-        root = build(a, 0, n - 1);
-    }
-
-    void modify(int l, int r, int x) {
-        modify(l, r, x, root, 0, n - 1);
+    void update(int l, int r, int x) {
+        update(l, r, x, 1, 0, n - 1);
     }
 
     int query(int l, int r) {
-        return query(l, r, root, 0, n - 1);
+        return query(l, r, 1, 0, n - 1);
     }
 };
