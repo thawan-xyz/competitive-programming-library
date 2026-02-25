@@ -12,82 +12,82 @@ struct trie {
     }
 
     void insert(str &s) {
-        int n = 0;
+        int i = 0;
         tree[0].prefix++;
-
-        for (char &c : s) {
-            if (not tree[n].child[c - 'a']) {
-                tree[n].child[c - 'a'] = tree.size();
+        for (char c : s) {
+            int j = c - 'a';
+            if (tree[i].child[j] == 0) {
+                tree[i].child[j] = tree.size();
                 tree.emplace_back();
             }
-            n = tree[n].child[c - 'a'];
-            tree[n].prefix++;
+            i = tree[i].child[j];
+            tree[i].prefix++;
         }
-        tree[n].end++;
+        tree[i].end++;
     }
 
     void remove(str &s) {
-        int n = 0;
+        int i = 0;
         list<int> path = {0};
 
-        for (char &c : s) {
-            if (not tree[n].child[c - 'a']) {
+        for (char c : s) {
+            int j = c - 'a';
+            if (tree[i].child[j] == 0) {
                 return;
             }
-            n = tree[n].child[c - 'a'];
-            path.push_back(n);
+            i = tree[i].child[j];
+            path.push_back(i);
         }
 
-        if (tree[n].end == 0) return;
-        tree[n].end--;
+        if (tree[i].end == 0) return;
+        tree[i].end--;
 
-        for (int i = path.size() - 1; i >= 1; --i) {
-            n = path[i];
-            tree[n].prefix--;
+        for (int k = path.size() - 1; k >= 1; --k) {
+            i = path[k];
+            tree[i].prefix--;
 
-            int p = path[i - 1];
-            if (tree[n].prefix == 0) {
-                tree[p].child[s[i - 1] - 'a'] = 0;
+            int p = path[k - 1];
+            if (tree[i].prefix == 0) {
+                tree[p].child[s[k - 1] - 'a'] = 0;
             }
         }
         tree[0].prefix--;
     }
 
     bool search(str &s) {
-        int n = 0;
-
-        for (char &c : s) {
-            if (not tree[n].child[c - 'a']) {
+        int i = 0;
+        for (char c : s) {
+            int j = c - 'a';
+            if (tree[i].child[j] == 0) {
                 return false;
             }
-            n = tree[n].child[c - 'a'];
+            i = tree[i].child[j];
         }
-        return tree[n].end != 0;
+        return tree[i].end != 0;
     }
 
     list<str> complete(str &s) {
-        int n = 0;
+        int i = 0;
         list<str> r;
-
-        for (char &c : s) {
-            if (not tree[n].child[c - 'a']) {
+        for (char c : s) {
+            int j = c - 'a';
+            if (tree[i].child[j] == 0) {
                 return r;
             }
-            n = tree[n].child[c - 'a'];
+            i = tree[i].child[j];
         }
-        dfs(n, s, r);
+        dfs(i, s, r);
         return r;
     }
 
-    void dfs(int n, str &s, list<str> &r) {
-        if (tree[n].end != 0) {
+    void dfs(int i, str &s, list<str> &r) {
+        if (tree[i].end != 0) {
             r.push_back(s);
         }
-
-        for (int i = 0; i < 26; ++i) {
-            if (tree[n].child[i]) {
-                s.push_back(i + 'a');
-                dfs(tree[n].child[i], s, r);
+        for (int j = 0; j < 26; ++j) {
+            if (tree[i].child[j]) {
+                s.push_back(j + 'a');
+                dfs(tree[i].child[j], s, r);
                 s.pop_back();
             }
         }

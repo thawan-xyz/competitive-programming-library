@@ -17,39 +17,40 @@ public:
 
     void insert(str &s) {
         int i = 0;
-        for (char &c : s) {
-            if (trie[i].next[c - 'a'] == 0) {
-                trie[i].next[c - 'a'] = trie.size();
+        for (char c : s) {
+            int j = c - 'a';
+            if (trie[i].next[j] == 0) {
+                trie[i].next[j] = trie.size();
                 trie.emplace_back();
             }
-            i = trie[i].next[c - 'a'];
+            i = trie[i].next[j];
         }
         trie[i].end.push_back(s.size());
     }
 
     void build() {
         queue<int> q;
-        for (int c = 0; c < 26; ++c) {
-            int i = trie[0].next[c];
+        for (int j = 0; j < 26; ++j) {
+            int i = trie[0].next[j];
             if (i != 0) {
                 q.push(i);
             }
         }
-        while (q.size()) {
-            int a = q.front(); q.pop();
-            int f = trie[a].fail;
+        while (not q.empty()) {
+            int i = q.front(); q.pop();
+            int f = trie[i].fail;
             if (trie[f].end.empty()) {
-                trie[a].exit = trie[f].exit;
+                trie[i].exit = trie[f].exit;
             } else {
-                trie[a].exit = f;
+                trie[i].exit = f;
             }
-            for (int c = 0; c < 26; ++c) {
-                int b = trie[a].next[c];
-                if (b != 0) {
-                    trie[b].fail = trie[trie[a].fail].next[c];
-                    q.push(b);
+            for (int j = 0; j < 26; ++j) {
+                int c = trie[i].next[j];
+                if (c != 0) {
+                    trie[c].fail = trie[f].next[j];
+                    q.push(c);
                 } else {
-                    trie[a].next[c] = trie[trie[a].fail].next[c];
+                    trie[i].next[j] = trie[f].next[j];
                 }
             }
         }
