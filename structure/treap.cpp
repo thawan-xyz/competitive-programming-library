@@ -1,14 +1,16 @@
 struct treap {
 private:
     struct node {
-        int x, y, l, r, s;
-
-        node(int x = 0, int y = 0): x(x), y(y), l(0), r(0), s(1) {}
+        int x = 0, y = 0;
+        int l = 0, r = 0;
+        int s = 1;
     };
 
     int make(int x, int y) {
         int i = tree.size();
-        tree.push_back(node(x, y));
+        tree.emplace_back();
+        tree[i].x = x;
+        tree[i].y = y;
         return i;
     }
 
@@ -102,7 +104,9 @@ public:
     list<node> tree;
     int root;
 
-    treap(): tree(1), root(0) {}
+    treap() {
+        root = make(0, 0);
+    }
 
     void insert(int x) {
         int y = random;
@@ -117,7 +121,7 @@ public:
         return index(root, x);
     }
 
-    int operator[](int i) {
+    int kth(int i) {
         return kth(root, i);
     }
 
@@ -130,6 +134,7 @@ public:
 
         tree[i].l = unite(tree[i].l, l);
         tree[i].r = unite(tree[i].r, r);
+        update(i);
         return i;
     }
 };
