@@ -33,8 +33,8 @@ struct mo {
 
     void remove(int x) {}
 
-    list<int> run(list<int> &a, list<query> &q) {
-        list<int> answer(q.size());
+    vector<int> run(vector<int> &a, vector<query> &q) {
+        vector<int> answer(q.size());
         sort(q.begin(), q.end());
 
         int i = 0, j = -1;

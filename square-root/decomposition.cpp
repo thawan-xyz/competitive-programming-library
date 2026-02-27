@@ -1,8 +1,8 @@
 struct decomposition {
     int n, m;
-    list<int> a, b;
+    vector<int> a, b;
 
-    decomposition(list<int> &base) {
+    decomposition(vector<int> &base) {
         n = base.size();
         m = max<int>(1, sqrt(n));
         a.resize(n);
