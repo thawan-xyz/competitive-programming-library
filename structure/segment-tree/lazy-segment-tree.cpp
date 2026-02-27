@@ -1,10 +1,10 @@
 struct lazy_segment_tree {
 private:
     int n;
-    list<int> tree;
-    list<int> lazy;
+    vector<int> tree;
+    vector<int> lazy;
 
-    void build(list<int> &a, int p, int l, int r) {
+    void build(vector<int> &a, int p, int l, int r) {
         if (l == r) {
             tree[p] = a[l];
         } else {
@@ -55,7 +55,7 @@ private:
 public:
     lazy_segment_tree(int n): n(n), tree(4 * n), lazy(4 * n) {}
 
-    lazy_segment_tree(list<int> &a): n(a.size()), tree(4 * n), lazy(4 * n) {
+    lazy_segment_tree(vector<int> &a): n(a.size()), tree(4 * n), lazy(4 * n) {
         build(a, 1, 0, n - 1);
     }
 

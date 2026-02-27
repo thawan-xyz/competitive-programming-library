@@ -1,6 +1,6 @@
 struct disjoint_set_union {
-    list<int> p;
-    list<int> s;
+    vector<int> p;
+    vector<int> s;
 
     disjoint_set_union(int n): p(n), s(n) {
         for (int i = 0; i < n; ++i) {

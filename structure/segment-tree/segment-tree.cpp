@@ -1,9 +1,9 @@
 struct segment_tree {
 private:
     int n;
-    list<int> tree;
+    vector<int> tree;
 
-    void build(list<int> &a, int p, int l, int r) {
+    void build(vector<int> &a, int p, int l, int r) {
         if (l == r) {
             tree[p] = a[l];
         } else {
@@ -40,7 +40,7 @@ private:
 public:
     segment_tree(int n): n(n), tree(4 * n) {}
 
-    segment_tree(list<int> &a): n(a.size()), tree(4 * n) {
+    segment_tree(vector<int> &a): n(a.size()), tree(4 * n) {
         build(a, 1, 0, n - 1);
     }
 

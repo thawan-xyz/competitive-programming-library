@@ -1,6 +1,6 @@
 struct sparse_table {
     int n;
-    list<list<int>> table;
+    vector<vector<int>> table;
 
     static int log2(int x) {
         return __lg(x);
@@ -10,13 +10,13 @@ struct sparse_table {
         return 1 << x;
     }
 
-    sparse_table(int n): n(n), table(n, list<int>(log2(n) + 1)) {}
+    sparse_table(int n): n(n), table(n, vector<int>(log2(n) + 1)) {}
 
     int merge(int x, int y) {
         return gcd(x, y);
     }
 
-    void build(list<int> &a) {
+    void build(vector<int> &a) {
         for (int i = 0; i < n; ++i) {
             table[i][0] = a[i];
         }

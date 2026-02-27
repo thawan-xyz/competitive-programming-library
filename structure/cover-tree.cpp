@@ -1,9 +1,9 @@
 struct cover_tree {
 private:
     int n;
-    list<int> x;
-    list<int> count;
-    list<int> len;
+    vector<int> x;
+    vector<int> count;
+    vector<int> len;
 
     void modify(int ql, int qr, int v, int p, int l, int r) {
         if (ql <= l and r <= qr) {
@@ -26,7 +26,7 @@ private:
     }
 
 public:
-    cover_tree(list<int> &x): n(x.size()), x(x), count(4 * n), len(4 * n) {}
+    cover_tree(vector<int> &x): n(x.size()), x(x), count(4 * n), len(4 * n) {}
 
     void modify(int l, int r, int v) {
         modify(l, r, v, 1, 0, n - 1);

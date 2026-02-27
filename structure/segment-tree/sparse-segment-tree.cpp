@@ -6,7 +6,7 @@ private:
     };
 
     array<int, 3> root;
-    list<node> tree;
+    vector<node> tree;
 
     int modify(int i, int x, int p, int l, int r) {
         if (i < l or r < i) return p;

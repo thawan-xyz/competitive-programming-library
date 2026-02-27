@@ -5,15 +5,15 @@ struct sparse_binary_indexed_tree {
     };
 
     int n;
-    list<int> is;
-    list<list<int>> js;
-    list<binary_indexed_tree> tree;
+    vector<int> is;
+    vector<vector<int>> js;
+    vector<binary_indexed_tree> tree;
 
     static int lsb(int i) {
         return i & -i;
     }
 
-    static void compress(list<int> &a) {
+    static void compress(vector<int> &a) {
         sort(a.begin(), a.end());
         a.erase(unique(a.begin(), a.end()), a.end());
     }
@@ -26,7 +26,7 @@ struct sparse_binary_indexed_tree {
         return lower_bound(js[i].begin(), js[i].end(), j) - js[i].begin();
     }
 
-    sparse_binary_indexed_tree(list<query> &q) {
+    sparse_binary_indexed_tree(vector<query> &q) {
         for (auto &[t, i, j] : q) {
             is.push_back(i);
         }

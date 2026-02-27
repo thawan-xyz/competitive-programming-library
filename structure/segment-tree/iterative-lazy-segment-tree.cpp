@@ -1,7 +1,7 @@
 struct iterative_lazy_segment_tree {
 private:
     int n, h;
-    list<int> tree, lazy;
+    vector<int> tree, lazy;
 
     int merge(int a, int b) {
         return a + b;
@@ -37,7 +37,7 @@ private:
 public:
     iterative_lazy_segment_tree(int n): n(n), h(32 - __builtin_clz(n)), tree(2 * n), lazy(n) {}
 
-    iterative_lazy_segment_tree(list<int> &a): n(a.size()), h(32 - __builtin_clz(n)), tree(2 * n), lazy(n) {
+    iterative_lazy_segment_tree(vector<int> &a): n(a.size()), h(32 - __builtin_clz(n)), tree(2 * n), lazy(n) {
         for (int i = 0; i < n; ++i) tree[n + i] = a[i];
         for (int i = n - 1; i > 0; --i) tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
     }

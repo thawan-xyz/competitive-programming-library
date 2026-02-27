@@ -101,7 +101,7 @@ private:
     }
 
 public:
-    list<node> tree;
+    vector<node> tree;
     int root;
 
     treap() {

@@ -2,13 +2,13 @@ struct merge_sort_tree {
 private:
     struct node {
         int l = 0, r = 0;
-        list<int> a;
+        vector<int> a;
     };
 
     int n, root;
-    list<node> tree;
+    vector<node> tree;
 
-    int build(list<int> &a, int l, int r) {
+    int build(vector<int> &a, int l, int r) {
         int p = tree.size();
         tree.emplace_back();
         if (l == r) {
@@ -32,7 +32,7 @@ private:
     }
 
 public:
-    merge_sort_tree(list<int> &a): n(a.size()) {
+    merge_sort_tree(vector<int> &a): n(a.size()) {
         tree.reserve(2 * n);
         tree.emplace_back();
         root = build(a, 0, n - 1);
