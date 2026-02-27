@@ -5,7 +5,7 @@ struct hasher {
     int n;
     array<vector<int>, 2> pow, pref, suf;
 
-    hasher(str &s): n(s.length()) {
+    hasher(string &s): n(s.length()) {
         for (int k = 0; k < 2; ++k) {
             pow[k].assign(n + 1, 1);
             pref[k].assign(n + 1, 0);

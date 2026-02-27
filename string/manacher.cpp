@@ -1,5 +1,5 @@
-str pre_process(str &s) {
-    str t = "#";
+string pre_process(string &s) {
+    string t = "#";
     for (char &c : s) {
         t.push_back(c);
         t.push_back('#');
@@ -7,8 +7,8 @@ str pre_process(str &s) {
     return t;
 }
 
-vector<int> manacher(str &s) {
-    str t = '^' + pre_process(s) + '$';
+vector<int> manacher(string &s) {
+    string t = '^' + pre_process(s) + '$';
     int n = t.length();
 
     vector<int> p(n);
@@ -29,7 +29,7 @@ vector<int> manacher(str &s) {
     return p;
 }
 
-str longest_palindrome(str &s) {
+string longest_palindrome(string &s) {
     vector<int> p = manacher(s);
     int n = p.size();
 
@@ -43,7 +43,7 @@ str longest_palindrome(str &s) {
     return s.substr(k, l);
 }
 
-int count_palindromes(str &s) {
+int count_palindromes(string &s) {
     vector<int> p = manacher(s);
     int n = p.size();
 

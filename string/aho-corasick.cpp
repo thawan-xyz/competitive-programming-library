@@ -15,7 +15,7 @@ public:
         trie.emplace_back();
     }
 
-    void insert(str &s) {
+    void insert(string &s) {
         int i = 0;
         for (char c : s) {
             int j = c - 'a';
@@ -56,7 +56,7 @@ public:
         }
     }
 
-    vector<int> match(str &t) {
+    vector<int> match(string &t) {
         vector<int> p;
         int n = t.length();
         for (int i = 0, k = 0; k < n; ++k) {

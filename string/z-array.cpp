@@ -1,4 +1,4 @@
-vector<int> z_array(str &s) {
+vector<int> z_array(string &s) {
     int n = s.length();
     vector<int> z(n);
     for (int i = 1, l = 0, r = 0; i < n; ++i) {

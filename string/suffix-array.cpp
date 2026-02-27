@@ -1,10 +1,10 @@
 struct suffix_array {
     int n;
-    str s;
+    string s;
     vector<int> suf, lcp;
     vector<int> rank, temp;
 
-    suffix_array(str &base): n(base.length() + 1), s(base + '$'), suf(n), lcp(n), rank(n), temp(n) {
+    suffix_array(string &base): n(base.length() + 1), s(base + '$'), suf(n), lcp(n), rank(n), temp(n) {
         for (int i = 0; i < n; ++i) {
             suf[i] = i;
             rank[i] = s[i];
@@ -58,11 +58,11 @@ struct suffix_array {
         }
     }
 
-    int compare(int i, str &t) {
+    int compare(int i, string &t) {
         return s.compare(i, t.size(), t);
     }
 
-    int lower_search(str &t) {
+    int lower_search(string &t) {
         int answer = 0;
         int low = 1, high = n - 1;
         while (low <= high) {
@@ -77,7 +77,7 @@ struct suffix_array {
         return answer;
     }
 
-    int upper_search(str &t) {
+    int upper_search(string &t) {
         int answer = n;
         int low = 1, high = n - 1;
         while (low <= high) {
@@ -92,7 +92,7 @@ struct suffix_array {
         return answer;
     }
 
-    int search(str &t) {
+    int search(string &t) {
         int lower = lower_search(t);
         if (compare(suf[lower], t) != 0) return 0;
         int upper = upper_search(t);

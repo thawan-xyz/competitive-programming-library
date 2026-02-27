@@ -1,19 +1,34 @@
 struct trie {
+private:
     struct node {
-        int prefix = 0;
+        int pref = 0;
         int end = 0;
         array<int, 26> child = {};
     };
 
     vector<node> tree;
 
+    void dfs(int i, string &s, vector<string> &r) {
+        if (tree[i].end != 0) {
+            r.push_back(s);
+        }
+        for (int j = 0; j < 26; ++j) {
+            if (tree[i].child[j]) {
+                s.push_back(j + 'a');
+                dfs(tree[i].child[j], s, r);
+                s.pop_back();
+            }
+        }
+    }
+
+public:
     trie() {
         tree.emplace_back();
     }
 
-    void insert(str &s) {
+    void insert(string &s) {
         int i = 0;
-        tree[0].prefix++;
+        tree[0].pref++;
         for (char c : s) {
             int j = c - 'a';
             if (tree[i].child[j] == 0) {
@@ -21,37 +36,37 @@ struct trie {
                 tree.emplace_back();
             }
             i = tree[i].child[j];
-            tree[i].prefix++;
+            tree[i].pref++;
         }
         tree[i].end++;
     }
 
-    void remove(str &s) {
+    void remove(string &s) {
         int i = 0;
-        vector<int> path = {0};
         for (char c : s) {
             int j = c - 'a';
             if (tree[i].child[j] == 0) {
                 return;
             }
             i = tree[i].child[j];
-            path.push_back(i);
         }
         if (tree[i].end == 0) return;
-        tree[i].end--;
-
-        for (int k = path.size() - 1; k >= 1; --k) {
-            i = path[k];
-            tree[i].prefix--;
-            int p = path[k - 1];
-            if (tree[i].prefix == 0) {
-                tree[p].child[s[k - 1] - 'a'] = 0;
+        int p = 0;
+        tree[0].pref--;
+        for (char c : s) {
+            int j = c - 'a';
+            i = tree[p].child[j];
+            tree[i].pref--;
+            if (tree[i].pref == 0) {
+                tree[p].child[j] = 0;
+                return;
             }
+            p = i;
         }
-        tree[0].prefix--;
+        tree[p].end--;
     }
 
-    bool search(str &s) {
+    bool search(string &s) {
         int i = 0;
         for (char c : s) {
             int j = c - 'a';
@@ -63,9 +78,9 @@ struct trie {
         return tree[i].end != 0;
     }
 
-    vector<str> complete(str &s) {
+    vector<string> complete(string s) {
         int i = 0;
-        vector<str> r;
+        vector<string> r;
         for (char c : s) {
             int j = c - 'a';
             if (tree[i].child[j] == 0) {
@@ -75,18 +90,5 @@ struct trie {
         }
         dfs(i, s, r);
         return r;
-    }
-
-    void dfs(int i, str &s, vector<str> &r) {
-        if (tree[i].end != 0) {
-            r.push_back(s);
-        }
-        for (int j = 0; j < 26; ++j) {
-            if (tree[i].child[j]) {
-                s.push_back(j + 'a');
-                dfs(tree[i].child[j], s, r);
-                s.pop_back();
-            }
-        }
     }
 };

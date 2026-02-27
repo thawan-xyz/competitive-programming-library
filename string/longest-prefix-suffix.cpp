@@ -1,4 +1,4 @@
-vector<int> longest_prefix_suffix(str &s) {
+vector<int> longest_prefix_suffix(string &s) {
     int n = s.length();
     vector<int> lps(n);
     for (int i = 1; i < n; ++i) {
