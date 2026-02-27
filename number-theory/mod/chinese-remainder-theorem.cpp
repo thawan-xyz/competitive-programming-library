@@ -1,4 +1,4 @@
-pair<int, int> chinese_remainder_theorem(array<int> &r, array<int> &mod) {
+pair<int, int> chinese_remainder_theorem(vector<int> &r, vector<int> &mod) {
     int n = mod.size();
 
     int i = r[0];

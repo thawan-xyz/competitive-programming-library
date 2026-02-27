@@ -1,6 +1,6 @@
-pair<int, array<int>> multi_extended_gcd(array<int> &a) {
+pair<int, vector<int>> multi_extended_gcd(vector<int> &a) {
     int n = a.size(), g = a[0];
-    array<int> c(n, 1), h(n, 1);
+    vector<int> c(n, 1), h(n, 1);
 
     for (int i = 1; i < n; ++i) {
         auto [f, x, y] = extended_gcd(g, a[i]);

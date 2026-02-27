@@ -1,6 +1,6 @@
-list<int> linear_sieve(int n) {
-    list<int> low(n + 1);
-    list<int> primes;
+vector<int> linear_sieve(int n) {
+    vector<int> low(n + 1);
+    vector<int> primes;
     for (int i = 2; i <= n; ++i) {
         if (low[i] == 0) {
             low[i] = i;

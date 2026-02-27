@@ -1,5 +1,5 @@
-list<int> segmented_sieve(int l, int r) {
-    list<int> primes = linear_sieve(sqrt(r));
+vector<int> segmented_sieve(int l, int r) {
+    vector<int> primes = linear_sieve(sqrt(r));
     offset_array<char> is_prime(l, r + 1, true);
     for (int p : primes) {
         for (int i = max(p * ((l + p - 1) / p), p * p); i <= r; i += p) {

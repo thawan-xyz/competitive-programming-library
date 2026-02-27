@@ -8,8 +8,8 @@ int totient(int n) {
     return phi;
 }
 
-array<int> totient_sieve(int n) {
-    array<int> phi(n + 1);
+vector<int> totient_sieve(int n) {
+    vector<int> phi(n + 1);
     for (int i = 1; i <= n; ++i) {
         phi[i] = i;
     }
