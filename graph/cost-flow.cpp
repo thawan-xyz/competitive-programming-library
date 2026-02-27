@@ -7,9 +7,9 @@ struct cost_flow {
     };
 
     int n;
-    list<list<edge>> g;
-    list<int> dist, pot;
-    list<pair<int, int>> par;
+    vector<vector<edge>> g;
+    vector<int> dist, pot;
+    vector<pair<int, int>> par;
 
     cost_flow(int n): n(n), g(n), dist(n), pot(n), par(n) {}
 
@@ -23,7 +23,7 @@ struct cost_flow {
     bool dijkstra(int s, int t) {
         fill(dist.begin(), dist.end(), inf);
 
-        priority_queue<pair<int, int>, list<pair<int, int>>, greater<pair<int, int>>> pq;
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
         dist[s] = 0;
         pq.push({0, s});
         while (pq.size()) {

@@ -1,9 +1,9 @@
-list<list<int>> tarjan(list<list<int>> &g, int one_based) {
+vector<vector<int>> tarjan(vector<vector<int>> &g, int one_based) {
     int n = g.size(), timer = 1;
-    list<list<int>> components;
-    list<int> id(n), low(n);
+    vector<vector<int>> components;
+    vector<int> id(n), low(n);
     stack<int> trail;
-    list<bool> in(n);
+    vector<bool> in(n);
 
     auto dfs = [&](auto &&self, int a) -> void {
         id[a] = low[a] = timer++;
@@ -19,7 +19,7 @@ list<list<int>> tarjan(list<list<int>> &g, int one_based) {
         }
 
         if (id[a] == low[a]) {
-            list<int> component;
+            vector<int> component;
             while (true) {
                 int b = trail.top(); trail.pop();
                 in[b] = false;
@@ -40,19 +40,19 @@ list<list<int>> tarjan(list<list<int>> &g, int one_based) {
     return components;
 }
 
-pair<list<list<int>>, list<int>> condensed_graph(list<list<int>> &g, int one_based) {
+pair<vector<vector<int>>, vector<int>> condensed_graph(vector<vector<int>> &g, int one_based) {
     int n = g.size();
-    list<list<int>> components = tarjan(g, one_based);
+    vector<vector<int>> components = tarjan(g, one_based);
     int m = components.size();
 
-    list<int> id(n);
+    vector<int> id(n);
     for (int i = 0; i < m; ++i) {
         for (int a : components[i]) {
             id[a] = i;
         }
     }
 
-    list<list<int>> c(m);
+    vector<vector<int>> c(m);
     for (int a = one_based; a < n; ++a) {
         for (int b : g[a]) if (id[a] != id[b]) {
             c[id[a]].push_back(id[b]);

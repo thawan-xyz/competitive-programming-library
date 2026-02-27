@@ -2,8 +2,8 @@ struct edge {
     int a, b, w;
 };
 
-pair<bool, list<int>> bellman_ford(int s, int n, list<edge> &e) {
-    list<int> d(n + 1, inf);
+pair<bool, vector<int>> bellman_ford(int s, int n, vector<edge> &e) {
+    vector<int> d(n + 1, inf);
     d[s] = 0;
     for (int i = 1; i < n; ++i) {
         bool changed = false;
@@ -19,11 +19,11 @@ pair<bool, list<int>> bellman_ford(int s, int n, list<edge> &e) {
     return {false, d};
 }
 
-pair<bool, list<int>> shortest_path_faster_algorithm(int s, int n, list<list<pair<int, int>>> &g) {
-    list<int> d(n + 1, inf);
-    list<int> c(n + 1);
+pair<bool, vector<int>> shortest_path_faster_algorithm(int s, int n, vector<vector<pair<int, int>>> &g) {
+    vector<int> d(n + 1, inf);
+    vector<int> c(n + 1);
     queue<int> q;
-    list<bool> in(n + 1);
+    vector<bool> in(n + 1);
     d[s] = 0;
     q.push(s);
     in[s] = true;

@@ -1,11 +1,11 @@
 struct heavy_light_decomposition {
     int n, timer = 0;
-    list<list<int>> &g;
-    list<int> p, d, h;
+    vector<vector<int>> &g;
+    vector<int> p, d, h;
     segment_tree s;
-    list<int> size, id;
+    vector<int> size, id;
 
-    heavy_light_decomposition(list<list<int>> &g, int root = 1): n(g.size()), g(g), p(n), d(n), h(n), s(n), size(n), id(n) {
+    heavy_light_decomposition(vector<vector<int>> &g, int root = 1): n(g.size()), g(g), p(n), d(n), h(n), s(n), size(n), id(n) {
         d[root] = 1;
         dfs(root);
         h[root] = root;

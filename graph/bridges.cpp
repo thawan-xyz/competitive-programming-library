@@ -1,7 +1,7 @@
-list<pair<int, int>> bridges(list<list<int>> &graph) {
+vector<pair<int, int>> bridges(vector<vector<int>> &graph) {
     int n = graph.size() - 1, timer = 1;
-    list<int> in(n + 1), low(n + 1);
-    list<pair<int, int>> edges;
+    vector<int> in(n + 1), low(n + 1);
+    vector<pair<int, int>> edges;
 
     function<void(int, int)> dfs = [&](int a, int p) -> void {
         in[a] = low[a] = timer++;

@@ -1,8 +1,8 @@
-list<int> articulations(list<list<int>> &graph) {
+vector<int> articulations(vector<vector<int>> &graph) {
     int n = graph.size() - 1, timer = 1;
-    list<int> in(n + 1), low(n + 1);
-    list<bool> articulation(n + 1);
-    list<int> points;
+    vector<int> in(n + 1), low(n + 1);
+    vector<bool> articulation(n + 1);
+    vector<int> points;
 
     function<void(int, int)> dfs = [&](int a, int p) -> void {
         in[a] = low[a] = timer++;

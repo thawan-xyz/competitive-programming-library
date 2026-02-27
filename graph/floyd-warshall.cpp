@@ -1,5 +1,5 @@
-list<list<int>> floyd_warshall(int n, list<list<int>> &g) {
-    list<list<int>> d = g;
+vector<vector<int>> floyd_warshall(int n, vector<vector<int>> &g) {
+    vector<vector<int>> d = g;
     for (int i = 0; i < n; ++i) {
         d[i][i] = 0;
     }

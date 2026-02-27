@@ -1,14 +1,14 @@
 struct binary_lifting {
     int n, log;
-    list<int> d;
-    list<list<int>> up;
+    vector<int> d;
+    vector<vector<int>> up;
 
-    binary_lifting(list<list<int>> &g, int root = 1): n(g.size()), log(31 - __builtin_clz(n)), d(n), up(n, list<int>(log + 1)) {
+    binary_lifting(vector<vector<int>> &g, int root = 1): n(g.size()), log(31 - __builtin_clz(n)), d(n), up(n, vector<int>(log + 1)) {
         d[root] = 0;
         build(g, root, 0);
     }
 
-    void build(list<list<int>> &g, int a, int p) {
+    void build(vector<vector<int>> &g, int a, int p) {
         up[a][0] = p;
         for (int i = 1; i <= log; ++i) {
             up[a][i] = up[up[a][i - 1]][i - 1];
