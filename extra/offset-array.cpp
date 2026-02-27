@@ -1,7 +1,7 @@
 template <typename T>
 struct offset_array {
     int l;
-    list<T> a;
+    vector<T> a;
 
     offset_array(int l, int r, T x = T()): l(l), a(r - l, x) {}
 

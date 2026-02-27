@@ -1,6 +1,6 @@
-bool nim(list<int> &piles, list<int> &moves) {
+bool nim(vector<int> &piles, vector<int> &moves) {
     int n = *max(piles.begin(), piles.end());
-    list<int> grundy(n + 1);
+    vector<int> grundy(n + 1);
 
     for (int i = 1; i <= n; ++i) {
         set<int> reach;
@@ -20,9 +20,9 @@ bool nim(list<int> &piles, list<int> &moves) {
     return answer != 0;
 }
 
-bool misere(list<int> &piles, list<int> &moves) {
+bool misere(vector<int> &piles, vector<int> &moves) {
     int n = *max(piles.begin(), piles.end());
-    list<int> grundy(n + 1);
+    vector<int> grundy(n + 1);
 
     for (int i = 1; i <= n; ++i) {
         set<int> reach;
