@@ -1,4 +1,4 @@
-float area(array<point> &p) {
+float area(vector<point> &p) {
     int n = p.size();
     float a = 0;
     for (int i = 0; i < n; ++i) {
@@ -8,7 +8,7 @@ float area(array<point> &p) {
     return a / 2;
 }
 
-array<point> convex_hull(array<point> &p) {
+vector<point> convex_hull(vector<point> &p) {
     sort(p.begin(), p.end());
     p.erase(unique(p.begin(), p.end()), p.end());
 
@@ -20,7 +20,7 @@ array<point> convex_hull(array<point> &p) {
     for (int i = 2; i < n and collinear; ++i) collinear &= h.orient(p[i]) == 0;
     if (collinear) return {p[0], p[n - 1]};
 
-    array<point> lower;
+    vector<point> lower;
     for (int i = 0; i < n; ++i) {
         while (lower.size() >= 2) {
             line l = {lower[lower.size() - 2], lower[lower.size() - 1]};
@@ -30,7 +30,7 @@ array<point> convex_hull(array<point> &p) {
         lower.push_back(p[i]);
     }
 
-    array<point> upper;
+    vector<point> upper;
     for (int i = n - 1; i >= 0; --i) {
         while (upper.size() >= 2) {
             line l = {upper[upper.size() - 2], upper[upper.size() - 1]};
@@ -43,7 +43,7 @@ array<point> convex_hull(array<point> &p) {
     lower.pop_back();
     upper.pop_back();
 
-    array<point> hull = lower;
+    vector<point> hull = lower;
     hull.insert(hull.end(), upper.begin(), upper.end());
     return hull;
 }
