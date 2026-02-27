@@ -1,4 +1,4 @@
-list<int> or_convolution(list<int> &a, list<int> &b) {
+vector<int> or_convolution(vector<int> &a, vector<int> &b) {
     int s = max(a.size(), b.size());
     int m = (s == 1) ? 1 : 1 << (32 - __builtin_clz(s - 1));
     int n = __builtin_ctz(m);
@@ -13,7 +13,7 @@ list<int> or_convolution(list<int> &a, list<int> &b) {
         }
     }
 
-    list<int> c(m);
+    vector<int> c(m);
     for (int mask = 0; mask < m; ++mask) {
         c[mask] = a[mask] * b[mask];
     }
@@ -28,7 +28,7 @@ list<int> or_convolution(list<int> &a, list<int> &b) {
     return c;
 }
 
-list<int> and_convolution(list<int> &a, list<int> &b) {
+vector<int> and_convolution(vector<int> &a, vector<int> &b) {
     int s = max(a.size(), b.size());
     int m = (s == 1) ? 1 : 1 << (32 - __builtin_clz(s - 1));
     int n = __builtin_ctz(m);
@@ -43,7 +43,7 @@ list<int> and_convolution(list<int> &a, list<int> &b) {
         }
     }
 
-    list<int> c(m);
+    vector<int> c(m);
     for (int mask = 0; mask < m; ++mask) {
         c[mask] = a[mask] * b[mask];
     }
