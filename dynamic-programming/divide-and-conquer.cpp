@@ -1,6 +1,6 @@
 int divide_and_conquer() {
-    list<int> prev(n + 1, inf);
-    list<int> curr(n + 1, inf);
+    vector<int> prev(n + 1, inf);
+    vector<int> curr(n + 1, inf);
     function<void(int, int, int, int)> compute = [&](int l, int r, int opt_l, int opt_r) -> void {
         if (l <= r) {
             int m = (l + r) / 2;

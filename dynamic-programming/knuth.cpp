@@ -1,6 +1,6 @@
 int knuth() {
-    list<list<int>> val(n + 5, list<int>(n + 5));
-    list<list<int>> opt(n + 5, list<int>(n + 5));
+    vector<vector<int>> val(n + 5, vector<int>(n + 5));
+    vector<vector<int>> opt(n + 5, vector<int>(n + 5));
     for (int i = 1; i <= n; ++i) {
         val[i][i] = cost(i, i);
         opt[i][i] = i;

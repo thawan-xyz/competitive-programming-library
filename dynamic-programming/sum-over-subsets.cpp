@@ -1,4 +1,4 @@
-list<int> sum_over_subsets(int n, list<int> f) {
+vector<int> sum_over_subsets(int n, vector<int> f) {
     int full = (1 << n) - 1;
     for (int i = 0; i < n; ++i) {
         int bit = 1 << i;
