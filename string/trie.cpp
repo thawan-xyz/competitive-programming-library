@@ -43,7 +43,6 @@ struct trie {
         for (int k = path.size() - 1; k >= 1; --k) {
             i = path[k];
             tree[i].prefix--;
-
             int p = path[k - 1];
             if (tree[i].prefix == 0) {
                 tree[p].child[s[k - 1] - 'a'] = 0;

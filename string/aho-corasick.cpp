@@ -39,10 +39,10 @@ public:
         while (not q.empty()) {
             int i = q.front(); q.pop();
             int f = trie[i].fail;
-            if (trie[f].end.empty()) {
-                trie[i].exit = trie[f].exit;
-            } else {
+            if (not trie[f].end.empty()) {
                 trie[i].exit = f;
+            } else {
+                trie[i].exit = trie[f].exit;
             }
             for (int j = 0; j < 26; ++j) {
                 int c = trie[i].next[j];
