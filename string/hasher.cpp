@@ -3,7 +3,7 @@ struct hasher {
     static constexpr array<int, 2> mod = {1000000007, 1000000009};
 
     int n;
-    array<list<int>, 2> pow, pref, suf;
+    array<vector<int>, 2> pow, pref, suf;
 
     hasher(str &s): n(s.length()) {
         for (int k = 0; k < 2; ++k) {

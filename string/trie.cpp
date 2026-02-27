@@ -5,7 +5,7 @@ struct trie {
         array<int, 26> child = {};
     };
 
-    list<node> tree;
+    vector<node> tree;
 
     trie() {
         tree.emplace_back();
@@ -28,7 +28,7 @@ struct trie {
 
     void remove(str &s) {
         int i = 0;
-        list<int> path = {0};
+        vector<int> path = {0};
         for (char c : s) {
             int j = c - 'a';
             if (tree[i].child[j] == 0) {
@@ -63,9 +63,9 @@ struct trie {
         return tree[i].end != 0;
     }
 
-    list<str> complete(str &s) {
+    vector<str> complete(str &s) {
         int i = 0;
-        list<str> r;
+        vector<str> r;
         for (char c : s) {
             int j = c - 'a';
             if (tree[i].child[j] == 0) {
@@ -77,7 +77,7 @@ struct trie {
         return r;
     }
 
-    void dfs(int i, str &s, list<str> &r) {
+    void dfs(int i, str &s, vector<str> &r) {
         if (tree[i].end != 0) {
             r.push_back(s);
         }

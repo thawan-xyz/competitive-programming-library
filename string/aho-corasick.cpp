@@ -4,10 +4,10 @@ private:
         int fail = 0;
         int exit = 0;
         array<int, 26> next = {};
-        list<int> end;
+        vector<int> end;
     };
 
-    list<node> trie;
+    vector<node> trie;
 
 public:
     aho_corasick(int n = 0) {
@@ -56,8 +56,8 @@ public:
         }
     }
 
-    list<int> match(str &t) {
-        list<int> p;
+    vector<int> match(str &t) {
+        vector<int> p;
         int n = t.length();
         for (int i = 0, k = 0; k < n; ++k) {
             i = trie[i].next[t[k] - 'a'];

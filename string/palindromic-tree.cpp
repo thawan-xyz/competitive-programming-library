@@ -7,8 +7,8 @@ struct palindromic_tree {
     };
 
     int suffix;
-    list<char> text;
-    list<node> tree;
+    vector<char> text;
+    vector<node> tree;
 
     palindromic_tree(int n): suffix(0) {
         text.reserve(n + 5);
