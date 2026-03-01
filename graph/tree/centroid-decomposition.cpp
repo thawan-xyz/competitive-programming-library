@@ -1,8 +1,9 @@
-vector<int> centroid_decomposition(int r, vector<vector<int>> &g) {
+pair<vector<int>, vector<vector<int>>> centroid_decomposition(int r, vector<vector<int>> &g) {
     int n = g.size();
     vector<int> parent(n);
     vector<int> size(n);
     vector<bool> removed(n);
+    vector<vector<int>> dist(n);
     auto dfs = [&](auto &self, int a, int p) -> int {
         size[a] = 1;
         for (int b : g[a]) if (b != p and not removed[b]) {
@@ -16,9 +17,16 @@ vector<int> centroid_decomposition(int r, vector<vector<int>> &g) {
         }
         return a;
     };
+    auto distance = [&](auto &self, int a, int p, int d) -> void {
+        dist[a].push_back(d);
+        for (int b : g[a]) if (b != p and not removed[b]) {
+            self(self, b, a, d + 1);
+        }
+    };
     auto build = [&](auto &self, int a, int p) -> void {
         int s = dfs(dfs, a, a);
         int c = centroid(centroid, a, a, s);
+        distance(distance, c, c, 0);
         parent[c] = p;
         removed[c] = true;
         for (int b : g[c]) if (not removed[b]) {
@@ -26,5 +34,6 @@ vector<int> centroid_decomposition(int r, vector<vector<int>> &g) {
         }
     };
     build(build, r, -1);
-    return parent;
+    for (auto &path : dist) reverse(path.begin(), path.end());
+    return {parent, dist};
 }
