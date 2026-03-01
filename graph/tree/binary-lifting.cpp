@@ -5,7 +5,7 @@ struct binary_lifting {
 
     binary_lifting(int r, vector<vector<int>> &g): n(g.size()), log(31 - __builtin_clz(n)), d(n), up(n, vector<int>(log + 1)) {
         d[r] = 0;
-        build(r, r, g);
+        build(r, 0, g);
     }
 
     void build(int a, int p, vector<vector<int>> &g) {
