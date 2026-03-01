@@ -1,9 +1,9 @@
 template <typename T>
-struct offset_array {
+struct offset {
     int l;
     vector<T> a;
 
-    offset_array(int l, int r, T x = T()): l(l), a(r - l, x) {}
+    offset(int l, int r, T x = T()): l(l), a(r - l, x) {}
 
     T &operator[](int i) {
         return a[i - l];
