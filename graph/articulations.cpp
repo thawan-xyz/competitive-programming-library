@@ -1,13 +1,12 @@
-vector<int> articulations(vector<vector<int>> &graph) {
-    int n = graph.size() - 1, timer = 1;
-    vector<int> in(n + 1), low(n + 1);
-    vector<bool> articulation(n + 1);
-    vector<int> points;
+vector<int> articulations(int r, vector<vector<int>> &g) {
+    int n = g.size(), timer = 1;
+    vector<int> in(n), low(n);
+    vector<bool> articulation(n);
 
     function<void(int, int)> dfs = [&](int a, int p) -> void {
         in[a] = low[a] = timer++;
         int children = 0;
-        for (int b : graph[a]) if (b != p) {
+        for (int b : g[a]) if (b != p) {
             if (in[b] != 0) {
                 low[a] = min(low[a], in[b]);
             } else {
@@ -19,8 +18,9 @@ vector<int> articulations(vector<vector<int>> &graph) {
         }
         if (p == 0) articulation[a] = children > 1;
     };
+    for (int i = r; i < n; ++i) if (in[i] == 0) dfs(i, i);
 
-    for (int i = 1; i <= n; ++i) if (in[i] == 0) dfs(i, 0);
-    for (int i = 1; i <= n; ++i) if (articulation[i]) points.push_back(i);
+    vector<int> points;
+    for (int i = r; i < n; ++i) if (articulation[i]) points.push_back(i);
     return points;
 }

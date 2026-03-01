@@ -1,11 +1,11 @@
-vector<vector<int>> tarjan(vector<vector<int>> &g, int one_based) {
+vector<vector<int>> tarjan(int r, vector<vector<int>> &g) {
     int n = g.size(), timer = 1;
     vector<vector<int>> components;
     vector<int> id(n), low(n);
     stack<int> trail;
     vector<bool> in(n);
 
-    auto dfs = [&](auto &&self, int a) -> void {
+    auto dfs = [&](auto &self, int a) -> void {
         id[a] = low[a] = timer++;
         trail.push(a);
         in[a] = true;
@@ -30,7 +30,7 @@ vector<vector<int>> tarjan(vector<vector<int>> &g, int one_based) {
         }
     };
 
-    for (int a = one_based; a < n; ++a) {
+    for (int a = r; a < n; ++a) {
         if (id[a] == 0) {
             dfs(dfs, a);
         }
@@ -40,9 +40,9 @@ vector<vector<int>> tarjan(vector<vector<int>> &g, int one_based) {
     return components;
 }
 
-pair<vector<vector<int>>, vector<int>> condensed_graph(vector<vector<int>> &g, int one_based) {
+pair<vector<vector<int>>, vector<int>> condensed_graph(int r, vector<vector<int>> &g) {
     int n = g.size();
-    vector<vector<int>> components = tarjan(g, one_based);
+    vector<vector<int>> components = tarjan(r, g);
     int m = components.size();
 
     vector<int> id(n);
@@ -53,7 +53,7 @@ pair<vector<vector<int>>, vector<int>> condensed_graph(vector<vector<int>> &g, i
     }
 
     vector<vector<int>> c(m);
-    for (int a = one_based; a < n; ++a) {
+    for (int a = r; a < n; ++a) {
         for (int b : g[a]) if (id[a] != id[b]) {
             c[id[a]].push_back(id[b]);
         }

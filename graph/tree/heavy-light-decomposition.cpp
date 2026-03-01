@@ -5,11 +5,11 @@ struct heavy_light_decomposition {
     segment_tree s;
     vector<int> size, id;
 
-    heavy_light_decomposition(vector<vector<int>> &g, int root = 1): n(g.size()), g(g), p(n), d(n), h(n), s(n), size(n), id(n) {
-        d[root] = 1;
-        dfs(root);
-        h[root] = root;
-        decompose(root);
+    heavy_light_decomposition(int r, vector<vector<int>> &g): n(g.size()), g(g), p(n), d(n), h(n), s(n), size(n), id(n) {
+        d[r] = 0;
+        dfs(r);
+        h[r] = r;
+        decompose(r);
     }
 
     void dfs(int a) {

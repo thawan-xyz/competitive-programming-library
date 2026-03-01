@@ -3,12 +3,12 @@ struct binary_lifting {
     vector<int> d;
     vector<vector<int>> up;
 
-    binary_lifting(vector<vector<int>> &g, int root = 1): n(g.size()), log(31 - __builtin_clz(n)), d(n), up(n, vector<int>(log + 1)) {
-        d[root] = 0;
-        build(g, root, 0);
+    binary_lifting(int r, vector<vector<int>> &g): n(g.size()), log(31 - __builtin_clz(n)), d(n), up(n, vector<int>(log + 1)) {
+        d[r] = 0;
+        build(r, r, g);
     }
 
-    void build(vector<vector<int>> &g, int a, int p) {
+    void build(int a, int p, vector<vector<int>> &g) {
         up[a][0] = p;
         for (int i = 1; i <= log; ++i) {
             up[a][i] = up[up[a][i - 1]][i - 1];
@@ -16,7 +16,7 @@ struct binary_lifting {
 
         for (int b : g[a]) if (b != p) {
             d[b] = d[a] + 1;
-            build(g, b, a);
+            build(b, a, g);
         }
     }
 

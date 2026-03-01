@@ -1,11 +1,11 @@
-vector<pair<int, int>> bridges(vector<vector<int>> &graph) {
-    int n = graph.size() - 1, timer = 1;
-    vector<int> in(n + 1), low(n + 1);
+vector<pair<int, int>> bridges(int r, vector<vector<int>> &g) {
+    int n = g.size(), timer = 1;
+    vector<int> in(n), low(n);
     vector<pair<int, int>> edges;
 
     function<void(int, int)> dfs = [&](int a, int p) -> void {
         in[a] = low[a] = timer++;
-        for (int b : graph[a]) if (b != p) {
+        for (int b : g[a]) if (b != p) {
             if (in[b] != 0) {
                 low[a] = min(low[a], in[b]);
             } else {
@@ -16,6 +16,6 @@ vector<pair<int, int>> bridges(vector<vector<int>> &graph) {
         }
     };
 
-    for (int i = 1; i <= n; ++i) if (in[i] == 0) dfs(i, 0);
+    for (int i = r; i < n; ++i) if (in[i] == 0) dfs(i, i);
     return edges;
 }
