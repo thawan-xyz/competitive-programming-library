@@ -37,4 +37,9 @@ struct xor_basis {
         }
         return x;
     }
+
+    int operator[](int k) {
+        if (n - size > 60) return 0;
+        return kth(k >> (n - size));
+    }
 };
