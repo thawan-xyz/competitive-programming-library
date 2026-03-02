@@ -4,16 +4,16 @@ struct xor_basis {
     array<int, log> basis = {};
 
     void insert(int x) {
-        n += 1;
         for (int i = log - 1; i >= 0; --i) if ((x >> i) & 1) {
             if (basis[i] == 0) {
                 basis[i] = x;
                 size += 1;
-                return;
+                break;
             } else {
                 x ^= basis[i];
             }
         }
+        n += 1;
     }
 
     int max() {
