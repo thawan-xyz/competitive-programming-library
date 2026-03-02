@@ -18,7 +18,15 @@ struct xor_basis {
         return false;
     }
 
-    void reduce() {
+    int max() {
+        int x = 0;
+        for (int i = log - 1; i >= 0; --i) if (((x >> i) & 1) == 0) {
+            x ^= basis[i];
+        }
+        return x;
+    }
+
+    void build() {
         reduced.clear();
         for (int i = log - 1; i >= 0; --i) if (basis[i] != 0) {
             for (int j = i - 1; j >= 0; --j) if (((basis[i] >> j) & 1) and basis[j] != 0) {
