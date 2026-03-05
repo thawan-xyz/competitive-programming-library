@@ -1,58 +1,57 @@
-void permute(vector<complex<float>> &p, vector<int> &order) {
+const float PI = acos(-1);
+
+void fast_fourier_transform(vector<complex<float>> &p, int sign) {
     int n = p.size();
-    for (int i = 0; i < n; ++i) {
-        int j = order[i];
+
+    for (int i = 1, j = 0; i < n; ++i) {
+        int bit = n >> 1;
+        while (j & bit) j ^= bit, bit >>= 1;
+        j ^= bit;
         if (i < j) swap(p[i], p[j]);
     }
-}
 
-void fast_fourier_transform(vector<complex<float>> &p, int sign, vector<int> &order) {
-    int n = p.size();
-    permute(p, order);
-
-    for (int l = 1; l < n; l <<= 1) {
-        float a = sign * M_PI / l;
-        complex<float> step(cos(a), sin(a));
-
-        for (int i = 0; i < n; i += l << 1) {
+    for (int len = 2; len <= n; len *= 2) {
+        int half = len / 2;
+        float ang = sign * (2 * PI / len);
+        auto step = polar(1, ang);
+        for (int i = 0; i < n; i += len) {
             complex<float> w(1, 0);
-            for (int j = 0; j < l; ++j) {
-                complex<float> x = p[i + j];
-                complex<float> y = w * p[(i + j) + l];
+            for (int j = 0; j < half; ++j) {
+                auto x = p[i + j];
+                auto y = w * p[(i + j) + half];
                 p[i + j] = x + y;
-                p[(i + j) + l] = x - y;
+                p[(i + j) + half] = x - y;
                 w *= step;
             }
         }
     }
 
-    if (sign == -1) for (complex<float> &c : p) c /= n;
+    if (sign == -1) {
+        for (complex<float> &x : p) x /= n;
+    }
 }
 
 vector<int> convolution(vector<int> &a, vector<int> &b) {
+    if (a.empty() or b.empty()) return {};
+
     int n = a.size() + b.size() - 1;
-    int m = (n == 1) ? 1 : 1 << (32 - __builtin_clz(n - 1));
-    int l = __builtin_ctz(m);
+    int m = 1;
+    while (m < n) m *= 2;
 
-    vector<int> order(m);
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < l; ++j) {
-            if (i & (1 << j)) {
-                order[i] |= 1 << (l - (j + 1));
-            }
-        }
-    }
+    vector<complex<float>> fa(a.begin(), a.end());
+    vector<complex<float>> fb(b.begin(), b.end());
+    fa.resize(m);
+    fb.resize(m);
 
-    vector<complex<float>> x(a.begin(), a.end()); x.resize(m);
-    vector<complex<float>> y(b.begin(), b.end()); y.resize(m);
-    fast_fourier_transform(x, 1, order);
-    fast_fourier_transform(y, 1, order);
+    fast_fourier_transform(fa, +1);
+    fast_fourier_transform(fb, +1);
 
-    vector<complex<float>> z(m);
-    for (int i = 0; i < m; ++i) z[i] = x[i] * y[i];
-    fast_fourier_transform(z, -1, order);
+    for (int i = 0; i < m; ++i) fa[i] *= fb[i];
+    fast_fourier_transform(fa, -1);
 
     vector<int> c(n);
-    for (int i = 0; i < n; ++i) c[i] = round(z[i].real());
+    for (int i = 0; i < n; ++i) {
+        c[i] = round(fa[i].real());
+    }
     return c;
 }
