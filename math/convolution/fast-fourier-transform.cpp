@@ -13,7 +13,7 @@ void fast_fourier_transform(vector<complex<float>> &p, int sign) {
     for (int len = 2; len <= n; len *= 2) {
         int half = len / 2;
         float ang = sign * (2 * PI / len);
-        auto step = polar(1, ang);
+        complex<float> step(cos(ang), sin(ang));
         for (int i = 0; i < n; i += len) {
             complex<float> w(1, 0);
             for (int j = 0; j < half; ++j) {
@@ -32,8 +32,6 @@ void fast_fourier_transform(vector<complex<float>> &p, int sign) {
 }
 
 vector<int> convolution(vector<int> &a, vector<int> &b) {
-    if (a.empty() or b.empty()) return {};
-
     int n = a.size() + b.size() - 1;
     int m = 1;
     while (m < n) m *= 2;
