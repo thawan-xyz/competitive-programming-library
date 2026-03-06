@@ -10,16 +10,25 @@ int mobius(int n) {
 }
 
 vector<int> mobius_sieve(int n) {
-    vector<int> mu(n + 1, 1);
-    vector<bool> p(n + 1, true);
-    for (int i = 2; i <= n; ++i) if (p[i]) {
-        mu[i] = -1;
-        for (int j = 2 * i; j <= n; j += i) {
-            mu[j] *= -1;
-            p[j] = false;
+    vector<int> mu(n + 1);
+    vector<bool> is_prime(n + 1, true);
+    vector<int> primes;
+    mu[1] = 1;
+    is_prime[1] = false;
+    for (int i = 2; i <= n; ++i) {
+        if (is_prime[i]) {
+            primes.push_back(i);
+            mu[i] = -1;
         }
-        for (int j = i * i; j <= n; j += i * i) {
-            mu[j] = 0;
+        for (int p : primes) {
+            if (i * p > n) break;
+            is_prime[i * p] = false;
+            if (i % p == 0) {
+                mu[i * p] = 0;
+                break;
+            } else {
+                mu[i * p] = -mu[i];
+            }
         }
     }
     return mu;
