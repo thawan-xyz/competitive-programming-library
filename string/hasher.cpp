@@ -3,9 +3,11 @@ struct hasher {
     static constexpr array<int, 2> mod = {1000000007, 1000000009};
 
     int n;
-    array<vector<int>, 2> pow, pref, suf;
+    vector<array<int, 2>> pow;
+    vector<array<int, 2>> pref, suf;
 
-    hasher(string &s): n(s.length()) {
+    hasher(const string &s): n(s.length()), pow(n + 1), pref(n + 1), suf(n + 1) {
+
         for (int k = 0; k < 2; ++k) {
             pow[k].assign(n + 1, 1);
             pref[k].assign(n + 1, 0);
