@@ -33,9 +33,9 @@ private:
     }
 
 public:
-    hasher_segment_tree(const string &s): n(s.length()), tree(2 * n), pow(n + 1) {
+    hasher_segment_tree(const string &s): n(s.length()), tree(2 * n), pow(n) {
         pow[0][0] = pow[0][1] = 1;
-        for (int i = 1; i <= n; ++i) {
+        for (int i = 1; i < n; ++i) {
             pow[i][0] = (pow[i - 1][0] * base[0]) % mod[0];
             pow[i][1] = (pow[i - 1][1] * base[1]) % mod[1];
         }
