@@ -10,14 +10,13 @@ private:
 public:
     iterative_segment_tree(int n): n(n), tree(2 * n) {}
 
-    iterative_segment_tree(vector<int> &a): n(a.size()), tree(2 * n) {
+    iterative_segment_tree(vector<int> &a): iterative_segment_tree(a.size()) {
         for (int i = 0; i < n; ++i) tree[n + i] = a[i];
         for (int i = n - 1; i > 0; --i) tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
     }
 
-    void modify(int i, int x) {
-        i += n;
-        tree[i] = x;
+    void update(int i, int x) {
+        tree[i += n] = x;
         for (i >>= 1; i > 0; i >>= 1) tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
     }
 

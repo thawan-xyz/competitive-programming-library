@@ -7,48 +7,50 @@ private:
         return a + b;
     }
 
-    void update(int p, int x, int l) {
-        tree[p] += x * l;
-        if (p < n) {
-            lazy[p] += x;
-        }
+    void apply(int i, int x, int len) {
+        tree[i] += x * len;
+        if (i < n) lazy[i] += x;
     }
 
-    void push(int i) {
-        for (int k = h; k > 0; --k) {
-            int p = i >> k, l = 1 << (k - 1);
-            if (lazy[p] != 0) {
-                update(p << 1, lazy[p], l);
-                update((p << 1) | 1, lazy[p], l);
-                lazy[p] = 0;
+    void push(int k) {
+        for (int s = h, len = 1 << (h - 1); s > 0; --s, len >>= 1) {
+            int i = k >> s;
+            if (lazy[i] != 0) {
+                apply(i << 1, lazy[i], len);
+                apply((i << 1) | 1, lazy[i], len);
+                lazy[i] = 0;
             }
         }
     }
 
-    void pull(int i) {
-        for (int p = i >> 1, l = 2; p > 0; p >>= 1, l <<= 1) {
-            tree[p] = merge(tree[p << 1], tree[(p << 1) | 1]);
-            if (lazy[p] != 0) {
-                tree[p] += l * lazy[p];
-            }
+    void pull(int k) {
+        for (int i = k >> 1, len = 2; i > 0; i >>= 1, len <<= 1) {
+            tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
+            if (lazy[i] != 0) tree[i] += lazy[i] * len;
         }
     }
 
 public:
-    iterative_lazy_segment_tree(int n): n(n), h(32 - __builtin_clz(n)), tree(2 * n), lazy(n) {}
+    iterative_lazy_segment_tree(int s) {
+        n = (s <= 1) ? 1 : 1 << (__lg(s - 1) + 1);
+        h = __lg(n);
+        tree.assign(2 * n, 0);
+        lazy.assign(n, 0);
+    }
 
-    iterative_lazy_segment_tree(vector<int> &a): n(a.size()), h(32 - __builtin_clz(n)), tree(2 * n), lazy(n) {
-        for (int i = 0; i < n; ++i) tree[n + i] = a[i];
+    iterative_lazy_segment_tree(vector<int> &a): iterative_lazy_segment_tree(a.size()) {
+        for (int i = 0; i < a.size(); ++i) tree[n + i] = a[i];
         for (int i = n - 1; i > 0; --i) tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
     }
 
-    void modify(int i, int j, int x) {
-        push(i + n), push(j + n);
-        for (int p = i + n, q = j + (n + 1), l = 1; p < q; p >>= 1, q >>= 1, l <<= 1) {
-            if (p & 1) update(p++, x, l);
-            if (q & 1) update(--q, x, l);
+    void update(int i, int j, int x) {
+        int p = i, q = j, len = 1;
+        push(p + n), push(q + n);
+        for (i += n, j += n + 1; i < j; i >>= 1, j >>= 1, len <<= 1) {
+            if (i & 1) apply(i++, x, len);
+            if (j & 1) apply(--j, x, len);
         }
-        pull(i + n), pull(j + n);
+        pull(p + n), pull(q + n);
     }
 
     int query(int i, int j) {
