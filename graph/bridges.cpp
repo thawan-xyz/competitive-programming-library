@@ -1,3 +1,9 @@
+/*
+ * Algoritmo para encontrar Pontes (Bridges) em um Grafo Não-Direcionado
+ * Retorna uma lista de arestas que, se removidas, aumentam o número de componentes conexos.
+ * Complexidade de Tempo: O(V + E)
+ * Complexidade de Espaço: O(V)
+ */
 vector<pair<int, int>> bridges(int o, vector<vector<int>> &g) {
     int n = g.size(), timer = 1;
     vector<int> in(n), low(n);

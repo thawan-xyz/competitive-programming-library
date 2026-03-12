@@ -1,69 +1,66 @@
-struct cost_flow {
-    struct edge {
-        int to;
-        int rev;
-        int cap;
-        int cost;
-    };
-
+/*
+ * Min-Cost Max-Flow (Successive Shortest Path c/ Dijkstra e Potenciais)
+ * Retorna {fluxo, custo}. Pode ser limitado a um fluxo 'k'.
+ * Complexidade de Tempo: O(F * E log V), onde F é o fluxo máximo alcançado.
+ * Complexidade de Espaço: O(V + E)
+ */
+struct min_cost_flow {
     int n;
-    vector<vector<edge>> g;
-    vector<int> dist, pot;
-    vector<pair<int, int>> par;
+    vector<int> d, h, p, e;
+    vector<vector<array<int, 4>>> g;
 
-    cost_flow(int n): n(n), g(n), dist(n), pot(n), par(n) {}
+    min_cost_flow(int n): n(n), g(n), d(n), h(n), p(n), e(n) {}
 
-    void insert_edge(int a, int b, int cap, int cost) {
-        edge i = {b, g[b].size(), cap, cost};
-        edge j = {a, g[a].size(), 0, -cost};
+    void insert_edge(int a, int b, int capacity, int cost) {
+        array<int, 4> i = {b, g[b].size(), capacity, cost};
+        array<int, 4> j = {a, g[a].size(), 0, -cost};
         g[a].push_back(i);
         g[b].push_back(j);
     }
 
     bool dijkstra(int s, int t) {
-        fill(dist.begin(), dist.end(), inf);
-
+        fill(d.begin(), d.end(), inf);
         priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-        dist[s] = 0;
-        pq.push({0, s});
+        d[s] = 0;
+        pq.emplace(0, s);
         while (pq.size()) {
-            auto [d, a] = pq.top(); pq.pop();
-            if (dist[a] != d) continue;
+            auto [x, a] = pq.top(); pq.pop();
+            if (d[a] < x) continue;
 
             for (int i = 0; i < g[a].size(); ++i) {
-                auto &[b, j, cap, cost] = g[a][i];
-                if (cap <= 0) continue;
+                auto &[b, j, capacity, cost] = g[a][i];
+                if (capacity <= 0) continue;
 
-                int e = d + cost + pot[a] - pot[b];
-                if (e < dist[b]) {
-                    dist[b] = e;
-                    par[b] = {a, i};
-                    pq.push({dist[b], b});
+                int w = d[a] + cost + h[a] - h[b];
+                if (w < d[b]) {
+                    d[b] = w;
+                    p[b] = a;
+                    e[b] = i;
+                    pq.emplace(d[b], b);
                 }
             }
         }
-        return dist[t] != inf;
+        return d[t] != inf;
     }
 
-    pair<int, int> min_cost_k_flow(int s, int t, int k) {
+    pair<int, int> min_cost_k_flow(int s, int t, int k = inf) {
         int flow = 0, cost = 0;
-        fill(pot.begin(), pot.end(), 0);
+        fill(h.begin(), h.end(), 0);
         while (flow < k and dijkstra(s, t)) {
-            for (int a = 0; a < n; ++a) if (dist[a] != inf) {
-                pot[a] += dist[a];
+            for (int a = 0; a < n; ++a) if (d[a] != inf) {
+                h[a] += d[a];
             }
 
             int push = k - flow;
-            for (int a = t; a != s; a = par[a].first) {
-                auto &[p, i] = par[a];
-                push = min(push, g[p][i].cap);
+            for (int a = t; a != s; a = p[a]) {
+                int b = p[a], i = e[a];
+                push = min(push, g[b][i][2]);
             }
-            for (int a = t; a != s; a = par[a].first) {
-                auto &[p, i] = par[a];
-                int j = g[p][i].rev;
-                g[p][i].cap -= push;
-                g[a][j].cap += push;
-                cost += g[p][i].cost * push;
+            for (int a = t; a != s; a = p[a]) {
+                int b = p[a], i = e[a], j = g[b][i][1];
+                g[b][i][2] -= push;
+                g[a][j][2] += push;
+                cost += g[b][i][3] * push;
             }
             flow += push;
         }
