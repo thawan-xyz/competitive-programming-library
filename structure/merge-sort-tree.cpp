@@ -1,44 +1,30 @@
 struct merge_sort_tree {
-private:
-    struct node {
-        int l = 0, r = 0;
-        vector<int> a;
-    };
+    int n;
+    vector<int> a;
+    vector<ordered_set<pair<int, int>>> tree;
 
-    int n, root;
-    vector<node> tree;
-
-    int build(vector<int> &a, int l, int r) {
-        int p = tree.size();
-        tree.emplace_back();
-        if (l == r) {
-            tree[p].a = {a[l]};
-        } else {
-            int m = (l + r) / 2;
-            tree[p].l = build(a, l, m);
-            tree[p].r = build(a, m + 1, r);
-            tree[p].a.resize(tree[tree[p].l].a.size() + tree[tree[p].r].a.size());
-            merge(tree[tree[p].l].a.begin(), tree[tree[p].l].a.end(), tree[tree[p].r].a.begin(), tree[tree[p].r].a.end(), tree[p].a.begin());
+    merge_sort_tree(vector<int> &a): n(a.size()), a(a), tree(2 * n) {
+        for (int i = 0; i < n; ++i) {
+            for (int j = i + n; j > 0; j >>= 1) {
+                tree[j].insert({a[i], i});
+            }
         }
-        return p;
     }
 
-    int count_less_equal(int ql, int qr, int x, int p, int l, int r) {
-        if (ql > r or qr < l) return 0;
-        if (ql <= l and qr >= r) return upper_bound(tree[p].a.begin(), tree[p].a.end(), x) - tree[p].a.begin();
-
-        int m = (l + r) / 2;
-        return count_less_equal(ql, qr, x, tree[p].l, l, m) + count_less_equal(ql, qr, x, tree[p].r, m + 1, r);
+    void update(int i, int x) {
+        for (int j = i + n; j > 0; j >>= 1) {
+            tree[j].erase({a[i], i});
+            tree[j].insert({x, i});
+        }
+        a[i] = x;
     }
 
-public:
-    merge_sort_tree(vector<int> &a): n(a.size()) {
-        tree.reserve(2 * n);
-        tree.emplace_back();
-        root = build(a, 0, n - 1);
-    }
-
-    int count_less_equal(int l, int r, int x) {
-        return count_less_equal(l, r, x, root, 0, n - 1);
+    int query(int i, int j, int k) {
+        int c = 0;
+        for (i += n, j += n + 1; i < j; i >>= 1, j >>= 1) {
+            if (i & 1) c += tree[i++].order_of_key({k + 1, 0});
+            if (j & 1) c += tree[--j].order_of_key({k + 1, 0});
+        }
+        return c;
     }
 };

@@ -1,13 +1,11 @@
 struct iterative_segment_tree {
-private:
     int n;
     vector<int> tree;
 
-    int merge(int a, int b) {
-        return a + b;
+    int merge(int x, int y) {
+        return x + y;
     }
 
-public:
     iterative_segment_tree(int n): n(n), tree(2 * n) {}
 
     iterative_segment_tree(vector<int> &a): iterative_segment_tree(a.size()) {
@@ -17,7 +15,7 @@ public:
 
     void update(int i, int x) {
         tree[i += n] = x;
-        for (i >>= 1; i > 0; i >>= 1) tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
+        while (i >>= 1) tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
     }
 
     int query(int i, int j) {

@@ -1,10 +1,9 @@
 struct iterative_lazy_segment_tree {
-private:
     int n, h;
     vector<int> tree, lazy;
 
-    int merge(int a, int b) {
-        return a + b;
+    int merge(int x, int y) {
+        return x + y;
     }
 
     void apply(int i, int x, int len) {
@@ -30,7 +29,6 @@ private:
         }
     }
 
-public:
     iterative_lazy_segment_tree(int s) {
         n = (s <= 1) ? 1 : 1 << (__lg(s - 1) + 1);
         h = __lg(n);
