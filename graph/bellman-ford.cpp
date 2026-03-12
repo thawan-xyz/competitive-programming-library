@@ -9,7 +9,7 @@ vector<int> bellman_ford(int s, int n, vector<array<int, 3>> &e) {
         }
         if (not changed) break;
     }
-    for (auto &[a, b, w] : e) if (d[a] != inf and d[a] + w < d[b]) return {}
+    for (auto [a, b, w] : e) if (d[a] != inf and d[a] + w < d[b]) return {}
     return d;
 }
 
