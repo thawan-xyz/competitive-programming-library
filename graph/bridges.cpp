@@ -1,21 +1,21 @@
-vector<pair<int, int>> bridges(int r, vector<vector<int>> &g) {
+vector<pair<int, int>> bridges(int o, vector<vector<int>> &g) {
     int n = g.size(), timer = 1;
     vector<int> in(n), low(n);
-    vector<pair<int, int>> edges;
+    vector<pair<int, int>> e;
 
-    function<void(int, int)> dfs = [&](int a, int p) -> void {
+    auto dfs = [&](auto &self, int a, int p) -> void {
         in[a] = low[a] = timer++;
         for (int b : g[a]) if (b != p) {
             if (in[b] != 0) {
                 low[a] = min(low[a], in[b]);
             } else {
-                dfs(b, a);
+                self(self, b, a);
                 low[a] = min(low[a], low[b]);
-                if (in[a] < low[b]) edges.push_back({a, b});
+                if (in[a] < low[b]) e.emplace_back(a, b);
             }
         }
     };
 
-    for (int i = r; i < n; ++i) if (in[i] == 0) dfs(i, i);
-    return edges;
+    for (int i = o; i < n; ++i) if (in[i] == 0) dfs(dfs, i, i);
+    return e;
 }
