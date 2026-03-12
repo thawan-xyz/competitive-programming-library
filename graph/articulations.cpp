@@ -1,9 +1,3 @@
-/*
- * Algoritmo para encontrar Pontos de Articulação (Cut Vertices) em um Grafo Não-Direcionado
- * Retorna uma lista de vértices que, se removidos, aumentam o número de componentes conexos (desconectam o grafo).
- * Complexidade de Tempo: O(V + E)
- * Complexidade de Espaço: O(V)
- */
 vector<int> articulations(int o, vector<vector<int>> &g) {
     int n = g.size(), timer = 1;
     vector<int> in(n), low(n);

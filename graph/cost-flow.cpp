@@ -1,9 +1,3 @@
-/*
- * Min-Cost Max-Flow (Successive Shortest Path c/ Dijkstra e Potenciais)
- * Retorna {fluxo, custo}. Pode ser limitado a um fluxo 'k'.
- * Complexidade de Tempo: O(F * E log V), onde F é o fluxo máximo alcançado.
- * Complexidade de Espaço: O(V + E)
- */
 struct min_cost_flow {
     int n;
     vector<int> d, h, p, e;
