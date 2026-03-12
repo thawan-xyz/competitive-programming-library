@@ -1,15 +1,14 @@
 vector<int> linear_sieve(int n) {
-    vector<int> low(n + 1);
-    vector<int> primes;
+    vector<int> p, lp(n + 1);
     for (int i = 2; i <= n; ++i) {
-        if (low[i] == 0) {
-            low[i] = i;
-            primes.push_back(i);
+        if (lp[i] == 0) {
+            lp[i] = i;
+            p.push_back(i);
         }
-        for (int p : primes) {
-            if (p > low[i] or p * i > n) break;
-            low[p * i] = p;
+        for (int j : p) {
+            if (j > lp[i] or i * j > n) break;
+            lp[i * j] = j;
         }
     }
-    return primes;
+    return p;
 }
