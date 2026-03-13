@@ -1,35 +1,28 @@
 struct cover_tree {
-private:
     int n;
-    vector<int> x;
-    vector<int> count;
-    vector<int> len;
+    vector<int> cnt, len, all;
 
-    void modify(int ql, int qr, int v, int p, int l, int r) {
-        if (ql <= l and r <= qr) {
-            count[p] += v;
-        } else {
-            int m = (l + r) / 2;
-            if (ql < m) modify(ql, qr, v, 2 * p, l, m);
-            if (qr > m) modify(ql, qr, v, (2 * p) + 1, m, r);
-        }
-
-        if (count[p] > 0) {
-            len[p] = x[r] - x[l];
-        } else {
-            if (l == r - 1) {
-                len[p] = 0;
-            } else {
-                len[p] = len[2 * p] + len[(2 * p) + 1];
-            }
-        }
+    void recalc(int i) {
+        if (cnt[i] > 0) len[i] = all[i];
+        else if (i < n) len[i] = len[i << 1] + len[i << 1 | 1];
+        else len[i] = 0;
     }
 
-public:
-    cover_tree(vector<int> &x): n(x.size()), x(x), count(4 * n), len(4 * n) {}
+    cover_tree(vector<int> &x): n(x.size() - 1), cnt(2 * n), len(2 * n), all(2 * n) {
+        for (int i = 0; i < n; ++i) all[n + i] = x[i + 1] - x[i];
+        for (int i = n - 1; i > 0; --i) all[i] = all[i << 1] + all[i << 1 | 1];
+    }
 
-    void modify(int l, int r, int v) {
-        modify(l, r, v, 1, 0, n - 1);
+    void update(int i, int j, int x) {
+        int p = i, q = j;
+        for (i += n, j += n; i < j; i >>= 1, j >>= 1) {
+            if (i & 1) cnt[i] += x, recalc(i++);
+            if (j & 1) cnt[--j] += x, recalc(j);
+        }
+        i = p + n;
+        while (i >>= 1) recalc(i);
+        j = q + n - 1;
+        while (j >>= 1) recalc(j);
     }
 
     int query() {
