@@ -1,19 +1,13 @@
 struct dinic {
-    struct edge {
-        int t, w, i;
-
-        edge(int t, int w, int i): t(t), w(w), i(i) {}
-    };
-
     int n;
-    vector<vector<edge>> g;
+    vector<vector<array<int, 3>>> g;
     vector<int> l, p;
 
     dinic(int n): n(n), g(n), l(n), p(n) {}
 
     void insert(int a, int b, int w) {
-        g[a].push_back(edge(b, w, g[b].size()));
-        g[b].push_back(edge(a, 0, g[a].size() - 1));
+        g[a].push_back({b, w, g[b].size()});
+        g[b].push_back({a, 0, g[a].size() - 1});
     }
 
     bool bfs(int s, int t) {
@@ -43,7 +37,7 @@ struct dinic {
                 int d = 0;
                 if ((d = dfs(b, t, min(f, w))) > 0) {
                     w -= d;
-                    g[b][i].w += d;
+                    g[b][i][1] += d;
                     return d;
                 }
             }

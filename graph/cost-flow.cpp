@@ -1,15 +1,13 @@
 struct min_cost_flow {
     int n;
-    vector<int> d, h, p, e;
     vector<vector<array<int, 4>>> g;
+    vector<int> d, h, p, e;
 
     min_cost_flow(int n): n(n), g(n), d(n), h(n), p(n), e(n) {}
 
     void insert_edge(int a, int b, int capacity, int cost) {
-        array<int, 4> i = {b, g[b].size(), capacity, cost};
-        array<int, 4> j = {a, g[a].size(), 0, -cost};
-        g[a].push_back(i);
-        g[b].push_back(j);
+        g[a].push_back({b, g[b].size(), capacity, cost});
+        g[b].push_back({a, g[a].size() - 1, 0, -cost});
     }
 
     bool dijkstra(int s, int t) {

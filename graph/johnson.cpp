@@ -7,6 +7,7 @@ vector<vector<int>> johnson(vector<vector<pair<int, int>>> &g) {
     vector<int> h = shortest_path_faster_algorithm(n, g);
     g.pop_back();
     if (h.empty()) return {};
+    h.pop_back();
     for (int i = 0; i < n; ++i) {
         for (auto &[j, w] : g[i]) {
             w += h[i] - h[j];
