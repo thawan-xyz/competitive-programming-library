@@ -1,52 +1,49 @@
 struct lazy_segment_tree {
     int n, h;
-    vector<int> tree, lazy;
+    vector<int> tree, lazy, len;
 
     int merge(int x, int y) {
         return x + y;
     }
 
-    void apply(int i, int x, int len) {
-        tree[i] += x * len;
+    void apply(int i, int x) {
+        tree[i] += x * len[i];
         if (i < n) lazy[i] += x;
     }
 
     void push(int k) {
-        for (int s = h, len = 1 << (h - 1); s > 0; --s, len >>= 1) {
+        for (int s = h; s > 0; --s) {
             int i = k >> s;
-            if (lazy[i] != 0) {
-                apply(i << 1, lazy[i], len);
-                apply((i << 1) | 1, lazy[i], len);
-                lazy[i] = 0;
-            }
+            if (lazy[i] == 0) continue;
+            apply(i << 1, lazy[i]);
+            apply((i << 1) | 1, lazy[i]);
+            lazy[i] = 0;
         }
     }
 
-    void pull(int k) {
-        for (int i = k >> 1, len = 2; i > 0; i >>= 1, len <<= 1) {
+    void pull(int i) {
+        while (i >>= 1) {
             tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
-            if (lazy[i] != 0) tree[i] += lazy[i] * len;
+            if (lazy[i] != 0) tree[i] += lazy[i] * len[i];
         }
     }
 
-    lazy_segment_tree(int s) {
-        n = (s <= 1) ? 1 : 1 << (__lg(s - 1) + 1);
-        h = __lg(n);
-        tree.assign(2 * n, 0);
-        lazy.assign(n, 0);
+    lazy_segment_tree(int n): n(n), h(__lg(2 * n - 1)), tree(2 * n), lazy(n), len(2 * n) {
+        for (int i = n; i < 2 * n; ++i) len[i] = 1;
+        for (int i = n - 1; i > 0; --i) len[i] = len[i << 1] + len[(i << 1) | 1];
     }
 
     lazy_segment_tree(vector<int> &a): lazy_segment_tree(a.size()) {
-        for (int i = 0; i < a.size(); ++i) tree[n + i] = a[i];
+        for (int i = 0; i < n; ++i) tree[n + i] = a[i];
         for (int i = n - 1; i > 0; --i) tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
     }
 
     void update(int i, int j, int x) {
-        int p = i, q = j, len = 1;
+        int p = i, q = j;
         push(p + n), push(q + n);
-        for (i += n, j += n + 1; i < j; i >>= 1, j >>= 1, len <<= 1) {
-            if (i & 1) apply(i++, x, len);
-            if (j & 1) apply(--j, x, len);
+        for (i += n, j += n + 1; i < j; i >>= 1, j >>= 1) {
+            if (i & 1) apply(i++, x);
+            if (j & 1) apply(--j, x);
         }
         pull(p + n), pull(q + n);
     }
