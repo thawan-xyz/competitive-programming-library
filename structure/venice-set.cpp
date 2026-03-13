@@ -11,11 +11,10 @@ struct venice_set {
     }
 
     void remove(int x) {
-        auto i = s.find(x - k);
-        if (i != s.end()) s.erase(i);
+        if (auto i = s.find(x - k); i != s.end()) s.erase(i);
     }
 
-    void modify(int x) {
+    void update(int x) {
         k += x;
     }
 
