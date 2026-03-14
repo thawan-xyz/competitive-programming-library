@@ -1,4 +1,4 @@
-vector<int> articulations(int o, vector<vector<int>> &g) {
+vector<int> articulations(int one, vector<vector<int>> &g) {
     int n = g.size(), timer = 1;
     vector<int> in(n), low(n);
     vector<bool> art(n);
@@ -20,7 +20,7 @@ vector<int> articulations(int o, vector<vector<int>> &g) {
     };
 
     vector<int> points;
-    for (int i = o; i < n; ++i) {
+    for (int i = one; i < n; ++i) {
         if (in[i] == 0) dfs(dfs, i, i);
         if (art[i]) points.push_back(i);
     }

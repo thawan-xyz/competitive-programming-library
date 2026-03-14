@@ -1,4 +1,4 @@
-vector<pair<int, int>> bridges(int o, vector<vector<int>> &g) {
+vector<pair<int, int>> bridges(int one, vector<vector<int>> &g) {
     int n = g.size(), timer = 1;
     vector<int> in(n), low(n);
     vector<pair<int, int>> e;
@@ -16,6 +16,6 @@ vector<pair<int, int>> bridges(int o, vector<vector<int>> &g) {
         }
     };
 
-    for (int i = o; i < n; ++i) if (in[i] == 0) dfs(dfs, i, i);
+    for (int i = one; i < n; ++i) if (in[i] == 0) dfs(dfs, i, i);
     return e;
 }
