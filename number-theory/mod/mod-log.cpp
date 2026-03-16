@@ -1,4 +1,4 @@
-int log(int a, int b, int mod) {
+int mod_log(int a, int b, int mod) {
     if (a == 0) {
         if (b == 0) return 1 % mod;
         return -1;

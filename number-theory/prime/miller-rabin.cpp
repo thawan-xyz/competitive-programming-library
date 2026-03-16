@@ -1,5 +1,5 @@
 bool composite(int n, int a, int s, int d) {
-    int128 x = power(a, d, n);
+    int128 x = mod_pow(a, d, n);
     if (x == 1 or x == n - 1) return false;
     for (int i = 1; i < s; ++i) {
         x = (x * x) % n;
