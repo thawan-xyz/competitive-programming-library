@@ -1,6 +1,6 @@
-const float PI = acos(-1);
+const float pi = acos(-1);
 
-void fast_fourier_transform(vector<complex<float>> &p, int sign) {
+void fft(vector<complex<float>> &p, int sign) {
     int n = p.size();
 
     for (int i = 1, j = 0; i < n; ++i) {
@@ -12,7 +12,7 @@ void fast_fourier_transform(vector<complex<float>> &p, int sign) {
 
     for (int len = 2; len <= n; len *= 2) {
         int half = len / 2;
-        float ang = sign * (2 * PI / len);
+        float ang = sign * (2 * pi / len);
         complex<float> step(cos(ang), sin(ang));
         for (int i = 0; i < n; i += len) {
             complex<float> w(1, 0);
@@ -40,11 +40,11 @@ vector<int> convolution(vector<int> &a, vector<int> &b) {
     fa.resize(m);
     fb.resize(m);
 
-    fast_fourier_transform(fa, +1);
-    fast_fourier_transform(fb, +1);
+    fft(fa, +1);
+    fft(fb, +1);
 
     for (int i = 0; i < m; ++i) fa[i] *= fb[i];
-    fast_fourier_transform(fa, -1);
+    fft(fa, -1);
 
     vector<int> c(n);
     for (int i = 0; i < n; ++i) c[i] = round(fa[i].real());
