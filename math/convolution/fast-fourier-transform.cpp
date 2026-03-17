@@ -32,8 +32,7 @@ void fast_fourier_transform(vector<complex<float>> &p, int sign) {
 }
 
 vector<int> convolution(vector<int> &a, vector<int> &b) {
-    int n = a.size() + b.size() - 1;
-    int m = 1;
+    int n = a.size() + b.size() - 1, m = 1;
     while (m < n) m *= 2;
 
     vector<complex<float>> fa(a.begin(), a.end());
@@ -48,8 +47,6 @@ vector<int> convolution(vector<int> &a, vector<int> &b) {
     fast_fourier_transform(fa, -1);
 
     vector<int> c(n);
-    for (int i = 0; i < n; ++i) {
-        c[i] = round(fa[i].real());
-    }
+    for (int i = 0; i < n; ++i) c[i] = round(fa[i].real());
     return c;
 }

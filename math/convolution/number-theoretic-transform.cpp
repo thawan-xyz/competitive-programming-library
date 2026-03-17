@@ -1,58 +1,41 @@
-const int mod = 998244353, g = 3;
-
-void permute(vector<int> &p, vector<int> &order) {
+void ntt(vector<int> &p, int g, int mod, bool inv) {
     int n = p.size();
-    for (int i = 0; i < n; ++i) {
-        int j = order[i];
+    for (int i = 1, j = 0; i < n; ++i) {
+        int bit = n >> 1;
+        while (j & bit) j ^= bit, bit >>= 1;
+        j ^= bit;
         if (i < j) swap(p[i], p[j]);
     }
-}
 
-void number_theoretic_transform(vector<int> &p, int sign, vector<int> &order, int inv) {
-    int n = p.size();
-    permute(p, order);
-
-    for (int l = 1; l < n; l <<= 1) {
-        int step = power(g, (mod - 1) / (l << 1));
-        if (sign == -1) step = power(step, mod - 2);
-
-        for (int i = 0; i < n; i += l << 1) {
-            int w = 1;
-            for (int j = 0; j < l; ++j) {
+    for (int len = 2; len <= n; len *= 2) {
+        int half = len / 2;
+        int ang = mod_pow(g, (mod - 1) / len, mod);
+        if (inv) ang = mod_pow(ang, mod - 2, mod);
+        for (int i = 0; i < n; i += len) {
+            for (int j = 0, w = 1; j < half; ++j, w = (w * ang) % mod) {
                 int x = p[i + j];
-                int y = (w * p[(i + j) + l]) % mod;
+                int y = (p[i + j + half] * w) % mod;
                 p[i + j] = (x + y) % mod;
-                p[(i + j) + l] = ((x - y) + mod) % mod;
-                w = (w * step) % mod;
+                p[i + j + half] = ((x - y) + mod) % mod;
             }
         }
     }
 
-    if (sign == -1) for (int &i : p) i = (i * inv) % mod;
+    if (inv) {
+        int inv_n = mod_pow(n, mod - 2, mod);
+        for (int &x : p) x = (x * inv_n) % mod;
+    }
 }
 
-vector<int> convolution(vector<int> &a, vector<int> &b) {
-    int n = a.size() + b.size() - 1;
-    int m = (n == 1) ? 1 : 1 << (32 - __builtin_clz(n - 1));
-    int l = __builtin_ctz(m);
+vector<int> convolution(vector<int> a, vector<int> b, int g = 3, int mod = 998244353) {
+    int n = a.size() + b.size() - 1, m = 1;
+    while (m < n) m *= 2;
 
-    vector<int> order(m);
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < l; ++j) {
-            if (i & (1 << j)) {
-                order[i] |= 1 << (l - (j + 1));
-            }
-        }
-    }
+    a.resize(m), b.resize(m);
+    ntt(a, g, mod, false), ntt(b, g, mod, false);
+    for (int i = 0; i < m; ++i) a[i] = (a[i] * b[i]) % mod;
 
-    int inv = power(m, mod - 2);
-    a.resize(m); number_theoretic_transform(a, 1, order, inv);
-    b.resize(m); number_theoretic_transform(b, 1, order, inv);
-
-    vector<int> c(m);
-    for (int i = 0; i < m; ++i) c[i] = (a[i] * b[i]) % mod;
-    number_theoretic_transform(c, -1, order, inv);
-    c.resize(n);
-
-    return c;
+    ntt(a, g, mod, true);
+    a.resize(n);
+    return a;
 }
