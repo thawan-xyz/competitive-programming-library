@@ -1,17 +1,19 @@
-pair<int, vector<int>> multi_extended_gcd(vector<int> &a) {
+vector<int> multi_extended_gcd(vector<int> &a) {
     int n = a.size(), g = a[0];
-    vector<int> c(n, 1), h(n, 1);
+    vector<int> c(n, 1), h(n - 1);
 
     for (int i = 1; i < n; ++i) {
-        auto [f, x, y] = extended_gcd(g, a[i]);
-        g = f;
+        auto [x, y] = extended_gcd(g, a[i]);
+        g = gcd(g, a[i]);
         h[i - 1] = x;
         c[i] = y;
     }
 
-    for (int i = n - 1; i >= 0; --i) {
-        if (i < n - 1) h[i] *= h[i + 1];
-        c[i] *= h[i];
+    int p = 1;
+    for (int i = n - 1; i > 0; --i) {
+        c[i] *= p;
+        p *= h[i - 1];
     }
-    return {g, c};
+    c[0] *= p;
+    return c;
 }
