@@ -1,7 +1,8 @@
-// Wavelet Matrix
-// Time Complexity: Build O(N * log(MAX_VAL)), Queries O(log(MAX_VAL))
-// Space/Memory: O(N * log(MAX_VAL))
-// Note: Coordinate compression is REQUIRED before using this structure.
+/* Wavelet Matrix
+ * Time Complexity: Build O(N * log(MAX_VAL)), Queries O(log(MAX_VAL))
+ * Space/Memory: O(N * log(MAX_VAL))
+ * Note: Coordinate compression is REQUIRED before using this structure.
+*/
 struct wavelet_matrix {
     int n, log;
     vector<vector<int>> pref;
