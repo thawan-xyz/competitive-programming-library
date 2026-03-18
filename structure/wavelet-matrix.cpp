@@ -1,3 +1,7 @@
+// Wavelet Matrix
+// Time Complexity: Build O(N * log(MAX_VAL)), Queries O(log(MAX_VAL))
+// Space/Memory: O(N * log(MAX_VAL))
+// Note: Coordinate compression is REQUIRED before using this structure.
 struct wavelet_matrix {
     int n, log;
     vector<vector<int>> pref;
@@ -10,61 +14,61 @@ struct wavelet_matrix {
         mid.resize(log + 1);
 
         for (int b = log; b >= 0; --b) {
-            vector<int> zero; zero.reserve(n);
-            vector<int> one; one.reserve(n);
+            vector<int> z; z.reserve(n);
+            vector<int> o; o.reserve(n);
             for (int i = 0; i < n; ++i) {
                 bool on = (a[i] >> b) & 1;
                 pref[b][i + 1] = pref[b][i];
                 if (not on) {
                     pref[b][i + 1] += 1;
-                    zero.push_back(a[i]);
+                    z.push_back(a[i]);
                 } else {
-                    one.push_back(a[i]);
+                    o.push_back(a[i]);
                 }
             }
-            mid[b] = zero.size();
-            copy(zero.begin(), zero.end(), a.begin());
-            copy(one.begin(), one.end(), a.begin() + mid[b]);
+            mid[b] = z.size();
+            copy(z.begin(), z.end(), a.begin());
+            copy(o.begin(), o.end(), a.begin() + mid[b]);
         }
     }
 
-    int kth(int l, int r, int k) {
+    int kth(int i, int j, int k) {
         int x = 0;
         for (int b = log; b >= 0; --b) {
-            int z_l = pref[b][l];
-            int z_r = pref[b][r + 1];
-            int z = z_r - z_l;
+            int l = pref[b][i];
+            int r = pref[b][j + 1];
+            int z = r - l;
 
             if (k < z) {
-                l = z_l;
-                r = z_r - 1;
+                i = l;
+                j = r - 1;
             } else {
                 x |= 1LL << b;
-                l += mid[b] - z_l;
-                r += mid[b] - z_r;
                 k -= z;
+                i += mid[b] - l;
+                j += mid[b] - r;
             }
         }
         return x;
     }
 
-    int less_or_equal(int l, int r, int x) {
+    int less_or_equal(int i, int j, int x) {
         int c = 0;
         for (int b = log; b >= 0; --b) {
-            int z_l = pref[b][l];
-            int z_r = pref[b][r + 1];
-            int z = z_r - z_l;
+            int l = pref[b][i];
+            int r = pref[b][j + 1];
+            int z = r - l;
 
             if (((x >> b) & 1) == 0) {
-                l = z_l;
-                r = z_r - 1;
+                i = l;
+                j = r - 1;
             } else {
                 c += z;
-                l += mid[b] - z_l;
-                r += mid[b] - z_r;
+                i += mid[b] - l;
+                j += mid[b] - r;
             }
         }
-        if (l <= r) c += r - l + 1;
+        if (i <= j) c += j - i + 1;
         return c;
     }
 };
