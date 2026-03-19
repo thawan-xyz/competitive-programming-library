@@ -1,7 +1,7 @@
 const array<int, 2> base = {41, 53};
 const array<int, 2> mod = {1000000007, 1000000009};
 
-struct dynamic_hasher {
+struct hasher {
     struct node {
         int len = 0;
         array<int, 2> normal = {};
@@ -29,7 +29,7 @@ struct dynamic_hasher {
         return m;
     }
 
-    dynamic_hasher(const string &s): n(s.length()), tree(2 * n), pow(n + 1) {
+    hasher(const string &s): n(s.length()), tree(2 * n), pow(n + 1) {
         pow[0] = {1, 1};
         for (int i = 0; i < n; ++i) {
             for (int j : {0, 1}) pow[i + 1][j] = (pow[i][j] * base[j]) % mod[j];
