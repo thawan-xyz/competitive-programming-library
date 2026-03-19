@@ -7,7 +7,7 @@ struct merge_sort_tree {
         for (int i = n - 1; i > 0; --i) merge(tree[i << 1].begin(), tree[i << 1].end(), tree[(i << 1) | 1].begin(), tree[(i << 1) | 1].end(), back_inserter(tree[i]));
     }
 
-    int query(int i, int j, int x) {
+    int less_or_equal(int i, int j, int x) {
         int c = 0;
         for (i += n, j += n + 1; i < j; i >>= 1, j >>= 1) {
             if (i & 1) c += upper_bound(tree[i].begin(), tree[i].end(), x) - tree[i].begin(), i++;

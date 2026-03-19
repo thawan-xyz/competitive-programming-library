@@ -1,8 +1,8 @@
-struct binary_indexed_tree {
+struct bit {
     int n;
     vector<int> tree;
 
-    binary_indexed_tree(int n = 0): n(n), tree(n + 1) {}
+    bit(int n = 0): n(n), tree(n + 1) {}
 
     void update(int i, int x) {
         for (i += 1; i <= n; i += i & -i) tree[i] += x;

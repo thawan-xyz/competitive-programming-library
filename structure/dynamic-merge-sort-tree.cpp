@@ -1,3 +1,6 @@
+// Merge Sort Tree: Range Queries with Point Updates
+// Time: Build O(N log² N) | Update/Query O(log² N) | Space: O(N log N)
+// Note: Uses PBDS ordered_set | pair<int, int> Handles Duplicate Values
 struct merge_sort_tree {
     int n;
     vector<int> a;
@@ -19,7 +22,7 @@ struct merge_sort_tree {
         a[i] = x;
     }
 
-    int query(int i, int j, int x) {
+    int less_or_equal(int i, int j, int x) {
         int c = 0;
         for (i += n, j += n + 1; i < j; i >>= 1, j >>= 1) {
             if (i & 1) c += tree[i++].order_of_key({x + 1, 0});

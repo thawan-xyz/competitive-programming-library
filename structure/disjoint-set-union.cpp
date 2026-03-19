@@ -1,7 +1,7 @@
-struct disjoint_set_union {
+struct dsu {
     vector<int> p, s;
 
-    disjoint_set_union(int n): p(n), s(n, 1) {
+    dsu(int n): p(n), s(n, 1) {
         for (int i = 0; i < n; ++i) p[i] = i;
     }
 

@@ -1,8 +1,11 @@
-struct sparse_binary_indexed_tree {
+// Sparse BIT: 2D Binary Indexed Tree with Static Coordinate Compression
+// Time: Build O(Q log² Q) | Update/Query O(log² Q) | Space: O(Q log Q)
+// Queries: {type, i, j} | 'U' = Update, 'P' = Prefix
+struct sparse_bit {
     int n;
     vector<int> is;
     vector<vector<int>> js;
-    vector<binary_indexed_tree> tree;
+    vector<bit> tree;
 
     void compress(vector<int> &a) {
         sort(a.begin(), a.end());
@@ -13,21 +16,21 @@ struct sparse_binary_indexed_tree {
         return lower_bound(a.begin(), a.end(), i) - a.begin();
     }
 
-    sparse_binary_indexed_tree(vector<tuple<char, int, int>> &q) {
+    sparse_bit(vector<tuple<char, int, int>> &q) {
         for (auto [t, i, j] : q) is.push_back(i);
         compress(is);
         n = is.size();
 
         js.resize(n + 1);
         for (auto [t, i, j] : q) {
-            if (t == 'u') for (i = id(is, i) + 1; i <= n; i += i & -i) js[i].push_back(j);
-            else if (t == 'p') for (i = id(is, i) + 1; i > 0; i -= i & -i) js[i].push_back(j);
+            if (t == 'U') for (i = id(is, i) + 1; i <= n; i += i & -i) js[i].push_back(j);
+            else if (t == 'P') for (i = id(is, i) + 1; i > 0; i -= i & -i) js[i].push_back(j);
         }
 
         tree.resize(n + 1);
         for (int i = 1; i <= n; ++i) {
             compress(js[i]);
-            tree[i] = binary_indexed_tree(js[i].size());
+            tree[i] = bit(js[i].size());
         }
     }
 

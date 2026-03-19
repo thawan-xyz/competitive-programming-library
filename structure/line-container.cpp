@@ -1,13 +1,12 @@
+// Line Container: Dynamic Convex Hull Trick for Maximum
+// Time: Insert/Query O(log N) | Space: O(N)
+// Note: Computes Max(ax + b) | Change < to > in Line Operator for Minimum
 struct line {
     mutable int a, b, i;
 
-    bool operator<(const line &o) const {
-        return tie(a, b) < tie(o.a, o.b);
-    }
+    bool operator<(const line &o) const { return tie(a, b) < tie(o.a, o.b); }
 
-    bool operator<(const int x) const {
-        return i < x;
-    }
+    bool operator<(const int x) const { return i < x; }
 };
 
 struct line_container : multiset<line, less<>> {
@@ -25,7 +24,7 @@ struct line_container : multiset<line, less<>> {
     }
 
     void insert(int a, int b) {
-        iterator z = multiset::insert({a, b, 0}), y = z++, x = y;
+        auto z = multiset::insert({a, b, 0}), y = z++, x = y;
         while (isect(y, z)) z = erase(z);
         if (x != begin() and isect(--x, y)) isect(x, y = erase(y));
         while ((y = x) != begin() and (--x)->i >= y->i) isect(x, erase(y));

@@ -1,8 +1,8 @@
-struct binary_indexed_tree_2d {
+struct bit_2d {
     int n, m;
-    vector<binary_indexed_tree> tree;
+    vector<bit> tree;
 
-    binary_indexed_tree_2d(int n = 0, int m = 0): n(n), m(m), tree(n + 1, binary_indexed_tree(m)) {}
+    bit_2d(int n = 0, int m = 0): n(n), m(m), tree(n + 1, bit(m)) {}
 
     void build(vector<vector<int>> &a) {
         for (int i = 0; i < n; ++i) {
