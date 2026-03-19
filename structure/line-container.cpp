@@ -1,6 +1,6 @@
 // Line Container: Dynamic Convex Hull Trick for Maximum
 // Time: Insert/Query O(log N) | Space: O(N)
-// Note: Computes Max(ax + b) | Change < to > in Line Operator for Minimum
+// Note: Computes Max(ax + b) | Change < to > in Line Operator for Min
 struct line {
     mutable int a, b, i;
 
