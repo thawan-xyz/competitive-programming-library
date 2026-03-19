@@ -1,140 +1,72 @@
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+
+// Treap: Randomized Binary Search Tree (Split/Merge)
+// Time: Operations O(log N) average | Space: O(N)
+// Note: Combines BST and Heap Properties | Requires mt19937 for Priorities
 struct treap {
-private:
-    struct node {
-        int x = 0, y = 0;
-        int l = 0, r = 0;
-        int s = 1;
-    };
+    struct node { int x, y, l, r, s; };
+
+    int root = 0;
+    vector<node> tree = {{0, 0, 0, 0, 0}};
 
     int make(int x, int y) {
-        int i = tree.size();
-        tree.emplace_back();
-        tree[i].x = x;
-        tree[i].y = y;
-        return i;
-    }
-
-    int size(int i) {
-        return i ? tree[i].s : 0;
+        tree.push_back({x, y, 0, 0, 1});
+        return tree.size() - 1;
     }
 
     void update(int i) {
-        tree[i].s = 1 + size(tree[i].l) + size(tree[i].r);
+        tree[i].s = 1 + tree[tree[i].l].s + tree[tree[i].r].s;
     }
 
-    pair<int, int> split(int i, int x) {
-        if (not i) return {0, 0};
-
-        if (tree[i].x <= x) {
-            auto [l, r] = split(tree[i].r, x);
-            tree[i].r = l;
-            update(i);
-            return {i, r};
-        } else {
-            auto [l, r] = split(tree[i].l, x);
-            tree[i].l = r;
-            update(i);
-            return {l, i};
-        }
+    void split(int i, int x, int &l, int &r) {
+        if (i == 0) l = r = 0;
+        else if (tree[i].x <= x) split(tree[i].r, x, tree[i].r, r), l = i, update(i);
+        else split(tree[i].l, x, l, tree[i].l), r = i, update(i);
     }
 
     int merge(int l, int r) {
-        if (not l) return r;
-        if (not r) return l;
-
-        if (tree[l].y > tree[r].y) {
-            tree[l].r = merge(tree[l].r, r);
-            update(l);
-            return l;
-        } else {
-            tree[r].l = merge(l, tree[r].l);
-            update(r);
-            return r;
-        }
+        if (l == 0 or r == 0) return l | r;
+        if (tree[l].y > tree[r].y) return tree[l].r = merge(tree[l].r, r), update(l), l;
+        return tree[r].l = merge(l, tree[r].l), update(r), r;
     }
 
-    int insert(int i, int x, int y) {
-        if (not i) return make(x, y);
-
-        if (tree[i].y < y) {
-            auto [l, r] = split(i, x);
-            i = make(x, y);
-            tree[i].l = l;
-            tree[i].r = r;
-        } else {
-            if (x <= tree[i].x) tree[i].l = insert(tree[i].l, x, y);
-            if (x > tree[i].x) tree[i].r = insert(tree[i].r, x, y);
-        }
-        update(i);
-        return i;
-    }
-
-    int erase(int i, int x) {
-        if (not i) return 0;
-
-        if (x == tree[i].x) return merge(tree[i].l, tree[i].r);
-        if (x < tree[i].x) tree[i].l = erase(tree[i].l, x);
-        if (x > tree[i].x) tree[i].r = erase(tree[i].r, x);
-        update(i);
-        return i;
-    }
-
-    int index(int i, int x) {
-        if (not i) return -1;
-
-        if (x == tree[i].x) return size(tree[i].l);
-        if (x < tree[i].x) return index(tree[i].l, x);
-
-        int r = index(tree[i].r, x);
-        if (r == -1) return -1;
-        return 1 + size(tree[i].l) + r;
-    }
-
-    int kth(int i, int x) {
-        if (not i) return -1;
-
-        int l = size(tree[i].l);
-        if (x == l) return tree[i].x;
-
-        if (x < l) return kth(tree[i].l, x);
-        return kth(tree[i].r, x - (l + 1));
-    }
-
-public:
-    vector<node> tree;
-    int root;
-
-    treap() {
-        root = make(0, 0);
-    }
-
-    void insert(int x) {
-        int y = random;
-        root = insert(root, x, y);
+    void insert(int x, int y = rng()) {
+        int l, r; split(root, x, l, r);
+        root = merge(merge(l, make(x, y)), r);
     }
 
     void erase(int x) {
-        root = erase(root, x);
+        int l, m, r; split(root, x - 1, l, r), split(r, x, m, r);
+        m = merge(tree[m].l, tree[m].r);
+        root = merge(merge(l, m), r);
     }
 
     int index(int x) {
-        return index(root, x);
+        int i = root, k = 0;
+        while (i != 0) {
+            if (tree[i].x < x) k += 1 + tree[tree[i].l].s, i = tree[i].r;
+            else i = tree[i].l;
+        }
+        return k;
     }
 
-    int kth(int i) {
-        return kth(root, i);
+    int kth(int k) {
+        int i = root;
+        while (i != 0) {
+            int s = tree[tree[i].l].s;
+            if (k < s) i = tree[i].l;
+            else if (k > s) k -= 1 + s, i = tree[i].r;
+            else return tree[i].x;
+        }
+        return -1;
     }
 
     int unite(int i, int j) {
-        if (not i) return j;
-        if (not j) return i;
-
+        if (i == 0 or j == 0) return i | j;
         if (tree[i].y < tree[j].y) swap(i, j);
-        auto [l, r] = split(j, tree[i].x);
-
+        int l, r; split(j, tree[i].x, l, r);
         tree[i].l = unite(tree[i].l, l);
         tree[i].r = unite(tree[i].r, r);
-        update(i);
-        return i;
+        return update(i), i;
     }
 };
