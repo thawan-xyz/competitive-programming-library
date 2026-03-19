@@ -14,9 +14,9 @@ void ntt(vector<int> &p, int g, int mod, bool inv) {
         for (int i = 0; i < n; i += len) {
             for (int j = 0, w = 1; j < half; ++j, w = (w * ang) % mod) {
                 int x = p[i + j];
-                int y = (p[i + j + half] * w) % mod;
+                int y = (p[(i + j) + half] * w) % mod;
                 p[i + j] = (x + y) % mod;
-                p[i + j + half] = ((x - y) + mod) % mod;
+                p[(i + j) + half] = ((x - y) + mod) % mod;
             }
         }
     }
