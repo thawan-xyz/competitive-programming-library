@@ -1,31 +1,34 @@
 struct hld {
     int n;
-    vector<int> p, d, h, sz, id;
+    vector<int> p, d, h, id;
     reversable_segment_tree s, t;
 
-    hld(int r, vector<vector<int>> &g): n(g.sz()), p(n), d(n), h(n), sz(n), id(n), s(n, false), t(n, true) {
-        d[r] = 0, dfs(r, g);
+    hld(int r, vector<vector<int>> &g): n(g.size()), p(n), d(n), h(n), id(n), s(n, false), t(n, true) {
+        p[r] = r, d[r] = 0, dfs(r, g);
         h[r] = r, decompose(r, g, 0);
     }
 
-    void dfs(int a, vector<vector<int>> &g) {
-        sz[a] = 1;
+    int dfs(int a, vector<vector<int>> &g) {
+        int size = 1, max = 0;
         for (int &b : g[a]) if (b != p[a]) {
             p[b] = a, d[b] = d[a] + 1;
-            dfs(b, g), sz[a] += sz[b];
-            if (g[a][0] == p[a] or sz[b] > sz[g[a][0]]) {
+            int curr = dfs(b, g);
+            if (curr > max) {
+                max = curr;
                 swap(g[a][0], b);
             }
+            size += curr;
         }
+        return size;
     }
 
-    int decompose(int a, vector<vector<int>> &g, int timer) {
-        id[a] = timer++;
+    int decompose(int a, vector<vector<int>> &g, int i) {
+        id[a] = i++;
         for (int b : g[a]) if (b != p[a]) {
             h[b] = (b == g[a][0]) ? h[a] : b;
-            timer = decompose(b, g, timer);
+            i = decompose(b, g, i);
         }
-        return timer;
+        return i;
     }
 
     int query(int a, int b) {
