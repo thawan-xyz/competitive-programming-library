@@ -1,5 +1,3 @@
-mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-
 // Treap: Randomized Binary Search Tree (Split/Merge)
 // Time: Operations O(log N) average | Space: O(N)
 // Note: Combines BST and Heap Properties | Requires mt19937 for Priorities
