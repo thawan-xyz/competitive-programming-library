@@ -1,8 +1,6 @@
-/* Wavelet Matrix
- * Time Complexity: Build O(N * log(MAX_VAL)), Queries O(log(MAX_VAL))
- * Space/Memory: O(N * log(MAX_VAL))
- * Note: Coordinate compression is REQUIRED before using this structure.
-*/
+// Wavelet Matrix: Range Quantile, Range Frequency, K-th smallest
+// Time: Build O(N log V) | Queries O(log V) | Space: O(N log V)
+// Note: Coordinate compression is REQUIRED before building.
 struct wavelet_matrix {
     int n, log;
     vector<vector<int>> pref;
