@@ -9,7 +9,7 @@ struct wavelet_matrix {
     wavelet_matrix(vector<int> a): n(a.size()), log(__lg(*max_element(a.begin(), a.end()) | 1)), pref(log + 1, vector<int>(n + 1)), mid(log + 1) {
         for (int b = log; b >= 0; --b) {
             for (int i = 0; i < n; ++i) pref[b][i + 1] = pref[b][i] + (((a[i] >> b) & 1) == 0);
-            mid[b] = stable_partition(a.begin(), a.end(), [&](int x) { return ((x >> b) & 1) == 0;}) - a.begin();
+            mid[b] = stable_partition(a.begin(), a.end(), [&](int x) { return ((x >> b) & 1) == 0; }) - a.begin();
         }
     }
 
