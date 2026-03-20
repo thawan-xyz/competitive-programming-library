@@ -2,10 +2,12 @@
 // Time: Operations O(log N) average | Space: O(N)
 // Note: Combines BST and Heap Properties | Requires mt19937 for Priorities
 struct treap {
-    struct node { int x, y, l, r, s; };
+    struct node {
+        int x, y, l, r, s;
+    };
 
     int root = 0;
-    vector<node> tree = {{0, 0, 0, 0, 0}};
+    vector<node> tree = {{}};
 
     int make(int x, int y) {
         tree.push_back({x, y, 0, 0, 1});

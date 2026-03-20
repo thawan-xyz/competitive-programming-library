@@ -4,9 +4,13 @@
 struct line {
     mutable int a, b, i;
 
-    bool operator<(const line &o) const { return tie(a, b) < tie(o.a, o.b); }
+    bool operator<(const line &o) const {
+        return tie(a, b) < tie(o.a, o.b);
+    }
 
-    bool operator<(const int x) const { return i < x; }
+    bool operator<(const int x) const {
+        return i < x;
+    }
 };
 
 struct line_container : multiset<line, less<>> {

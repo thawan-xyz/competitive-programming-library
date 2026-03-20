@@ -7,9 +7,13 @@ struct range_set {
 
     range_set(int n): n(n), data((n + 63) / 64) {}
 
-    uint from(int i) { return ~0ULL << (i & 63); }
+    uint from(int i) {
+        return ~0ULL << (i & 63);
+    }
 
-    uint until(int i) { return ~0ULL >> (63 - (i & 63)); }
+    uint until(int i) {
+        return ~0ULL >> (63 - (i & 63));
+    }
 
     void apply(int k, bool on, uint mask) {
         if (on) data[k] |= mask;
