@@ -1,7 +1,7 @@
 // Implicit Treap: Dynamic Array with Range Updates and Queries
 // Time: Operations O(log N) average | Space: O(N)
 // Note: Supports Range Modifications | Uses Lazy Propagation and Implicit Indices
-struct implicit_treap {
+struct treap {
     struct node {
         int v, p, s, l, r;
         int data, lazy;
@@ -76,6 +76,13 @@ struct implicit_treap {
         auto [l, m] = split(root, k);
         auto [_, r] = split(m, 1);
         root = merge(l, r);
+    }
+
+    void move(int i, int j, int k) {
+        auto [h, q] = split(root, j + 1);
+        auto [p, m] = split(h, i);
+        auto [l, r] = split(merge(p, q), k);
+        root = merge(merge(l, m), r);
     }
 
     void update(int i, int j, int v) {
