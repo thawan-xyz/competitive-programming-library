@@ -13,7 +13,7 @@ struct bit_2d {
     }
 
     void update(int i, int j, int x) {
-        for (i += 1; i <= n; i += i & -i) tree[i].update(x);
+        for (i += 1; i <= n; i += i & -i) tree[i].update(j, x);
     }
 
     int prefix(int i, int j) {
