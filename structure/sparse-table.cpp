@@ -16,7 +16,7 @@ struct sparse_table {
     }
 
     int query(int i, int j) {
-        int k = __lg(j - i + 1), p = 1 << k;
-        return merge(table[k][i], table[k][j - p + 1]);
+        int k = __lg(j - i + 1);
+        return merge(table[k][i], table[k][j - (1 << k) + 1]);
     }
 };
