@@ -1,6 +1,6 @@
-// Harmonic Lemma: Quotient Blocks in a specific range [L, R]
+// Harmonic Lemma: Quotient Blocks in a specific range [l, r]
 // Time: O(sqrt(N)) | Space: O(1)
-// Note: Iterates over ranges [I, J] inside [L, R] where floor(n / k) is exactly q
+// Note: Iterates over ranges [i, j] inside [l, r] where floor(n / k) is exactly q
 int harmonic_lemma(int n, int l, int r) {
     int s = 0;
     for (int i = l, j; i <= r; i = j + 1) {
