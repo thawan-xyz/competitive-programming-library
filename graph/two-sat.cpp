@@ -40,7 +40,7 @@ struct two_sat {
 
     // Solves the 2-SAT and returns a valid assignment, or empty if unsatisfiable
     vector<bool> build() {
-        vector<vector<int>> components = tarjan(g, 0);
+        vector<vector<int>> components = tarjan(0, g);
         int m = components.size();
         vector<int> id(2 * n);
         for (int i = 0; i < m; ++i) {
