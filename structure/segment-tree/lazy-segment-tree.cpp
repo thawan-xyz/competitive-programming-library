@@ -28,13 +28,13 @@ struct lazy_segment_tree {
         }
     }
 
-    lazy_segment_tree(int n): n(n), h(__lg(2 * n - 1)), tree(2 * n), lazy(n), len(2 * n) {
+    lazy_segment_tree(int s): n(1 << __lg(2 * s - 1)), h(__lg(n)), tree(2 * n), lazy(n), len(2 * n) {
         for (int i = n; i < 2 * n; ++i) len[i] = 1;
         for (int i = n - 1; i > 0; --i) len[i] = len[i << 1] + len[(i << 1) | 1];
     }
 
     lazy_segment_tree(vector<int> &a): lazy_segment_tree(a.size()) {
-        for (int i = 0; i < n; ++i) tree[n + i] = a[i];
+        for (int i = 0; i < a.size(); ++i) tree[n + i] = a[i];
         for (int i = n - 1; i > 0; --i) tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
     }
 
