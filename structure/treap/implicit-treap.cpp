@@ -1,6 +1,6 @@
-// Implicit Treap: Dynamic Array with Range Updates and Queries
-// Time: Operations O(log N) average | Space: O(N)
-// Note: Supports Range Modifications | Uses Lazy Propagation and Implicit Indices
+// Implicit Treap: dynamic array with range updates and queries
+// Time: operations O(log N) average | Space: O(N)
+// Note: supports range modifications | uses lazy propagation and implicit indices
 struct treap {
     struct node {
         int v, p, s, l, r;

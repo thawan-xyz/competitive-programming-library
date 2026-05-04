@@ -1,4 +1,4 @@
-// Venice Set: Multiset with Global Value Updates
+// Venice Set: multiset with global value updates
 // Time: O(log N) | Space: O(N)
 struct venice_set {
     int k = 0;

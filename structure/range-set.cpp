@@ -1,4 +1,4 @@
-// Range Set: Bitset optimized for Range Updates and Queries
+// Range Set: bitset optimized for range updates and queries
 // Time: O(N/64) per operation | Space: O(N/64)
 // Note: uint = uint64_t (unsigned long long)
 struct range_set {

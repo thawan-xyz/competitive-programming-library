@@ -1,6 +1,6 @@
-// Wavelet Matrix: Range Quantile, Range Frequency, K-th smallest
-// Time: Build O(N log V) | Queries O(log V) | Space: O(N log V)
-// Note: Coordinate compression is REQUIRED before building.
+// Wavelet Matrix: range quantile, range frequency, k-th smallest
+// Time: build O(N log V) | Queries O(log V) | Space: O(N log V)
+// Note: coordinate compression is REQUIRED before building.
 struct wavelet_matrix {
     int n, log;
     vector<vector<int>> pref;

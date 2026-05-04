@@ -1,6 +1,6 @@
-// Treap: Randomized Binary Search Tree (Split/Merge)
-// Time: Operations O(log N) average | Space: O(N)
-// Note: Combines BST and Heap Properties | Requires mt19937 for Priorities
+// Treap: randomized binary search tree (split/merge)
+// Time: operations O(log N) average | Space: O(N)
+// Note: combines bst and heap properties | requires mt19937 for priorities
 struct treap {
     struct node {
         int v, p, l, r, s;
