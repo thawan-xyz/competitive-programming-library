@@ -2,7 +2,7 @@ struct sparse_table {
     int n, l;
     vector<vector<int>> table;
 
-    int merge(int x, int y) {
+    static int merge(int x, int y) {
         return gcd(x, y);
     }
 
