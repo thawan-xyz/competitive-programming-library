@@ -2,15 +2,19 @@ struct bit {
     int n;
     vector<int> tree;
 
+    static int lsb(int i) {
+        return i & -i;
+    }
+
     bit(int n = 0): n(n), tree(n + 1) {}
 
     void update(int i, int x) {
-        for (i += 1; i <= n; i += i & -i) tree[i] += x;
+        for (i += 1; i <= n; i += lsb(i)) tree[i] += x;
     }
 
     int prefix(int i) {
         int s = 0;
-        for (i += 1; i > 0; i -= i & -i) s += tree[i];
+        for (i += 1; i > 0; i -= lsb(i)) s += tree[i];
         return s;
     }
 
