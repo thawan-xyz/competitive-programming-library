@@ -5,32 +5,23 @@ private:
         int l = 0, r = 0;
     };
 
-    array<int, 3> root;
+    int root, min_l, max_r;
     vector<node> tree;
 
-    int modify(int i, int x, int p, int l, int r) {
-        if (i < l or r < i) return p;
-
-        if (not p) {
-            p = tree.size();
-            tree.emplace_back();
-        }
-
-        if (l == r) {
-            tree[p].x += x;
-            return p;
-        }
+    int update(int i, int x, int p, int l, int r) {
+        if (not p) p = tree.size(), tree.emplace_back();
+        if (l == r) return tree[p].x += x, p;
 
         int m = l + (r - l) / 2;
-        tree[p].l = modify(i, x, tree[p].l, l, m);
-        tree[p].r = modify(i, x, tree[p].r, m + 1, r);
+        if (i <= m) tree[p].l = update(i, x, tree[p].l, l, m);
+        else tree[p].r = update(i, x, tree[p].r, m + 1, r);
+
         tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
         return p;
     }
 
     int query(int ql, int qr, int p, int l, int r) {
         if (not p or (qr < l or r < ql)) return 0;
-
         if (ql <= l and r <= qr) return tree[p].x;
 
         int m = l + (r - l) / 2;
@@ -38,17 +29,16 @@ private:
     }
 
 public:
-    sparse_segment_tree(int l, int r) {
-        root = {0, l, r};
+    sparse_segment_tree(int l, int r): root(0), min_l(l), max_r(r) {
         tree.reserve(2e5);
         tree.emplace_back();
     }
 
-    void modify(int i, int x) {
-        root[0] = modify(i, x, root[0], root[1], root[2]);
+    void update(int i, int x) {
+        root = update(i, x, root, min_l, max_r);
     }
 
     int query(int ql, int qr) {
-        return query(ql, qr, root[0], root[1], root[2]);
+        return query(ql, qr, root, min_l, max_r);
     }
 };
