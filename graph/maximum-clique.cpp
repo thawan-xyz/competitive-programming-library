@@ -22,9 +22,9 @@ vector<int> maximum_clique(vector<vector<int>> &g) {
             int k = __builtin_ctzll(c);
             int k_mask = 1LL << k;
             self(self, r | k_mask, p & h[k], x & h[k]);
-            p &= ~k_mask;
+            p ^= k_mask;
             x |= k_mask;
-            c &= ~k_mask;
+            c ^= k_mask;
         }
     };
     int initial = (1LL << n) - 1;
