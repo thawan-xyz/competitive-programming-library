@@ -1,8 +1,20 @@
 // Hungarian Algorithm: minimum weight bipartite matching
 // Time: O(N^2 * M) | Space: O(N + M)
-// Note: computes min cost assignment | requires N <= M | negate input matrix for max
-pair<int, vector<int>> hungarian(vector<vector<int>> &g) {
+// Note: computes min cost assignment | negate input matrix for max
+pair<int, vector<int>> hungarian(vector<vector<int>> g) {
     int n = g.size(), m = g[0].size();
+    bool transposed = false;
+    if (n > m) {
+        transposed = true;
+        vector<vector<int>> t(m, vector<int>(n));
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                t[j][i] = g[i][j];
+            }
+        }
+        swap(n, m);
+        swap(g, t);
+    }
 
     vector<int> pot_row(n + 1), pot_col(m + 1);
     vector<int> match(m + 1), prev_col(m + 1);
@@ -49,6 +61,14 @@ pair<int, vector<int>> hungarian(vector<vector<int>> &g) {
     vector<int> answer(n, -1);
     for (int j = 1; j <= m; ++j) if (match[j] != 0) {
         answer[match[j] - 1] = j - 1;
+    }
+
+    if (transposed) {
+        vector<int> real(m, -1);
+        for (int i = 0; i < n; ++i) if (answer[i] != -1) {
+            real[answer[i]] = i;
+        }
+        swap(answer, real);
     }
     return {cost, answer};
 }
