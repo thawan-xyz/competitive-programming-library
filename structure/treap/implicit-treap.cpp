@@ -4,14 +4,14 @@
 struct treap {
     struct node {
         int v, p, s, l, r;
-        int data, lazy;
+        int data, lazy, rev;
     };
 
     int root = 0;
     vector<node> t = {{}};
 
     int make(int v, int p = rng()) {
-        t.push_back({v, p, 1, 0, 0, v, 0});
+        t.push_back({v, p, 1, 0, 0, v, 0, 0});
         return t.size() - 1;
     }
 
@@ -22,11 +22,24 @@ struct treap {
         t[i].lazy += v;
     }
 
+    void apply_reverse(int i) {
+        if (i == 0) return;
+        t[i].rev ^= 1;
+        swap(t[i].l, t[i].r);
+    }
+
     void push(int i) {
-        if (t[i].lazy == 0) return;
-        apply(t[i].l, t[i].lazy);
-        apply(t[i].r, t[i].lazy);
-        t[i].lazy = 0;
+        if (i == 0) return;
+        if (t[i].rev != 0) {
+            apply_reverse(t[i].l);
+            apply_reverse(t[i].r);
+            t[i].rev = 0;
+        }
+        if (t[i].lazy != 0) {
+            apply(t[i].l, t[i].lazy);
+            apply(t[i].r, t[i].lazy);
+            t[i].lazy = 0;
+        }
     }
 
     void pull(int i) {
@@ -82,6 +95,13 @@ struct treap {
         auto [h, q] = split(root, j + 1);
         auto [p, m] = split(h, i);
         auto [l, r] = split(merge(p, q), k);
+        root = merge(merge(l, m), r);
+    }
+
+    void reverse(int i, int j) {
+        auto [h, r] = split(root, j + 1);
+        auto [l, m] = split(h, i);
+        apply_reverse(m);
         root = merge(merge(l, m), r);
     }
 
