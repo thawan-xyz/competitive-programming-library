@@ -1,13 +1,22 @@
 struct dinic {
+    struct edge {
+        int b, w, i;
+    };
+
     int n;
-    vector<vector<array<int, 3>>> g;
+    vector<vector<edge>> g;
     vector<int> l, p;
 
     dinic(int n): n(n), g(n), l(n), p(n) {}
 
-    void insert(int a, int b, int w) {
-        g[a].push_back({b, w, g[b].size()});
-        g[b].push_back({a, 0, g[a].size() - 1});
+    void directed(int a, int b, int w) {
+        g[a].push_back({b, w, static_cast<int>(g[b].size())});
+        g[b].push_back({a, 0, static_cast<int>(g[a].size()) - 1});
+    }
+
+    void undirected(int a, int b, int w) {
+        g[a].push_back({b, w, static_cast<int>(g[b].size())});
+        g[b].push_back({a, w, static_cast<int>(g[a].size()) - 1});
     }
 
     bool bfs(int s, int t) {
@@ -29,15 +38,14 @@ struct dinic {
     }
 
     int dfs(int a, int t, int f) {
-        if (a == t) return f;
+        if (a == t or f == 0) return f;
 
         for (int &k = p[a]; k < g[a].size(); ++k) {
             auto &[b, w, i] = g[a][k];
             if (w > 0 and l[b] == l[a] + 1) {
-                int d = 0;
-                if ((d = dfs(b, t, min(f, w))) > 0) {
+                if (int d = dfs(b, t, min(f, w))) {
                     w -= d;
-                    g[b][i][1] += d;
+                    g[b][i].w += d;
                     return d;
                 }
             }
@@ -50,10 +58,14 @@ struct dinic {
         while (bfs(s, t)) {
             fill(p.begin(), p.end(), 0);
             int d = 0;
-            while ((d = dfs(s, t, inf)) > 0) {
+            while (d = dfs(s, t, inf)) {
                 f += d;
             }
         }
         return f;
+    }
+
+    bool on_cut(int a) {
+        return l[a] >= 0;
     }
 };
