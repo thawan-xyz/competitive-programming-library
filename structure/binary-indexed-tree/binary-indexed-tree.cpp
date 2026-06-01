@@ -23,7 +23,8 @@ struct bit {
     }
 
     int find_kth(int k) {
-        assert(k > 0 and n > 0);
+        k += 1;
+        assert(k > 0);
         int i = 0;
         for (int s = 1 << __lg(n); s > 0; s >>= 1) if (i + s <= n and tree[i + s] < k) {
             i += s;
