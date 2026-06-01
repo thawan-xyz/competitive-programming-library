@@ -21,4 +21,14 @@ struct bit {
     int query(int i, int j) {
         return prefix(j) - prefix(i - 1);
     }
+
+    int find_kth(int k) {
+        assert(k > 0 and n > 0);
+        int i = 0;
+        for (int s = 1 << __lg(n); s > 0; s >>= 1) if (i + s <= n and tree[i + s] < k) {
+            i += s;
+            k -= tree[i];
+        }
+        return i;
+    }
 };
