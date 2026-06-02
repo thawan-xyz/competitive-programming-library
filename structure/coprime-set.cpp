@@ -1,3 +1,6 @@
+// Coprime Set: counts elements coprime to a given number using Inclusion-Exclusion
+// Time: insert/remove/query O(2^K * (K + log D)) | Space: O(N * 2^K)
+// Note: P must be a vector of DISTINCT prime factors | K = size of P, D = unique divisors in map
 struct coprime_set {
     map<int, int> n;
 
