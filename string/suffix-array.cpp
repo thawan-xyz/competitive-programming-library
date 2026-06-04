@@ -27,7 +27,7 @@ struct suffix_array {
     }
 
     void counting_sort(int k) {
-        int m = max(255, n) + 1;
+        int m = max<int>(256, n + 1);
         vector<int> f(m);
         for (int i = 0; i < n; ++i) {
             int r = rank[(suf[i] + k) % n];
@@ -54,7 +54,7 @@ struct suffix_array {
             int j = suf[inv[i] - 1];
             while (s[i + l] == s[j + l]) l++;
             lcp[inv[i]] = l;
-            l = max(0, l - 1);
+            l = max<int>(0, l - 1);
         }
     }
 
@@ -97,5 +97,46 @@ struct suffix_array {
         if (compare(suf[lower], t) != 0) return 0;
         int upper = upper_search(t);
         return upper - lower;
+    }
+
+    pair<int, int> kth_distinct_substring(int k) {
+        assert(k >= 0);
+        for (int i = 1; i < n; ++i) {
+            int len = (n - 1) - suf[i];
+            int sub = len - lcp[i];
+            if (k < sub) return {suf[i], lcp[i] + k + 1};
+            k -= sub;
+        }
+        return {-1, -1};
+    }
+
+    pair<int, int> kth_substring(int k) {
+        assert(k >= 0);
+        sparse_table st(lcp);
+        for (int i = 1; i < n; ++i) {
+            int curr_len = lcp[i] + 1;
+            int max_len = (n - 1) - suf[i];
+            while (curr_len <= max_len) {
+                int j = i;
+                int low = i + 1, high = n - 1;
+                while (low <= high) {
+                    int mid = (low + high) / 2;
+                    if (st.query(i + 1, mid) >= curr_len) {
+                        j = mid;
+                        low = mid + 1;
+                    } else {
+                        high = mid - 1;
+                    }
+                }
+                int freq = j - i + 1;
+                int len = max_len;
+                if (j > i) len = min(len, st.query(i + 1, j));
+                int sub = (len - curr_len + 1) * freq;
+                if (k < sub) return {suf[i], curr_len + (k / freq)};
+                k -= sub;
+                curr_len = len + 1;
+            }
+        }
+        return {-1, -1};
     }
 };
