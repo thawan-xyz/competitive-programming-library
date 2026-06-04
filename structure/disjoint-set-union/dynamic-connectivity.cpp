@@ -3,6 +3,7 @@ private:
     int n, q;
     vector<vector<pair<int, int>>> tree;
     rollback_dsu dsu;
+    vector<int> ans;
 
     void insert(int i, int l, int r, int ql, int qr, pair<int, int> e) {
         if (qr < l or ql > r) return;
@@ -25,8 +26,6 @@ private:
     }
 
 public:
-    vector<int> ans;
-
     dynamic_connectivity(int n, int q): n(n), q(q), tree(4 * q), dsu(n), ans(q) {}
 
     void insert(int ql, int qr, pair<int, int> e) {
