@@ -1,3 +1,5 @@
+// Cover Tree: calculates total length covered by at least one interval
+// Time: update O(log N), query O(1) | Space: O(N)
 struct cover_tree {
     int n;
     vector<int> cnt, len, all;
