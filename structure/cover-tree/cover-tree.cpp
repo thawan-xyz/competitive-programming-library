@@ -2,7 +2,7 @@
 // Time: update O(log N), query O(1) | Space: O(N)
 struct cover_tree {
     int n;
-    vector<int> cnt, len, all;
+    vector<int> all, cnt, len;
 
     void recalc(int i) {
         if (cnt[i] > 0) len[i] = all[i];
@@ -10,7 +10,7 @@ struct cover_tree {
         else len[i] = 0;
     }
 
-    cover_tree(vector<int> &x): n(x.size() - 1), cnt(2 * n), len(2 * n), all(2 * n) {
+    cover_tree(vector<int> &x): n(x.size() - 1), all(2 * n), cnt(2 * n), len(2 * n) {
         for (int i = 0; i < n; ++i) all[n + i] = x[i + 1] - x[i];
         for (int i = n - 1; i > 0; --i) all[i] = all[i << 1] + all[i << 1 | 1];
     }
