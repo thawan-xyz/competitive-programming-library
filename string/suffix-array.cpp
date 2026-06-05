@@ -1,10 +1,13 @@
+// Suffix Array: lexicographical sorting of all string suffixes
+// Time: build O(N log N) | LCP O(N) | search O(|P| log N) | Space: O(N)
+// Note: expects sentinel character at the end of input | supports pattern matching and k-th queries
 struct suffix_array {
     int n, m;
     string s;
     vector<int> suf, lcp;
     vector<int> rank, temp;
 
-    suffix_array(string &base): n(base.length() + 1), m(0), s(base + '$'), suf(n), lcp(n), rank(n), temp(n) {
+    suffix_array(string &s): n(s.length()), m(0), s(s), suf(n), lcp(n), rank(n), temp(n) {
         for (int i = 0; i < n; ++i) {
             suf[i] = i;
             rank[i] = s[i];
