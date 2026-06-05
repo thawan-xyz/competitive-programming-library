@@ -1,13 +1,14 @@
 struct suffix_array {
-    int n;
+    int n, m;
     string s;
     vector<int> suf, lcp;
     vector<int> rank, temp;
 
-    suffix_array(string &base): n(base.length() + 1), s(base + '$'), suf(n), lcp(n), rank(n), temp(n) {
+    suffix_array(string &base): n(base.length() + 1), m(0), s(base + '$'), suf(n), lcp(n), rank(n), temp(n) {
         for (int i = 0; i < n; ++i) {
             suf[i] = i;
             rank[i] = s[i];
+            m = max<int>(m, s[i]);
         }
         for (int k = 1; k < n; k <<= 1) {
             counting_sort(k), counting_sort(0);
@@ -22,13 +23,13 @@ struct suffix_array {
                 }
             }
             swap(rank, temp);
-            if (rank[suf[n - 1]] == n) break;
+            m = rank[suf[n - 1]];
+            if (m == n) break;
         }
     }
 
     void counting_sort(int k) {
-        int m = max<int>(256, n + 1);
-        vector<int> f(m);
+        vector<int> f(m + 1);
         for (int i = 0; i < n; ++i) {
             int r = rank[(suf[i] + k) % n];
             f[r] += 1;
