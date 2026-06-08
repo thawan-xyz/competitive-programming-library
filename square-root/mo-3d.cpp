@@ -5,7 +5,7 @@
 // M parameter: block size multiplier to tune the N^(2/3) block size
 // Note: implement 'insert', 'remove', and 'curr' state according to your specific problem
 vector<int> mo_3d(vector<int> &a, vector<array<int, 4>> &q, vector<array<int, 2>> &u, float m = 1.0) {
-    int b = clamp<int>(pow(a.size(), 2.0 / 3.0) * m, 1, a.size());
+    int b = clamp<int>(m * pow(a.size(), 2.0 / 3.0), 1, a.size());
     auto block = [&](int i) -> int {
         return i / b;
     };
