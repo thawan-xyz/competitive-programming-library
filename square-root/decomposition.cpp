@@ -2,9 +2,9 @@ struct decomposition {
     int n, m;
     vector<int> a, b;
 
-    decomposition(vector<int> &base) {
+    decomposition(vector<int> &base, float f = 1.0) {
         n = base.size();
-        m = max<int>(1, sqrt(n));
+        m = clamp<int>(f * sqrt(n), 1, n);
         a.resize(n);
         b.resize((n + (m - 1)) / m);
         for (int i = 0; i < n; ++i) {
