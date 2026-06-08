@@ -1,11 +1,19 @@
+// Mo's Algorithm 3D: offline range queries with point updates
+// Time: O(N^(5/3)) | Space: O(N + Q + U)
+// Q elements: {l, r, t, id} | t = # of updates prior to query | id = original query index
+// U elements: {i, x} | i = array index to update | x = new value
+// M parameter: block size multiplier to tune the N^(2/3) block size
+// Note: implement 'insert', 'remove', and 'curr' state according to your specific problem
 vector<int> mo_3d(vector<int> &a, vector<array<int, 4>> &q, vector<array<int, 2>> &u, float m = 1.0) {
     int b = clamp<int>(pow(a.size(), 2.0 / 3.0) * m, 1, a.size());
+    auto block = [&](int i) -> int {
+        return i / b;
+    };
+
     sort(q.begin(), q.end(), [&](const array<int, 4> &x, const array<int, 4> &y) {
-        int bl_x = x[0] / b, bl_y = y[0] / b;
-        if (bl_x != bl_y) return bl_x < bl_y;
-        int br_x = x[1] / b, br_y = y[1] / b;
-        if (br_x != br_y) return (bl_x & 1) ? (br_x < br_y) : (br_x > br_y);
-        return (br_x & 1) ? (x[2] < y[2]) : (x[2] > y[2]);
+        if (block(x[0]) != block(y[0])) return block(x[0]) < block(y[0]);
+        if (block(x[1]) != block(y[1])) return (block(x[0]) & 1) ? block(x[1]) < block(y[1]) : block(x[1]) > block(y[1]);
+        return (block(x[1]) & 1) ? x[2] < y[2] : x[2] > y[2];
     });
 
     int curr = 0;
