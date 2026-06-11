@@ -41,7 +41,7 @@ private:
 public:
     vector<int> roots;
 
-    sparse_persistent_segment_tree(int min_l, int max_r, int q = 0): min_l(min_l), max_r(max_r) {
+    sparse_persistent_segment_tree(int l, int r, int q = 0): min_l(l), max_r(r) {
         tree.reserve(1 + 35 * q);
         tree.emplace_back();
         roots.push_back(0);
