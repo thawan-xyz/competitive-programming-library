@@ -38,8 +38,14 @@ private:
         push(p, l, r);
 
         int m = l + (r - l) / 2;
-        if (ql <= m) tree[p].l = update(ql, qr, x, tree[p].l, l, m);
-        if (qr > m) tree[p].r = update(ql, qr, x, tree[p].r, m + 1, r);
+        if (ql <= m) {
+            int nl = update(ql, qr, x, tree[p].l, l, m);
+            tree[p].l = nl;
+        }
+        if (qr > m) {
+            int nr = update(ql, qr, x, tree[p].r, m + 1, r);
+            tree[p].r = nr;
+        }
 
         tree[p].val = tree[tree[p].l].val + tree[tree[p].r].val;
         return p;

@@ -13,8 +13,13 @@ private:
         if (l == r) return tree[p].x += x, p;
 
         int m = l + (r - l) / 2;
-        if (i <= m) tree[p].l = update(i, x, tree[p].l, l, m);
-        else tree[p].r = update(i, x, tree[p].r, m + 1, r);
+        if (i <= m) {
+            int nl = update(i, x, tree[p].l, l, m);
+            tree[p].l = nl;
+        } else {
+            int nr = update(i, x, tree[p].r, m + 1, r);
+            tree[p].r = nr;
+        }
 
         tree[p].x = tree[tree[p].l].x + tree[tree[p].r].x;
         return p;
