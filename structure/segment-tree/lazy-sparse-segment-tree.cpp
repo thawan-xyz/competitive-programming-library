@@ -5,13 +5,12 @@ private:
         int l = 0, r = 0;
     };
 
-    int root, min_l, max_r;
+    int root = 0, min_l, max_r;
     vector<node> tree;
 
     void push(int p, int l, int r) {
-        if (tree[p].lazy == 0) return;
+        if (not tree[p].lazy) return;
         int m = l + (r - l) / 2;
-
         if (not tree[p].l) {
             tree[p].l = tree.size();
             tree.emplace_back();
@@ -20,7 +19,6 @@ private:
             tree[p].r = tree.size();
             tree.emplace_back();
         }
-    
         tree[tree[p].l].lazy += tree[p].lazy;
         tree[tree[p].r].lazy += tree[p].lazy;
         tree[tree[p].l].val += tree[p].lazy * (m - l + 1);
@@ -29,14 +27,16 @@ private:
     }
 
     int update(int ql, int qr, int x, int p, int l, int r) {
-        if (not p) p = tree.size(), tree.emplace_back();
+        if (not p) {
+            p = tree.size();
+            tree.emplace_back();
+        }
         if (ql <= l and r <= qr) {
             tree[p].lazy += x;
             tree[p].val += x * (r - l + 1);
             return p;
         }
         push(p, l, r);
-
         int m = l + (r - l) / 2;
         if (ql <= m) {
             int nl = update(ql, qr, x, tree[p].l, l, m);
@@ -46,7 +46,6 @@ private:
             int nr = update(ql, qr, x, tree[p].r, m + 1, r);
             tree[p].r = nr;
         }
-
         tree[p].val = tree[tree[p].l].val + tree[tree[p].r].val;
         return p;
     }
@@ -55,14 +54,13 @@ private:
         if (not p or (qr < l or r < ql)) return 0;
         if (ql <= l and r <= qr) return tree[p].val;
         push(p, l, r);
-
         int m = l + (r - l) / 2;
         return query(ql, qr, tree[p].l, l, m) + query(ql, qr, tree[p].r, m + 1, r);
     }
 
 public:
-    lazy_sparse_segment_tree(int l, int r): root(0), min_l(l), max_r(r) {
-        tree.reserve(2e5);
+    lazy_sparse_segment_tree(int l, int r, int q = 0): min_l(l), max_r(r) {
+        tree.reserve(1 + 35 * q);
         tree.emplace_back();
     }
 

@@ -32,7 +32,7 @@ private:
     }
 
     int query(int ql, int qr, int p, int l, int r) {
-        if (not p or qr < l or r < ql) return 0;
+        if (not p or (qr < l or r < ql)) return 0;
         if (ql <= l and r <= qr) return tree[p].x;
         int m = l + (r - l) / 2;
         return query(ql, qr, tree[p].l, l, m) + query(ql, qr, tree[p].r, m + 1, r);
