@@ -37,7 +37,7 @@ struct suffix_array {
             int r = rank[(suf[i] + k) % n];
             f[r] += 1;
         }
-        for (int i = 1; i < m; ++i) {
+        for (int i = 1; i <= m; ++i) {
             f[i] += f[i - 1];
         }
         for (int i = n - 1; i >= 0; --i) {
