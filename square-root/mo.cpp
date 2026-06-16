@@ -1,10 +1,15 @@
-int hilbert(int l, int r) {
-    static array<int, 4> d = {3, 0, 0, 1};
-    int h = 0, c = 0;
-    for (int s = 20; s >= 0; --s) {
-        int q = (((l >> s & 1) << 1 | (r >> s & 1)) + c) & 3;
-        h = h << 2 | q;
-        c = (c + d[q]) & 3;
+int hilbert(int x, int y) {
+    int h = 0;
+    for (int s = 25; s >= 0; --s) {
+        int rx = (x >> s) & 1;
+        int ry = (y >> s) & 1;
+        int qd = (3 * rx) ^ ry;
+        h = (h << 2) | qd;
+        if (ry == 0) {
+            x ^= -rx;
+            y ^= -rx;
+            swap(x, y);
+        }
     }
     return h;
 }
