@@ -5,7 +5,7 @@ struct tree_suffix_array {
     int n, m, log;
     string s;
     vector<int> suf, lcp, temp, depth;
-    vector<vector<int>> g, up, rank;
+    vector<vector<int>> &g, up, rank;
 
     void dfs(int a, int p, int d) {
         up[a][0] = p;
