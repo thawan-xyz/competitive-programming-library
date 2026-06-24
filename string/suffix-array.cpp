@@ -7,31 +7,7 @@ struct suffix_array {
     vector<int> suf, lcp;
     vector<int> rank, temp;
 
-    suffix_array(string &s): n(s.length()), m(0), s(s), suf(n), lcp(n), rank(n), temp(n) {
-        for (int i = 0; i < n; ++i) {
-            suf[i] = i;
-            rank[i] = s[i];
-            m = max<int>(m, s[i]);
-        }
-        for (int k = 1; k < n; k <<= 1) {
-            counting_sort(k), counting_sort(0);
-            temp[suf[0]] = 1;
-            for (int i = 1; i < n; ++i) {
-                int prev = suf[i - 1];
-                int curr = suf[i];
-                if (rank[prev] == rank[curr] and rank[(prev + k) % n] == rank[(curr + k) % n]) {
-                    temp[curr] = temp[prev];
-                } else {
-                    temp[curr] = temp[prev] + 1;
-                }
-            }
-            swap(rank, temp);
-            m = rank[suf[n - 1]];
-            if (m == n) break;
-        }
-    }
-
-    void counting_sort(int k) {
+    void sort(int k) {
         vector<int> f(m + 1);
         for (int i = 0; i < n; ++i) {
             int r = rank[(suf[i] + k) % n];
@@ -48,15 +24,43 @@ struct suffix_array {
         swap(suf, temp);
     }
 
+    suffix_array(string &s): n(s.length()), m(0), s(s), suf(n), lcp(n), rank(n), temp(n) {
+        for (int i = 0; i < n; ++i) {
+            suf[i] = i;
+            rank[i] = s[i];
+            m = max<int>(m, s[i]);
+        }
+        for (int k = 1; k < n; k <<= 1) {
+            sort(k), sort(0);
+            temp[suf[0]] = 1;
+            for (int i = 1; i < n; ++i) {
+                int prev = suf[i - 1];
+                int curr = suf[i];
+                if (rank[prev] == rank[curr] and rank[(prev + k) % n] == rank[(curr + k) % n]) {
+                    temp[curr] = temp[prev];
+                } else {
+                    temp[curr] = temp[prev] + 1;
+                }
+            }
+            swap(rank, temp);
+            m = rank[suf[n - 1]];
+            if (m == n) break;
+        }
+    }
+
     void longest_common_prefix() {
         vector<int> inv(n);
         for (int i = 0; i < n; ++i) {
             inv[suf[i]] = i;
         }
         int l = 0;
-        for (int i = 0; i < n - 1; ++i) {
+        for (int i = 0; i < n; ++i) {
+            if (inv[i] == 0) {
+                l = 0;
+                continue;
+            }
             int j = suf[inv[i] - 1];
-            while (s[i + l] == s[j + l]) l++;
+            while (i + l < n and j + l < n and s[i + l] == s[j + l]) l++;
             lcp[inv[i]] = l;
             l = max<int>(0, l - 1);
         }
