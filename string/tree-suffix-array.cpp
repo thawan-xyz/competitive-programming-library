@@ -4,7 +4,7 @@
 struct tree_suffix_array {
     int n, m, log;
     string s;
-    vector<int> suf, lcp, temp, depth;
+    vector<int> suf, lcp, temp, depth, freq;
     vector<vector<int>> up, rank;
 
     void dfs(int a, int p, int d, vector<vector<int>> &g) {
@@ -19,28 +19,28 @@ struct tree_suffix_array {
     }
 
     void sort(int k, bool jump) {
-        vector<int> f(m + 1);
+        fill(freq.begin(), freq.begin() + m + 1, 0);
         for (int i = 0; i < n; ++i) {
             int h = suf[i];
             if (jump) h = up[k][h];
             int r = rank[k][h];
-            f[r]++;
+            freq[r]++;
         }
         for (int i = 1; i <= m; ++i) {
-            f[i] += f[i - 1];
+            freq[i] += freq[i - 1];
         }
         for (int i = n - 1; i >= 0; --i) {
             int h = suf[i];
             if (jump) h = up[k][h];
             int r = rank[k][h];
-            f[r]--;
-            temp[f[r]] = suf[i];
+            freq[r]--;
+            temp[freq[r]] = suf[i];
         }
         swap(suf, temp);
     }
 
     tree_suffix_array(const string &letters, vector<vector<int>> &g): n(letters.length()), m(0), log(__lg(n | 1) + 1),
-    s(letters), suf(n), lcp(n), temp(n), depth(n), up(log + 1, vector<int>(n)), rank(log + 1, vector<int>(n)) {
+    s(letters), suf(n), lcp(n), temp(n), depth(n), freq(max<int>(256, n)), up(log + 1, vector<int>(n)), rank(log + 1, vector<int>(n)) {
         dfs(1, 0, 1, g);
         for (int i = 0; i < n; ++i) {
             suf[i] = i;
@@ -132,12 +132,5 @@ struct tree_suffix_array {
         if (compare(suf[lower], t) != 0) return 0;
         int upper = upper_search(t);
         return upper - lower;
-    }
-
-    pair<int, int> range(string &t) {
-        int lower = lower_search(t);
-        if (compare(suf[lower], t) != 0) return {-1, -1};
-        int upper = upper_search(t);
-        return {lower, upper - 1};
     }
 };
