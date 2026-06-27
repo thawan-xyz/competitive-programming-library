@@ -1,13 +1,13 @@
-// Heavy-Light Decomposition: path queries/updates on trees (commutative operations)
+// Reversible Heavy-Light Decomposition: path queries/updates on trees (NON-commutative operations)
 // Time: build O(N) | query O(log^2 N) | update O(log N) | Space: O(N)
-// Note: flag edge = true for edge weights (weight of edge u-v is stored in the deeper node)
+// Note: uses 2 segtrees to respect path direction, flag edge = true for edge weights
 struct hld {
     int n;
     bool edge;
     vector<int> p, d, h, id;
-    segment_tree s;
+    reversible_segment_tree s, t;
 
-    hld(int r, vector<vector<int>> &g, bool edge): n(g.size()), edge(edge), p(n), d(n), h(n), id(n), s(n) {
+    hld(int r, vector<vector<int>> &g, bool edge): n(g.size()), edge(edge), p(n), d(n), h(n), id(n), s(n, false), t(n, true) {
         p[r] = r, d[r] = 0, dfs(r, g);
         h[r] = r, decompose(r, g, 0);
     }
@@ -36,19 +36,24 @@ struct hld {
     }
 
     int query(int a, int b) {
-        int r = s.neutral;
+        int l = s.neutral, r = s.neutral;
         while (h[a] != h[b]) {
-            if (d[h[a]] < d[h[b]]) swap(a, b);
-            r = s.merge(r, s.query(id[h[a]], id[a]));
-            a = p[h[a]];
+            if (d[h[a]] > d[h[b]]) {
+                l = s.merge(l, t.query(id[h[a]], id[a]));
+                a = p[h[a]];
+            } else {
+                r = s.merge(s.query(id[h[b]], id[b]), r);
+                b = p[h[b]];
+            }
         }
-        if (d[a] > d[b]) swap(a, b);
-        if (edge and a == b) return r;
-        r = s.merge(r, s.query(id[a] + edge, id[b]));
-        return r;
+        if (edge and a == b) return s.merge(l, r);
+        if (d[a] > d[b]) l = s.merge(l, t.query(id[b] + edge, id[a]));
+        else r = s.merge(s.query(id[a] + edge, id[b]), r);
+        return s.merge(l, r);
     }
 
     void update(int a, int x) {
         s.update(id[a], x);
+        t.update(id[a], x);
     }
 };
