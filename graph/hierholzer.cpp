@@ -1,6 +1,6 @@
 // Undirected Eulerian Path: Hierholzer's algorithm for paths and circuits
 // Time: O(V + E) | Space: O(V + E)
-// Note: returns sequence of vertices or empty if impossible | 's' must be valid start node
+// Note: returns sequence of vertices or empty if impossible | s must be a valid start node
 vector<int> undirected_eulerian_path(int s, vector<vector<pair<int, int>>> &g, int e) {
     int n = g.size();
     int odd = 0;
@@ -30,7 +30,7 @@ vector<int> undirected_eulerian_path(int s, vector<vector<pair<int, int>>> &g, i
 
 // Directed Eulerian Path: Hierholzer's algorithm for paths and circuits
 // Time: O(V + E) | Space: O(V + E)
-// Note: returns sequence of vertices or empty if impossible | 's' must be valid start node
+// Note: returns sequence of vertices or empty if impossible | s must be a valid start node
 vector<int> directed_eulerian_path(int s, vector<vector<int>> &g, int e) {
     int n = g.size();
     vector<int> in(n), out(n);
