@@ -11,13 +11,13 @@ struct dinic {
     dinic(int n): n(n), g(n), l(n), p(n) {}
 
     void directed(int a, int b, int w) {
-        g[a].push_back({b, w, static_cast<int>(g[b].size()), true});
-        g[b].push_back({a, 0, static_cast<int>(g[a].size()) - 1, false});
+        g[a].emplace_back(b, w, g[b].size(), true);
+        g[b].emplace_back(a, 0, g[a].size() - 1, false);
     }
 
     void undirected(int a, int b, int w) {
-        g[a].push_back({b, w, static_cast<int>(g[b].size()), true});
-        g[b].push_back({a, w, static_cast<int>(g[a].size()) - 1, true});
+        g[a].emplace_back(b, w, g[b].size(), true);
+        g[b].emplace_back(a, w, g[a].size() - 1, true);
     }
 
     bool bfs(int s, int t) {
