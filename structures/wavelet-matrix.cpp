@@ -25,6 +25,7 @@ struct wavelet_matrix {
 
     int less_or_equal(int i, int j, int x) {
         int c = 0;
+        if (x >= (1LL << (log + 1))) x = (1LL << (log + 1)) - 1;
         for (int b = log; b >= 0; --b) {
             int l = pref[b][i], r = pref[b][j + 1], z = r - l;
             if (((x >> b) & 1) == 0) i = l, j = r - 1;
