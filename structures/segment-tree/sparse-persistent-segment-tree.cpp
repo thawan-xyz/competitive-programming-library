@@ -16,7 +16,7 @@ private:
     int update(int i, int x, int p, int l, int r) {
         int c = clone(p);
         if (l == r) {
-            tree[c].x += x;
+            tree[c].x = x;
             return c;
         }
         int m = l + (r - l) / 2;

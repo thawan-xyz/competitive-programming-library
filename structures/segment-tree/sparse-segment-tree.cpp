@@ -14,7 +14,7 @@ private:
             tree.emplace_back();
         }
         if (l == r) {
-            tree[p].x += x;
+            tree[p].x = x;
             return p;
         }
         int m = l + (r - l) / 2;

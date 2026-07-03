@@ -16,7 +16,7 @@ private:
 
     void update(int i, int x, int p, int l, int r) {
         if (l == r) {
-            tree[p] += x;
+            tree[p] = x;
         } else {
             int m = (l + r) / 2;
             if (i <= m) update(i, x, 2 * p, l, m);
