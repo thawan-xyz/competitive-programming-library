@@ -23,7 +23,7 @@ struct binary_lifting {
         if (d[a] < k) return -1;
 
         for (int i = log; i >= 0; --i) {
-            if (k & (1 << i)) {
+            if ((k >> i) & 1) {
                 a = up[a][i];
             }
         }
