@@ -44,6 +44,10 @@ struct binary_lifting {
         return up[a][0];
     }
 
+    int distance(int a, int b) {
+        return d[a] + d[b] - 2 * d[lowest_common_ancestor(a, b)];
+    }
+
     int kth_node(int a, int b, int k) {
         int lca = lowest_common_ancestor(a, b);
         int l = d[a] - d[lca];
