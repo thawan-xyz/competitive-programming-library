@@ -7,17 +7,17 @@ struct suffix_array {
     vector<int> suf, lcp;
     vector<int> rank, temp;
 
-    void sort(int k) {
+    void sort() {
         vector<int> f(m + 1);
         for (int i = 0; i < n; ++i) {
-            int r = rank[(suf[i] + k) % n];
+            int r = rank[suf[i]];
             f[r] += 1;
         }
         for (int i = 1; i <= m; ++i) {
             f[i] += f[i - 1];
         }
         for (int i = n - 1; i >= 0; --i) {
-            int r = rank[(suf[i] + k) % n];
+            int r = rank[suf[i]];
             f[r] -= 1;
             temp[f[r]] = suf[i];
         }
@@ -30,8 +30,12 @@ struct suffix_array {
             rank[i] = s[i];
             m = max<int>(m, s[i]);
         }
+        sort();
         for (int k = 1; k < n; k <<= 1) {
-            sort(k), sort(0);
+            for (int i = 0; i < n; ++i) {
+                suf[i] = (suf[i] - k + n) % n;
+            }
+            sort();
             temp[suf[0]] = 1;
             for (int i = 1; i < n; ++i) {
                 int prev = suf[i - 1];
