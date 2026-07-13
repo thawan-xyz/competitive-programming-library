@@ -5,21 +5,23 @@ int divide_and_conquer() {
         if (l > r) return;
         int m = (l + r) / 2;
         curr[m] = inf;
-        int opt = opt_l;
-        for (int k = opt_l; k <= min(m - 1, opt_r); ++k) {
-            int val = prev[k] + cost(k + 1, m);
+        int opt = opt_r;
+        for (int i = max(opt_l, m); i <= min(opt_r, n - 1); ++i) if (prev[i + 1] != inf) {
+            int val = cost(m, i) + prev[i + 1];
             if (val < curr[m]) {
                 curr[m] = val;
-                opt = k;
+                opt = i;
             }
         }
         self(self, l, m - 1, opt_l, opt);
         self(self, m + 1, r, opt, opt_r);
     };
-    prev[0] = 0;
-    for (int i = 1; i <= k; ++i) {
-        compute(compute, 1, n, 0, n - 1);
-        prev = curr;
+    for (int i = 1; i <= n; ++i) {
+        curr[i] = cost(i, n);
     }
-    return curr[n];
+    for (int i = 2; i <= k; ++i) {
+        swap(prev, curr);
+        compute(compute, 1, n, 1, n);
+    }
+    return curr[1];
 }
