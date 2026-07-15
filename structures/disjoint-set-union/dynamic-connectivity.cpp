@@ -3,37 +3,37 @@ private:
     int n, q;
     vector<vector<pair<int, int>>> tree;
     rollback_dsu dsu;
-    vector<int> ans;
 
-    void insert(int i, int l, int r, int ql, int qr, pair<int, int> e) {
+    void insert(pair<int, int> e, int ql, int qr, int p, int l, int r) {
         if (qr < l or ql > r) return;
-        if (ql <= l and qr >= r) return void(tree[i].push_back(e));
+        if (ql <= l and qr >= r) return void(tree[p].push_back(e));
         int m = (l + r) / 2;
-        insert(2 * i, l, m, ql, qr, e);
-        insert(2 * i + 1, m + 1, r, ql, qr, e);
+        insert(e, ql, qr, 2 * p, l, m);
+        insert(e, ql, qr, 2 * p + 1, m + 1, r);
     }
 
-    void compute(int i, int l, int r) {
-        for (auto [a, b] : tree[i]) dsu.unite(a, b);
+    void compute(vector<int> &ans, int p, int l, int r) {
+        for (auto [a, b] : tree[p]) dsu.unite(a, b);
         if (l == r) {
             ans[l] = dsu.c;
         } else {
             int m = (l + r) / 2;
-            compute(2 * i, l, m);
-            compute(2 * i + 1, m + 1, r);
+            compute(ans, 2 * p, l, m);
+            compute(ans, 2 * p + 1, m + 1, r);
         }
-        for (int k = 0; k < tree[i].size(); ++k) dsu.rollback();
+        for (auto [a, b] : tree[p]) dsu.rollback();
     }
 
 public:
-    dynamic_connectivity(int n, int q): n(n), q(q), tree(4 * q), dsu(n), ans(q) {}
+    dynamic_connectivity(int n, int q): n(n), q(q), tree(4 * q), dsu(n) {}
 
-    void insert(int ql, int qr, pair<int, int> e) {
-        insert(1, 0, q - 1, ql, qr, e);
+    void insert(pair<int, int> e, int ql, int qr) {
+        insert(e, ql, qr, 1, 0, q - 1);
     }
 
     vector<int> compute() {
-        compute(1, 0, q - 1);
+        vector<int> ans(q);
+        compute(ans, 1, 0, q - 1);
         return ans;
     }
 };

@@ -4,7 +4,7 @@ struct rollback_dsu {
     vector<pair<int, int>> h;
 
     rollback_dsu(int n): c(n), p(n), s(n, 1) {
-        for (int i = 0; i < n; ++i) p[i] = i;
+        iota(p.begin(), p.end(), 0);
     }
 
     int find(int a) {

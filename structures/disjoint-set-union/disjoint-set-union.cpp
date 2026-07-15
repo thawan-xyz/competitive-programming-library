@@ -2,7 +2,7 @@ struct dsu {
     vector<int> p, s;
 
     dsu(int n): p(n), s(n, 1) {
-        for (int i = 0; i < n; ++i) p[i] = i;
+        iota(p.begin(), p.end(), 0);
     }
 
     int find(int a) {
