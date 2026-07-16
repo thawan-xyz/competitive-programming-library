@@ -1,85 +1,64 @@
-struct line {
-    int a, b;
-
-    int eval(int x) const {
-        return a * x + b;
-    }
-};
-
+// Li Chao Tree: dynamic line & segment container for maximum convex hull trick
+// Time: line insert/query O(log U) | segment insert O(log^2 U) | Space: O(N log U)
+// Note: computes max(ax + b) | for min: insert (-a, -b) and take -query(x)
 struct li_chao_tree {
 private:
+    struct line {
+        int a, b;
+
+        int eval(int x) const {
+            return a * x + b;
+        }
+    };
+
     struct node {
         line h;
         int l, r;
-
-        node(line h): h(h), l(0), r(0) {}
     };
 
-    int neutral;
     int min_x, max_x;
-    bool is_max;
     vector<node> tree;
 
-    bool compare(int x, int y) {
-        return is_max ? x > y : x < y;
-    }
-
-    int merge(int x, int y) {
-        return is_max ? max(x, y) : min(x, y);
+    int create_node() {
+        tree.push_back({{0, -inf}, 0, 0});
+        return tree.size() - 1;
     }
 
     int insert_line(line h, int p, int l, int r) {
-        if (p == 0) {
-            p = tree.size();
-            tree.push_back(node({0, neutral}));
-        }
+        if (p == 0) p = create_node();
         int m = l + (r - l) / 2;
-        bool is_l = compare(h.eval(l), tree[p].h.eval(l));
-        bool is_m = compare(h.eval(m), tree[p].h.eval(m));
+        bool is_l = h.eval(l) > tree[p].h.eval(l);
+        bool is_m = h.eval(m) > tree[p].h.eval(m);
         if (is_m) swap(h, tree[p].h);
         if (l == r) return p;
-        if (is_l != is_m) {
-            int c = insert_line(h, tree[p].l, l, m);
-            tree[p].l = c;
-        } else {
-            int c = insert_line(h, tree[p].r, m + 1, r);
-            tree[p].r = c;
-        }
+        if (is_l != is_m) tree[p].l = insert_line(h, tree[p].l, l, m);
+        else tree[p].r = insert_line(h, tree[p].r, m + 1, r);
         return p;
     }
 
     int insert_segment(line h, int ql, int qr, int p, int l, int r) {
-        if (p == 0) {
-            p = tree.size();
-            tree.push_back(node({0, neutral}));
-        }
+        if (p == 0) p = create_node();
         if (ql <= l and r <= qr) return insert_line(h, p, l, r);
         int m = l + (r - l) / 2;
-        if (ql <= m) {
-            int c = insert_segment(h, ql, qr, tree[p].l, l, m);
-            tree[p].l = c;
-        }
-        if (qr > m) {
-            int c = insert_segment(h, ql, qr, tree[p].r, m + 1, r);
-            tree[p].r = c;
-        }
+        if (ql <= m) tree[p].l = insert_segment(h, ql, qr, tree[p].l, l, m);
+        if (qr > m) tree[p].r = insert_segment(h, ql, qr, tree[p].r, m + 1, r);
         return p;
     }
 
     int query(int x, int p, int l, int r) {
-        if (p == 0) return neutral;
+        if (p == 0) return -inf;
         int y = tree[p].h.eval(x);
         if (l == r) return y;
         int m = l + (r - l) / 2;
-        if (x <= m) y = merge(y, query(x, tree[p].l, l, m));
-        else y = merge(y, query(x, tree[p].r, m + 1, r));
+        if (x <= m) y = max(y, query(x, tree[p].l, l, m));
+        else y = max(y, query(x, tree[p].r, m + 1, r));
         return y;
     }
 
 public:
-    li_chao_tree(int min_x, int max_x, bool is_max): neutral(is_max ? -inf : inf), min_x(min_x), max_x(max_x), is_max(is_max) {
-        tree.push_back(node({0, neutral}));
-        tree.push_back(node({0, neutral}));
+    li_chao_tree(int min_x, int max_x): min_x(min_x), max_x(max_x) {
+        tree.push_back({{0, -inf}, 0, 0});
+        create_node();
     }
 
     void insert_line(int a, int b) {
@@ -87,7 +66,7 @@ public:
     }
 
     void insert_segment(int a, int b, int l, int r) {
-        if (l <= r) insert_segment({a, b}, l, r, 1, min_x, max_x);
+        insert_segment({a, b}, l, r, 1, min_x, max_x);
     }
 
     int query(int x) {
