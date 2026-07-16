@@ -13,6 +13,7 @@ private:
 
     struct node {
         line f;
+
         int l, r;
     };
 
