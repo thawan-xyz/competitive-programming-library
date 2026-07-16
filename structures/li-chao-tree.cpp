@@ -6,13 +6,13 @@ private:
     struct line {
         int a, b;
 
-        int eval(int x) {
+        int operator()(int x) const {
             return a * x + b;
         }
     };
 
     struct node {
-        line h;
+        line f;
         int l, r;
     };
 
@@ -24,30 +24,30 @@ private:
         return tree.size() - 1;
     }
 
-    int insert_line(line h, int p, int l, int r) {
+    int insert_line(line f, int p, int l, int r) {
         if (p == 0) p = create_node();
         int m = l + (r - l) / 2;
-        bool is_l = h.eval(l) > tree[p].h.eval(l);
-        bool is_m = h.eval(m) > tree[p].h.eval(m);
-        if (is_m) swap(h, tree[p].h);
+        bool is_l = f(l) > tree[p].f(l);
+        bool is_m = f(m) > tree[p].f(m);
+        if (is_m) swap(f, tree[p].f);
         if (l == r) return p;
-        if (is_l != is_m) tree[p].l = insert_line(h, tree[p].l, l, m);
-        else tree[p].r = insert_line(h, tree[p].r, m + 1, r);
+        if (is_l != is_m) tree[p].l = insert_line(f, tree[p].l, l, m);
+        else tree[p].r = insert_line(f, tree[p].r, m + 1, r);
         return p;
     }
 
-    int insert_segment(line h, int ql, int qr, int p, int l, int r) {
+    int insert_segment(line f, int ql, int qr, int p, int l, int r) {
         if (p == 0) p = create_node();
-        if (ql <= l and r <= qr) return insert_line(h, p, l, r);
+        if (ql <= l and r <= qr) return insert_line(f, p, l, r);
         int m = l + (r - l) / 2;
-        if (ql <= m) tree[p].l = insert_segment(h, ql, qr, tree[p].l, l, m);
-        if (qr > m) tree[p].r = insert_segment(h, ql, qr, tree[p].r, m + 1, r);
+        if (ql <= m) tree[p].l = insert_segment(f, ql, qr, tree[p].l, l, m);
+        if (qr > m) tree[p].r = insert_segment(f, ql, qr, tree[p].r, m + 1, r);
         return p;
     }
 
     int query(int x, int p, int l, int r) {
         if (p == 0) return -inf;
-        int y = tree[p].h.eval(x);
+        int y = tree[p].f(x);
         if (l == r) return y;
         int m = l + (r - l) / 2;
         if (x <= m) y = max(y, query(x, tree[p].l, l, m));
