@@ -6,7 +6,7 @@ private:
     struct line {
         int a, b;
 
-        int eval(int x) const {
+        int eval(int x) {
             return a * x + b;
         }
     };
