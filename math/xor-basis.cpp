@@ -1,3 +1,6 @@
+// XOR Basis: linear basis for subset XOR representation and query operations
+// Time: insert/contains/max/kth O(log) | Space: O(log) where log is the maximum bit length (30)
+// Note: kth(k) returns k-th smallest distinct XOR | operator[k] returns k-th smallest among all 2^n subsets (with duplicates)
 struct xor_basis {
     static constexpr int log = 30;
     int n = 0, s = 0;
