@@ -6,7 +6,7 @@ struct segment_tree {
         return x + y;
     }
 
-    segment_tree(int s): n(1 << __lg(2 * s - 1)), tree(2 * n) {}
+    segment_tree(int s): n(1 << __lg(max(1, 2 * s - 1))), tree(2 * n) {}
 
     segment_tree(vector<int> &a): segment_tree(a.size()) {
         for (int i = 0; i < a.size(); ++i) tree[n + i] = a[i];
