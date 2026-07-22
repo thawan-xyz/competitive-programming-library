@@ -1,3 +1,6 @@
+// Suffix Automaton: DAG representing all substrings of a string
+// Time: build O(N), extend amortized O(1) | Space: O(N * SIGMA)
+// Note: set for lowercase 'a'-'z' | root is at index 1
 struct suffix_automaton {
     struct node {
         int len = 0, link = 0;
