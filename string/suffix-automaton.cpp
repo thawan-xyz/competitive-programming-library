@@ -1,50 +1,48 @@
 struct suffix_automaton {
     struct node {
-        int len;
-        int link;
-        array<int, 26> next;
-
-        node(int len): len(len) {
-            link = -1;
-            next.fill(-1);
-        }
+        int len = 0, link = 0;
+        array<int, 26> next = {};
     };
 
-    vector<node> states;
-    int last;
+    int prev;
+    vector<node> st;
 
-    suffix_automaton(int n = 1) {
-        states.reserve(2 * n);
-        states.emplace_back(0);
-        last = 0;
-    }
+    suffix_automaton(): prev(1), st(2) {}
 
     void extend(char c) {
-        int curr = states.size();
-        states.emplace_back(states[last].len + 1);
-        int p = last;
-        while (p != -1 and states[p].next[c - 'a'] == -1) {
-            states[p].next[c - 'a'] = curr;
-            p = states[p].link;
+        int idx = c - 'a';
+        int curr = st.size();
+        int ptr = prev;
+
+        st.emplace_back();
+        st[curr].len = st[prev].len + 1;
+        prev = curr;
+
+        while (ptr and (not st[ptr].next[idx])) {
+            st[ptr].next[idx] = curr;
+            ptr = st[ptr].link;
         }
-        if (p == -1) {
-            states[curr].link = 0;
-        } else {
-            int q = states[p].next[c - 'a'];
-            if (states[q].len == states[p].len + 1) {
-                states[curr].link = q;
-            } else {
-                int clone = states.size();
-                states.push_back(states[q]);
-                states[clone].len = states[p].len + 1;
-                while (p != -1 and states[p].next[c - 'a'] == q) {
-                    states[p].next[c - 'a'] = clone;
-                    p = states[p].link;
-                }
-                states[q].link = clone;
-                states[curr].link = clone;
-            }
+
+        if (not ptr) {
+            st[curr].link = 1;
+            return;
         }
-        last = curr;
+
+        int qtr = st[ptr].next[idx];
+        if (st[ptr].len + 1 == st[qtr].len) {
+            st[curr].link = qtr;
+            return;
+        }
+
+        int clone = st.size();
+        st.push_back(st[qtr]);
+        st[clone].len = st[ptr].len + 1;
+    
+        while (ptr and st[ptr].next[idx] == qtr) {
+            st[ptr].next[idx] = clone;
+            ptr = st[ptr].link;
+        }
+
+        st[curr].link = st[qtr].link = clone;
     }
 };
