@@ -1,5 +1,5 @@
 // Suffix Automaton: directed acyclic graph representing all substrings of a string
-// Time: extend amortized O(1) | Space: O(N * S)
+// Time: extend O(1) amortized | Space: O(N * S)
 // Note: root at index 1 | alphabet [a-z]
 struct suffix_automaton {
     struct node {
