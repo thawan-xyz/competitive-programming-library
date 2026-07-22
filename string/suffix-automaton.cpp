@@ -52,4 +52,14 @@ struct suffix_automaton {
 
         st[curr].link = st[qtr].link = clone;
     }
+
+    bool contains(string &t) {
+        int ptr = 1;
+        for (char c : t) {
+            int idx = c - 'a';
+            ptr = st[ptr].next[idx];
+            if (not ptr) return false;
+        }
+        return true;
+    }
 };
