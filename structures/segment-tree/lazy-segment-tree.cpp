@@ -1,60 +1,71 @@
 struct lazy_segment_tree {
-    int n, h;
-    vector<int> tree, lazy, len;
+private:
+    int n;
+    vector<int> tree;
+    vector<int> lazy;
 
-    int merge(int x, int y) {
-        return x + y;
-    }
-
-    void apply(int i, int x) {
-        tree[i] += x * len[i];
-        if (i < n) lazy[i] += x;
-    }
-
-    void push(int k) {
-        for (int s = h; s > 0; --s) {
-            int i = k >> s;
-            if (lazy[i] == 0) continue;
-            apply(i << 1, lazy[i]);
-            apply((i << 1) | 1, lazy[i]);
-            lazy[i] = 0;
+    void build(vector<int> &a, int p, int l, int r) {
+        if (l == r) {
+            tree[p] = a[l];
+        } else {
+            int m = (l + r) / 2;
+            build(a, 2 * p, l, m);
+            build(a, (2 * p) + 1, m + 1, r);
+            tree[p] = tree[2 * p] + tree[(2 * p) + 1];
         }
     }
 
-    void pull(int i) {
-        while (i >>= 1) {
-            tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
-            if (lazy[i] != 0) tree[i] += lazy[i] * len[i];
+    void apply(int p, int x, int len) {
+        tree[p] += x * len;
+        lazy[p] += x;
+    }
+
+    void push(int p, int l, int r) {
+        if (lazy[p] != 0) {
+            int m = (l + r) / 2;
+            apply(2 * p, lazy[p], m - l + 1);
+            apply((2 * p) + 1, lazy[p], r - m);
+            lazy[p] = 0;
         }
     }
 
-    lazy_segment_tree(int s): n(1 << __lg(max(1, 2 * s - 1))), h(__lg(n)), tree(2 * n), lazy(n), len(2 * n) {
-        for (int i = n; i < 2 * n; ++i) len[i] = 1;
-        for (int i = n - 1; i > 0; --i) len[i] = len[i << 1] + len[(i << 1) | 1];
-    }
-
-    lazy_segment_tree(vector<int> &a): lazy_segment_tree(a.size()) {
-        for (int i = 0; i < a.size(); ++i) tree[n + i] = a[i];
-        for (int i = n - 1; i > 0; --i) tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
-    }
-
-    void update(int i, int j, int x) {
-        int p = i, q = j;
-        push(p + n), push(q + n);
-        for (i += n, j += n + 1; i < j; i >>= 1, j >>= 1) {
-            if (i & 1) apply(i++, x);
-            if (j & 1) apply(--j, x);
+    void update(int ql, int qr, int x, int p, int l, int r) {
+        if (ql <= l and r <= qr) {
+            apply(p, x, r - l + 1);
+        } else {
+            push(p, l, r);
+            int m = (l + r) / 2;
+            if (ql <= m) update(ql, qr, x, 2 * p, l, m);
+            if (qr > m) update(ql, qr, x, (2 * p) + 1, m + 1, r);
+            tree[p] = tree[2 * p] + tree[(2 * p) + 1];
         }
-        pull(p + n), pull(q + n);
     }
 
-    int query(int i, int j) {
-        push(i + n), push(j + n);
-        int l = 0, r = 0;
-        for (i += n, j += n + 1; i < j; i >>= 1, j >>= 1) {
-            if (i & 1) l = merge(l, tree[i++]);
-            if (j & 1) r = merge(tree[--j], r);
+    int query(int ql, int qr, int p, int l, int r) {
+        if (ql <= l and r <= qr) {
+            return tree[p];
+        } else {
+            push(p, l, r);
+            int m = (l + r) / 2;
+            int answer = 0;
+            if (ql <= m) answer += query(ql, qr, 2 * p, l, m);
+            if (qr > m) answer += query(ql, qr, (2 * p) + 1, m + 1, r);
+            return answer;
         }
-        return merge(l, r);
+    }
+
+public:
+    lazy_segment_tree(int n): n(n), tree(4 * n), lazy(4 * n) {}
+
+    lazy_segment_tree(vector<int> &a): n(a.size()), tree(4 * n), lazy(4 * n) {
+        build(a, 1, 0, n - 1);
+    }
+
+    void update(int l, int r, int x) {
+        update(l, r, x, 1, 0, n - 1);
+    }
+
+    int query(int l, int r) {
+        return query(l, r, 1, 0, n - 1);
     }
 };
