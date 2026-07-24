@@ -3,7 +3,7 @@
 // Note: connects left [0..n] to right [0..m] | match[right] returns left node or -1
 vector<int> kuhn(int n, int m, vector<vector<int>> &g) {
     vector<int> match(m + 1, -1);
-    int itr = 0;
+    int itr = 1;
     vector<int> v(n + 1);
 
     auto dfs = [&](auto &self, int a) -> bool {
