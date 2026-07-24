@@ -18,5 +18,5 @@ T cross(point<T> p, point<T> q) {
 // Note: returns radians in [-PI, PI] | negative result means w is to the right
 template <typename T>
 double angle(point<T> v, point<T> w) {
-    return arg(w * conj(v));
+    return atan2(cross(v, w), dot(v, w));
 }
