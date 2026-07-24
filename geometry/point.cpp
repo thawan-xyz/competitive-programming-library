@@ -13,3 +13,10 @@ template <typename T>
 T cross(point<T> p, point<T> q) {
     return (conj(p) * q).y;
 }
+
+// Directed Angle: shortest angle from vector v to vector w
+// Note: returns radians in [-PI, PI] | negative result means w is to the right
+template <typename T>
+double angle(point<T> v, point<T> w) {
+    return arg(w * conj(v));
+}
