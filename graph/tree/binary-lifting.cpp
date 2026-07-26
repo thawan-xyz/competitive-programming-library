@@ -1,41 +1,47 @@
 struct binary_lifting {
-    int n, log;
+    int n, LOG;
     vector<int> d;
     vector<vector<int>> up;
 
-    binary_lifting(int r, vector<vector<int>> &g): n(g.size()), log(31 - __builtin_clz(n)), d(n), up(n, vector<int>(log + 1)) {
-        build(r, r, g);
+    binary_lifting(vector<vector<int>> &g) {
+        n = g.size();
+        LOG = __bit_width(n) - 1;
+        d.assign(n, -1);
+        up.assign(n, vector<int>(LOG + 1));
+        for (int i = 0; i < n; ++i) {
+            if (d[i] == -1) {
+                d[i] = 0;
+                build(i, i, g);
+            }
+        }
     }
 
     void build(int a, int p, vector<vector<int>> &g) {
         up[a][0] = p;
-        for (int i = 1; i <= log; ++i) {
+        for (int i = 1; i <= LOG; ++i) {
             up[a][i] = up[up[a][i - 1]][i - 1];
         }
-
         for (int b : g[a]) if (b != p) {
             d[b] = d[a] + 1;
             build(b, a, g);
         }
     }
 
-    int kth_ancestor(int a, int k) {
-        if (d[a] < k) return -1;
-
-        for (int i = log; i >= 0; --i) {
-            if ((k >> i) & 1) {
-                a = up[a][i];
-            }
+    int kth(int a, int k) {
+        k = min(k, d[a]);
+        while (k > 0) {
+            int i = __bit_width(k) - 1;
+            a = up[a][i];
+            k ^= 1 << i;
         }
         return a;
     }
 
-    int lowest_common_ancestor(int a, int b) {
+    int lca(int a, int b) {
         if (d[a] < d[b]) swap(a, b);
-        a = kth_ancestor(a, d[a] - d[b]);
+        a = kth(a, d[a] - d[b]);
         if (a == b) return a;
-
-        for (int i = log; i >= 0; --i) {
+        for (int i = LOG; i >= 0; --i) {
             if (up[a][i] != up[b][i]) {
                 a = up[a][i];
                 b = up[b][i];
@@ -44,17 +50,16 @@ struct binary_lifting {
         return up[a][0];
     }
 
-    int distance(int a, int b) {
-        return d[a] + d[b] - 2 * d[lowest_common_ancestor(a, b)];
+    int dist(int a, int b) {
+        return d[a] + d[b] - 2 * d[lca(a, b)];
     }
 
-    int kth_node(int a, int b, int k) {
-        int lca = lowest_common_ancestor(a, b);
-        int l = d[a] - d[lca];
-        int r = d[b] - d[lca];
-        if (k > l + r) return -1;
-
-        if (k <= l) return kth_ancestor(a, k);
-        return kth_ancestor(b, r - (k - l));
+    int path(int a, int b, int k) {
+        int p = lca(a, b);
+        int l = d[a] - d[p];
+        int r = d[b] - d[p];
+        k = min(k, l + r);
+        if (k <= l) return kth(a, k);
+        else return kth(b, l + r - k);
     }
 };
