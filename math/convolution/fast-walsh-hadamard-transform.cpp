@@ -37,7 +37,7 @@ vector<int> convolution(vector<int> a, vector<int> b, char opr) {
     fwht(a, +1, opr);
     fwht(b, +1, opr);
 
-    for (int i = 0; i < n; ++i) a[i] = (a[i] * b[i]) % mod;
+    for (int i = 0; i < m; ++i) a[i] = (a[i] * b[i]) % mod;
     fwht(a, -1, opr);
 
     return a;
