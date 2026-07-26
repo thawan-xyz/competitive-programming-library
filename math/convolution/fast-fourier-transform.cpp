@@ -1,15 +1,23 @@
 const float pi = acos(-1);
+const int max_len = 1 << 20;
 
-vector<complex<float>> roots(int half, float ang) {
-    vector<complex<float>> w(half);
-    w[0] = {1, 0};
+array<complex<float>, max_len / 2> root, inv_root;
+
+void roots() {
+    root[0] = {1, 0};
+    inv_root[0] = {1, 0};
+
+    float ang = 2 * pi / max_len;
+    int half = max_len / 2;
     for (int i = 1; i < half; i *= 2) {
         complex<float> step(cos(ang * i), sin(ang * i));
         for (int j = 0; j < i; ++j) {
-            w[i + j] = w[j] * step;
+            root[i + j] = root[j] * step;
         }
     }
-    return w;
+    for (int i = 1; i < half; ++i) {
+        inv_root[i] = conj(root[i]);
+    }
 }
 
 void fft(vector<complex<float>> &p, bool inv) {
@@ -17,26 +25,26 @@ void fft(vector<complex<float>> &p, bool inv) {
     if (not inv) {
         for (int len = n; len >= 2; len /= 2) {
             int half = len / 2;
-            float ang = 2 * pi / len;
-            auto w = roots(half, ang);
+            int step = max_len / len;
             for (int i = 0; i < n; i += len) {
                 for (int j = 0; j < half; ++j) {
+                    auto w = root[step * j];
                     auto x = p[i + j];
                     auto y = p[i + j + half];
                     p[i + j] = x + y;
-                    p[i + j + half] = (x - y) * w[j];
+                    p[i + j + half] = (x - y) * w;
                 }
             }
         }
     } else {
         for (int len = 2; len <= n; len *= 2) {
             int half = len / 2;
-            float ang = -2 * pi / len;
-            auto w = roots(half, ang);
+            int step = max_len / len;
             for (int i = 0; i < n; i += len) {
                 for (int j = 0; j < half; ++j) {
+                    auto w = inv_root[step * j];
                     auto x = p[i + j];
-                    auto y = p[i + j + half] * w[j];
+                    auto y = p[i + j + half] * w;
                     p[i + j] = x + y;
                     p[i + j + half] = x - y;
                 }
