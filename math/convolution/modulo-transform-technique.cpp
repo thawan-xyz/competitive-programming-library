@@ -1,9 +1,10 @@
 void ntt(vector<int> &p, bool inv, int g, int mod) {
     int n = p.size();
-    int p2 = __builtin_ctz(n);
+
+    int pow2 = __builtin_ctz(n);
     vector<int> rev(n);
     for (int i = 1; i < n; ++i) {
-        rev[i] = (rev[i >> 1] >> 1) | ((i & 1) << (p2 - 1));
+        rev[i] = (rev[i >> 1] >> 1) | ((i & 1) << (pow2 - 1));
         if (i < rev[i]) swap(p[i], p[rev[i]]);
     }
 
@@ -35,10 +36,8 @@ vector<int> convolution(vector<int> a, vector<int> b, int g = 3, int mod = 99824
     int m = 1;
     while (m < n) m *= 2;
 
-    a.resize(m);
-    b.resize(m);
-    ntt(a, false, g, mod);
-    ntt(b, false, g, mod);
+    a.resize(m), b.resize(m);
+    ntt(a, false, g, mod), ntt(b, false, g, mod);
 
     for (int i = 0; i < m; ++i) a[i] = (a[i] * b[i]) % mod;
     ntt(a, true, g, mod);
