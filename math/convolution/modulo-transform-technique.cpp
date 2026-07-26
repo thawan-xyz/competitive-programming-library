@@ -1,33 +1,42 @@
 void ntt(vector<int> &p, bool inv, int g, int mod) {
     int n = p.size();
+    if (not inv) {
+        for (int len = n; len >= 2; len /= 2) {
+            int half = len / 2;
+            int ang = mpow(g, (mod - 1) / len, mod);
 
-    int pow2 = __builtin_ctz(n);
-    vector<int> rev(n);
-    for (int i = 1; i < n; ++i) {
-        rev[i] = (rev[i >> 1] >> 1) | ((i & 1) << (pow2 - 1));
-        if (i < rev[i]) swap(p[i], p[rev[i]]);
-    }
+            vector<int> w(half, 1);
+            for (int i = 1; i < half; ++i) w[i] = (ang * w[i - 1]) % mod;
 
-    vector<int> w(n / 2);
-    for (int len = 2; len <= n; len *= 2) {
-        int half = len / 2;
-        int ang = mpow(g, (mod - 1) / len, mod);
-        if (inv) ang = mpow(ang, mod - 2, mod);
-        w[0] = 1;
-        for (int i = 1; i < half; ++i) w[i] = (ang * w[i - 1]) % mod;
-        for (int i = 0; i < n; i += len) {
-            for (int j = 0; j < half; ++j) {
-                int x = p[i + j];
-                int y = (p[i + j + half] * w[j]) % mod;
-                p[i + j] = (x + y) % mod;
-                p[i + j + half] = (x - y + mod) % mod;
+            for (int i = 0; i < n; i += len) {
+                for (int j = 0; j < half; ++j) {
+                    int x = p[i + j];
+                    int y = p[i + j + half];
+                    p[i + j] = (x + y) % mod;
+                    p[i + j + half] = (((x - y + mod) % mod) * w[j]) % mod;
+                }
             }
         }
-    }
+    } else {
+        for (int len = 2; len <= n; len *= 2) {
+            int half = len / 2;
+            int ang = mpow(g, (mod - 1) / len, mod);
+            ang = mpow(ang, mod - 2, mod);
 
-    if (inv) {
-        int i = mpow(n, mod - 2, mod);
-        for (int &x : p) x = (x * i) % mod;
+            vector<int> w(half, 1);
+            for (int i = 1; i < half; ++i) w[i] = (ang * w[i - 1]) % mod;
+
+            for (int i = 0; i < n; i += len) {
+                for (int j = 0; j < half; ++j) {
+                    int x = p[i + j];
+                    int y = (p[i + j + half] * w[j]) % mod;
+                    p[i + j] = (x + y) % mod;
+                    p[i + j + half] = (x - y + mod) % mod;
+                }
+            }
+        }
+        int inv_n = mpow(n, mod - 2, mod);
+        for (int &x : p) x = (x * inv_n) % mod;
     }
 }
 
