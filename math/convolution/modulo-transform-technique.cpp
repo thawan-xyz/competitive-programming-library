@@ -1,13 +1,17 @@
+vector<int> roots(int half, int ang, int mod) {
+    vector<int> w(half);
+    w[0] = 1;
+    for (int i = 1; i < half; ++i) w[i] = (ang * w[i - 1]) % mod;
+    return w;
+}
+
 void ntt(vector<int> &p, bool inv, int g, int mod) {
     int n = p.size();
     if (not inv) {
         for (int len = n; len >= 2; len /= 2) {
             int half = len / 2;
             int ang = mpow(g, (mod - 1) / len, mod);
-
-            vector<int> w(half, 1);
-            for (int i = 1; i < half; ++i) w[i] = (ang * w[i - 1]) % mod;
-
+            vector<int> w = roots(half, ang, mod);
             for (int i = 0; i < n; i += len) {
                 for (int j = 0; j < half; ++j) {
                     int x = p[i + j];
@@ -22,10 +26,7 @@ void ntt(vector<int> &p, bool inv, int g, int mod) {
             int half = len / 2;
             int ang = mpow(g, (mod - 1) / len, mod);
             ang = mpow(ang, mod - 2, mod);
-
-            vector<int> w(half, 1);
-            for (int i = 1; i < half; ++i) w[i] = (ang * w[i - 1]) % mod;
-
+            vector<int> w = roots(half, ang, mod);
             for (int i = 0; i < n; i += len) {
                 for (int j = 0; j < half; ++j) {
                     int x = p[i + j];
@@ -45,8 +46,10 @@ vector<int> convolution(vector<int> a, vector<int> b, int g = 3, int mod = 99824
     int m = 1;
     while (m < n) m *= 2;
 
-    a.resize(m), b.resize(m);
-    ntt(a, false, g, mod), ntt(b, false, g, mod);
+    a.resize(m);
+    b.resize(m);
+    ntt(a, false, g, mod);
+    ntt(b, false, g, mod);
 
     for (int i = 0; i < m; ++i) a[i] = (a[i] * b[i]) % mod;
     ntt(a, true, g, mod);

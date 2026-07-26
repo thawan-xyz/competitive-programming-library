@@ -31,8 +31,10 @@ vector<int> convolution(vector<int> a, vector<int> b, char opr) {
     int n = 1, m = max(a.size(), b.size());
     while (n < m) n *= 2;
 
-    a.resize(n), b.resize(n);
-    fwht(a, 1, opr), fwht(b, 1, opr);
+    a.resize(n);
+    b.resize(n);
+    fwht(a, 1, opr);
+    fwht(b, 1, opr);
 
     for (int i = 0; i < n; ++i) a[i] = (a[i] * b[i]) % mod;
     fwht(a, -1, opr);
