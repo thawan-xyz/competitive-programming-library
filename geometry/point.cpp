@@ -17,7 +17,7 @@ T cross(point<T> p, point<T> q) {
 // Directed Angle: shortest angle from vector v to vector w
 // Note: returns radians in [-pi, pi] | negative result means w is to the right
 template <typename T>
-double angle(point<T> v, point<T> w) {
+float angle(point<T> v, point<T> w) {
     return atan2(cross(v, w), dot(v, w));
 }
 
