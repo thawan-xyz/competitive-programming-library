@@ -3,19 +3,32 @@
 // Note: flag edge = true for edge weights (weight of edge u-v is stored in the deeper node)
 struct hld {
     int n;
-    bool edge;
-    vector<int> p, d, h, id;
+    bool e;
     segment_tree s;
+    vector<int> p, d, h, id;
 
-    hld(int r, vector<vector<int>> &g, bool edge): n(g.size()), edge(edge), p(n), d(n), h(n), id(n), s(n) {
-        p[r] = r, d[r] = 0, dfs(r, g);
-        h[r] = r, decompose(r, g, 0);
+    hld(vector<vector<int>> &g, bool e): n(g.size()), e(e), s(n) {
+        p.assign(n, -1);
+        d.assign(n, 0);
+        h.assign(n, 0);
+        id.assign(n, 0);
+        int t = 0;
+        for (int i = 0; i < n; ++i) {
+            if (p[i] == -1) {
+                p[i] = i;
+                d[i] = 0;
+                dfs(i, g);
+                h[i] = i;
+                decompose(i, t, g);
+            }
+        }
     }
 
     int dfs(int a, vector<vector<int>> &g) {
         int size = 1, max = 0;
         for (int &b : g[a]) if (b != p[a]) {
-            p[b] = a, d[b] = d[a] + 1;
+            p[b] = a;
+            d[b] = d[a] + 1;
             int curr = dfs(b, g);
             if (curr > max) {
                 max = curr;
@@ -26,13 +39,22 @@ struct hld {
         return size;
     }
 
-    int decompose(int a, vector<vector<int>> &g, int i) {
-        id[a] = i++;
+    void decompose(int a, int &t, vector<vector<int>> &g) {
+        id[a] = t++;
         for (int b : g[a]) if (b != p[a]) {
-            h[b] = (b == g[a][0]) ? h[a] : b;
-            i = decompose(b, g, i);
+            h[b] = b;
+            if (b == g[a][0]) h[b] = h[a];
+            decompose(b, t, g);
         }
-        return i;
+    }
+
+    int lca(int a, int b) {
+        while (h[a] != h[b]) {
+            if (d[h[a]] < d[h[b]]) swap(a, b);
+            a = p[h[a]];
+        }
+        if (d[a] > d[b]) swap(a, b);
+        return a;
     }
 
     int query(int a, int b) {
@@ -43,8 +65,8 @@ struct hld {
             a = p[h[a]];
         }
         if (d[a] > d[b]) swap(a, b);
-        if (edge and a == b) return r;
-        r = s.merge(r, s.query(id[a] + edge, id[b]));
+        if (e and a == b) return r;
+        r = s.merge(r, s.query(id[a] + e, id[b]));
         return r;
     }
 
