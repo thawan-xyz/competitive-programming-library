@@ -1,6 +1,3 @@
-// Heavy-Light Decomposition: path queries/updates on trees (commutative operations)
-// Time: build O(N) | query O(log^2 N) | update O(log N) | Space: O(N)
-// Note: flag edge = true for edge weights (weight of edge u-v is stored in the deeper node)
 struct hld {
     int n;
     bool e;

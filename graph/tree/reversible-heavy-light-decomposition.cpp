@@ -1,13 +1,10 @@
-// Reversible Heavy-Light Decomposition: path queries/updates on trees (NON-commutative operations)
-// Time: build O(N) | query O(log^2 N) | update O(log N) | Space: O(N)
-// Note: uses 2 segtrees to respect path direction, flag edge = true for edge weights
-struct hld {
+struct rev_hld {
     int n;
     bool edge;
     vector<int> p, d, h, id;
     reversible_segment_tree s, t;
 
-    hld(int r, vector<vector<int>> &g, bool edge): n(g.size()), edge(edge), p(n), d(n), h(n), id(n), s(n, false), t(n, true) {
+    rev_hld(int r, vector<vector<int>> &g, bool edge): n(g.size()), edge(edge), p(n), d(n), h(n), id(n), s(n, false), t(n, true) {
         p[r] = r, d[r] = 0, dfs(r, g);
         h[r] = r, decompose(r, g, 0);
     }
