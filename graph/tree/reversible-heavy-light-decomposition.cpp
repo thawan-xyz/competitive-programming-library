@@ -1,18 +1,31 @@
-struct rev_hld {
+struct reversible_hld {
     int n;
-    bool edge;
-    vector<int> p, d, h, id;
+    bool e;
     reversible_segment_tree s, t;
+    vector<int> p, d, h, id;
 
-    rev_hld(int r, vector<vector<int>> &g, bool edge): n(g.size()), edge(edge), p(n), d(n), h(n), id(n), s(n, false), t(n, true) {
-        p[r] = r, d[r] = 0, dfs(r, g);
-        h[r] = r, decompose(r, g, 0);
+    reversible_hld(vector<vector<int>> &g, bool e): n(g.size()), e(e), s(n, false), t(n, true) {
+        p.assign(n, -1);
+        d.assign(n, 0);
+        h.assign(n, 0);
+        id.assign(n, 0);
+        int k = 0;
+        for (int i = 0; i < n; ++i) {
+            if (p[i] == -1) {
+                p[i] = i;
+                d[i] = 0;
+                dfs(i, g);
+                h[i] = i;
+                decompose(i, k, g);
+            }
+        }
     }
 
     int dfs(int a, vector<vector<int>> &g) {
         int size = 1, max = 0;
         for (int &b : g[a]) if (b != p[a]) {
-            p[b] = a, d[b] = d[a] + 1;
+            p[b] = a;
+            d[b] = d[a] + 1;
             int curr = dfs(b, g);
             if (curr > max) {
                 max = curr;
@@ -23,29 +36,42 @@ struct rev_hld {
         return size;
     }
 
-    int decompose(int a, vector<vector<int>> &g, int i) {
-        id[a] = i++;
+    void decompose(int a, int &k, vector<vector<int>> &g) {
+        id[a] = k++;
         for (int b : g[a]) if (b != p[a]) {
-            h[b] = (b == g[a][0]) ? h[a] : b;
-            i = decompose(b, g, i);
+            h[b] = b;
+            if (b == g[a][0]) h[b] = h[a];
+            decompose(b, k, g);
         }
-        return i;
+    }
+
+    int lca(int a, int b) {
+        while (h[a] != h[b]) {
+            if (d[h[a]] < d[h[b]]) swap(a, b);
+            a = p[h[a]];
+        }
+        if (d[a] > d[b]) swap(a, b);
+        return a;
     }
 
     int query(int a, int b) {
-        int l = s.neutral, r = s.neutral;
+        int l = s.neutral;
+        int r = s.neutral;
         while (h[a] != h[b]) {
             if (d[h[a]] > d[h[b]]) {
-                l = s.merge(l, t.query(id[h[a]], id[a]));
+                l = t.merge(l, t.query(id[h[a]], id[a]));
                 a = p[h[a]];
             } else {
                 r = s.merge(s.query(id[h[b]], id[b]), r);
                 b = p[h[b]];
             }
         }
-        if (edge and a == b) return s.merge(l, r);
-        if (d[a] > d[b]) l = s.merge(l, t.query(id[b] + edge, id[a]));
-        else r = s.merge(s.query(id[a] + edge, id[b]), r);
+        if (e and a == b) return s.merge(l, r);
+        if (d[a] > d[b]) {
+            l = t.merge(l, t.query(id[b] + e, id[a]));
+        } else {
+            r = s.merge(s.query(id[a] + e, id[b]), r);
+        }
         return s.merge(l, r);
     }
 
