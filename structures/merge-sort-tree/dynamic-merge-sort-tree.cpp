@@ -1,5 +1,5 @@
 // Merge Sort Tree: range queries with point updates
-// Time: build O(N log² N) | Update/Query: O(log² N) | Space: O(N log N)
+// Time: build O(N log^2 N) | Update/Query: O(log^2 N) | Space: O(N log N)
 // Note: uses PBDS ordered_set | pair<int, int> handles duplicate values
 struct merge_sort_tree {
     int n;

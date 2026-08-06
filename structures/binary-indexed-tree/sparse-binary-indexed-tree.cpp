@@ -1,5 +1,5 @@
 // Sparse BIT: 2D Binary Indexed Tree with Static Coordinate Compression
-// Time: Build O(Q log² Q) | Update/Query O(log² Q) | Space: O(Q log Q)
+// Time: Build O(Q log^2 Q) | Update/Query O(log^2 Q) | Space: O(Q log Q)
 // Queries: {type, i1, j1, i2, j2} | 'U' = Update, 'Q' = Query
 struct sparse_bit {
     int n;
