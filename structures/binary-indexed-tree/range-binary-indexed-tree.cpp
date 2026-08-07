@@ -1,18 +1,17 @@
 struct range_bit {
-    bit mul, sub;
+    bit m, s;
 
-    range_bit(int n): mul(n + 1), sub(n + 1) {}
+    range_bit(int n): m(n + 1), s(n + 1) {}
 
     void update(int i, int j, int x) {
-        mul.update(i, x);
-        mul.update(j + 1, -x);
-
-        sub.update(i, x * (i - 1));
-        sub.update(j + 1, -x * j);
+        m.update(i, x);
+        m.update(j + 1, -x);
+        s.update(i, x * (i - 1));
+        s.update(j + 1, -x * j);
     }
 
     int prefix(int i) {
-        return mul.prefix(i) * i - sub.prefix(i);
+        return i * m.prefix(i) - s.prefix(i);
     }
 
     int query(int i, int j) {
