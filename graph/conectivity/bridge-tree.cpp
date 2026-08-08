@@ -1,6 +1,6 @@
 // Bridge Tree: condenses 2-edge-connected components into single nodes
 // Time: O(V + E) | Space: O(V + E)
-// Note: returns {tree, id} where 'id[a]' is the new node id of original vertex 'a'
+// Note: returns a tree and an id array where 'id[a]' is the new node id of original vertex 'a'
 pair<vector<vector<int>>, vector<int>> bridge_tree(vector<vector<int>> &g) {
     int n = g.size(), t = 0;
     vector<int> tin(n, -1), low(n), id(n), st;
