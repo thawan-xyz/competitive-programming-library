@@ -8,7 +8,12 @@ vector<vector<int>> block_cut_tree(vector<vector<int>> &g) {
     auto dfs = [&](auto &self, int a, int p) -> void {
         tin[a] = low[a] = t++;
         st.push_back(a);
-        for (int b : g[a]) if (b != p) {
+        bool parent = true;
+        for (int b : g[a]) {
+            if (p == b and parent) {
+                parent = false;
+                continue;
+            }
             if (tin[b] != -1) {
                 low[a] = min(low[a], tin[b]);
             } else {
