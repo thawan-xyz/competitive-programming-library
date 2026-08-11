@@ -1,15 +1,14 @@
 struct aho_corasick {
-private:
     struct node {
         int fail = 0;
         int exit = 0;
+        int len = 0;
+        int cnt = 0;
         array<int, 26> next = {};
-        vector<int> end;
     };
 
     vector<node> trie;
 
-public:
     aho_corasick(int n = 0) {
         trie.reserve(n + 5);
         trie.emplace_back();
@@ -18,52 +17,48 @@ public:
     void insert(string &s) {
         int i = 0;
         for (char c : s) {
-            int j = c - 'a';
-            if (trie[i].next[j] == 0) {
-                trie[i].next[j] = trie.size();
+            int k = c - 'a';
+            if (trie[i].next[k] == 0) {
+                trie[i].next[k] = trie.size();
                 trie.emplace_back();
             }
-            i = trie[i].next[j];
+            i = trie[i].next[k];
         }
-        trie[i].end.push_back(s.size());
+        trie[i].len = s.length();
+        trie[i].cnt++;
     }
 
-    void build() {
+    void compile() {
         queue<int> q;
-        for (int j = 0; j < 26; ++j) {
-            int i = trie[0].next[j];
-            if (i != 0) {
-                q.push(i);
-            }
+        for (int c = 0; c < 26; ++c) {
+            int i = trie[0].next[c];
+            if (i != 0) q.push(i);
         }
-        while (not q.empty()) {
+        while (q.size()) {
             int i = q.front(); q.pop();
             int f = trie[i].fail;
-            if (not trie[f].end.empty()) {
-                trie[i].exit = f;
-            } else {
-                trie[i].exit = trie[f].exit;
-            }
-            for (int j = 0; j < 26; ++j) {
-                int c = trie[i].next[j];
-                if (c != 0) {
-                    trie[c].fail = trie[f].next[j];
-                    q.push(c);
+            trie[i].exit = trie[f].cnt != 0 ? f : trie[f].exit;
+            for (int c = 0; c < 26; ++c) {
+                int &j = trie[i].next[c];
+                if (j != 0) {
+                    trie[j].fail = trie[f].next[c];
+                    q.push(j);
                 } else {
-                    trie[i].next[j] = trie[f].next[j];
+                    j = trie[f].next[c];
                 }
             }
         }
     }
 
     vector<int> match(string &t) {
-        vector<int> p;
         int n = t.length();
-        for (int i = 0, k = 0; k < n; ++k) {
+        vector<int> p;
+        int i = 0;
+        for (int k = 0; k < n; ++k) {
             i = trie[i].next[t[k] - 'a'];
-            for (int j = i; j != 0; j = trie[j].exit) {
-                for (int l : trie[j].end) {
-                    p.push_back(k - l + 1);
+            for (int j = i; j != 0; j = trie[j].exit) if (trie[j].cnt != 0) {
+                for (int r = 1; r <= trie[j].cnt; ++r) {
+                    p.push_back(k - trie[j].len + 1);
                 }
             }
         }
