@@ -1,3 +1,6 @@
+// Dominator Tree: computes immediate dominators in directed graphs
+// Time: build O(V log V + E) | Space: O(V + E)
+// Note: returns the tree where node a immediately dominates its children
 struct dominator_dsu {
     vector<int> p, c;
     vector<int> &x;
