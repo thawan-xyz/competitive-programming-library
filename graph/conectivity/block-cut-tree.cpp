@@ -1,6 +1,6 @@
 // Block-Cut Tree: decomposes an undirected graph into biconnected components
 // Time: O(V + E) | Space: O(V + E)
-// Note: returns a tree where nodes 0..N-1 are original vertices and nodes >= N are blocks
+// Note: returns a tree where nodes [0, N) are original vertices and nodes >= N are blocks
 vector<vector<int>> block_cut_tree(vector<vector<int>> &g) {
     int n = g.size(), t = 0;
     vector<int> tin(n, -1), low(n), st;
