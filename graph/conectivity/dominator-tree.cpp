@@ -48,7 +48,7 @@ vector<vector<int>> dominator_tree(int s, vector<vector<int>> &g) {
     for (int a = 0; a < n; ++a) semi[a] = tin[a];
     vector<vector<int>> bucket(n);
     dominator_dsu dsu(n, semi);
-    for (int i = t - 1; t >= 1; --i) {
+    for (int i = t - 1; i >= 1; --i) {
         int a = inv[i];
         for (int b : rev[a]) if (tin[b] != -1) {
             semi[a] = min(semi[a], semi[dsu.find(b)]);
