@@ -20,7 +20,7 @@ struct hash_val {
     }
 };
 
-hash_val combine(hash_val &l, hash_val &r) {
+hash_val combine(const hash_val &l, const hash_val &r) {
     compute_pow(max(l.len, r.len));
     hash_val m;
     m.len = l.len + r.len;
