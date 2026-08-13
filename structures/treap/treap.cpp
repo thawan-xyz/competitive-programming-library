@@ -3,30 +3,34 @@
 // Note: combines bst and heap properties | requires mt19937 for priorities
 struct treap {
     struct node {
-        int v, p, l, r, s;
+        int x, p, l = 0, r = 0, s = 1;
+
+        node(int x, int p = rng()): x(x), p(p) {}
     };
 
     int root = 0;
-    vector<node> t = {{}};
+    vector<node> t;
 
-    int make(int v, int p = rng()) {
-        t.push_back({v, p, 0, 0, 1});
-        return t.size() - 1;
+    treap(int n = 0) {
+        t.reserve(n + 1);
+        t.push_back(node(0));
+        t[0].s = 0;
     }
 
     void pull(int i) {
+        if (i == 0) return;
         t[i].s = 1 + t[t[i].l].s + t[t[i].r].s;
     }
 
-    pair<int, int> split(int i, int v) {
+    pair<int, int> split(int i, int x) {
         if (i == 0) return {0, 0};
-        if (t[i].v <= v) {
-            auto [l, r] = split(t[i].r, v);
+        if (t[i].x <= x) {
+            auto [l, r] = split(t[i].r, x);
             t[i].r = l;
             pull(i);
             return {i, r};
         } else {
-            auto [l, r] = split(t[i].l, v);
+            auto [l, r] = split(t[i].l, x);
             t[i].l = r;
             pull(i);
             return {l, i};
@@ -46,22 +50,24 @@ struct treap {
         }
     }
 
-    void insert(int v) {
-        auto [l, r] = split(root, v);
-        root = merge(merge(l, make(v)), r);
+    void insert(int x) {
+        auto [l, r] = split(root, x);
+        int i = t.size();
+        t.push_back(node(x));
+        root = merge(merge(l, i), r);
     }
 
-    void erase(int v) {
-        auto [l, h] = split(root, v - 1);
-        auto [m, r] = split(h, v);
+    void erase(int x) {
+        auto [l, h] = split(root, x - 1);
+        auto [m, r] = split(h, x);
         m = merge(t[m].l, t[m].r);
         root = merge(merge(l, m), r);
     }
 
-    int index(int v) {
+    int index(int x) {
         int i = root, k = 0;
         while (i != 0) {
-            if (t[i].v < v) k += 1 + t[t[i].l].s, i = t[i].r;
+            if (t[i].x < x) k += 1 + t[t[i].l].s, i = t[i].r;
             else i = t[i].l;
         }
         return k;
@@ -73,7 +79,7 @@ struct treap {
             int s = t[t[i].l].s;
             if (k < s) i = t[i].l;
             else if (k > s) k -= 1 + s, i = t[i].r;
-            else return t[i].v;
+            else return t[i].x;
         }
         return -1;
     }

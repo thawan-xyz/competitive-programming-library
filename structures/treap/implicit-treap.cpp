@@ -3,26 +3,29 @@
 // Note: supports range modifications | uses lazy propagation and implicit indices
 struct treap {
     struct node {
-        int v, p, s, l, r;
-        int data, lazy, rev;
+        int x, p, l = 0, r = 0;
+        int sum, size = 1, lazy = 0, rev = 0;
+
+        node(int x, int p = rng()): x(x), p(p), sum(x) {}
     };
 
     int root = 0;
-    vector<node> t = {{}};
+    vector<node> t;
 
-    int make(int v, int p = rng()) {
-        t.push_back({v, p, 1, 0, 0, v, 0, 0});
-        return t.size() - 1;
+    treap(int n = 0) {
+        t.reserve(n + 1);
+        t.push_back(node(0));
+        t[0].size = 0;
     }
 
-    void apply(int i, int v) {
+    void apply(int i, int x) {
         if (i == 0) return;
-        t[i].v += v;
-        t[i].data += v * t[i].s;
-        t[i].lazy += v;
+        t[i].x += x;
+        t[i].sum += x * t[i].size;
+        t[i].lazy += x;
     }
 
-    void apply_reverse(int i) {
+    void flip(int i) {
         if (i == 0) return;
         t[i].rev ^= 1;
         swap(t[i].l, t[i].r);
@@ -31,8 +34,8 @@ struct treap {
     void push(int i) {
         if (i == 0) return;
         if (t[i].rev != 0) {
-            apply_reverse(t[i].l);
-            apply_reverse(t[i].r);
+            flip(t[i].l);
+            flip(t[i].r);
             t[i].rev = 0;
         }
         if (t[i].lazy != 0) {
@@ -44,14 +47,14 @@ struct treap {
 
     void pull(int i) {
         if (i == 0) return;
-        t[i].s = t[t[i].l].s + 1 + t[t[i].r].s;
-        t[i].data = t[t[i].l].data + t[i].v + t[t[i].r].data;
+        t[i].size = t[t[i].l].size + 1 + t[t[i].r].size;
+        t[i].sum = t[t[i].l].sum + t[i].x + t[t[i].r].sum;
     }
 
     pair<int, int> split(int i, int k) {
         if (i == 0) return {0, 0};
         push(i);
-        int s = t[t[i].l].s;
+        int s = t[t[i].l].size;
         if (s >= k) {
             auto [l, r] = split(t[i].l, k);
             t[i].l = r;
@@ -80,9 +83,11 @@ struct treap {
         }
     }
 
-    void insert(int k, int v) {
+    void insert(int k, int x) {
         auto [l, r] = split(root, k);
-        root = merge(merge(l, make(v)), r);
+        int i = t.size();
+        t.push_back(node(x));
+        root = merge(merge(l, i), r);
     }
 
     void erase(int k) {
@@ -101,21 +106,21 @@ struct treap {
     void reverse(int i, int j) {
         auto [h, r] = split(root, j + 1);
         auto [l, m] = split(h, i);
-        apply_reverse(m);
+        flip(m);
         root = merge(merge(l, m), r);
     }
 
-    void update(int i, int j, int v) {
+    void update(int i, int j, int x) {
         auto [h, r] = split(root, j + 1);
         auto [l, m] = split(h, i);
-        apply(m, v);
+        apply(m, x);
         root = merge(merge(l, m), r);
     }
 
     int query(int i, int j) {
         auto [h, r] = split(root, j + 1);
         auto [l, m] = split(h, i);
-        int q = t[m].data;
+        int q = t[m].sum;
         root = merge(merge(l, m), r);
         return q;
     }
