@@ -12,8 +12,8 @@ void compute_pow(int n) {
 }
 
 struct hash_val {
-    int len;
-    array<int, 2> ord, rev;
+    int len = 0;
+    array<int, 2> ord = {0, 0}, rev = {0, 0};
 
     bool operator==(const hash_val &o) const {
         return len == o.len and ord == o.ord;
