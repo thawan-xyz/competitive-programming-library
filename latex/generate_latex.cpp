@@ -156,11 +156,8 @@ void dfs(vector<pair<string, string>>& files, string path, bool extra = false) {
 }
 
 void print_section(string section_name) {
-    cout << "\n\\clearpage\n\n%";
-    for (int i = 0; i < 20; i++) cout << "%";
-    cout << "\n%\n% " << section_name << "\n%\n%";
-    for (int i = 0; i < 20; i++) cout << "%";
-    cout << "\n\n\\section{" << section_name << "}\n\n";
+    cout << "\n\\vspace{0.8em}\n\\hrule\n\\vspace{0.5em}\n";
+    cout << "\\section{" << section_name << "}\n\n";
 }
 
 string to_lower(string text) {

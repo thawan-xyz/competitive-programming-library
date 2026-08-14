@@ -10,9 +10,11 @@
 \usepackage{xcolor}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{titlesec}
 \usepackage[landscape, left=0.5cm, right=0.5cm, top=1cm, bottom=1.5cm]{geometry}
 
-\addtolength{\parskip}{.5\baselineskip}
+\titlespacing*{\section}{0pt}{1em}{0.2em}
+\titlespacing*{\subsection}{0pt}{0.5em}{0pt}
 
 \input{env}
 
@@ -38,11 +40,13 @@
   showstringspaces=false,
   stringstyle=\color{blue},
   tabsize=4,
-  basicstyle=\ttfamily\scriptsize
+  basicstyle=\ttfamily\scriptsize,
+  aboveskip=1pt,
+  belowskip=1pt
 }
 
-\lstset{literate=
-    {~}{$\sim$}{1}
+\lstset{
+  literate={~}{$\sim$}{1}
 }
 
 \title{
@@ -58,4 +62,5 @@
 
 \renewcommand{\contentsname}{Contents}
 \tableofcontents
-\clearpage
+
+\vspace{1em}

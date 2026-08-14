@@ -1,6 +1,6 @@
 #!/bin/bash
 
-: ${TEAMNAME:="essa caiu no concurso de coveiro"}
+: ${TEAMNAME:="Time"}
 : ${MEMBERS:="Thawan"}
 : ${UNIVERSITY:="UFPE"}
 
@@ -15,6 +15,7 @@ EOF
 g++ -std=c++17 -o generate_latex generate_latex.cpp -O2
 ./generate_latex $1 > notebook.tex
 
+pdflatex -interaction=nonstopmode notebook.tex
 pdflatex -interaction=nonstopmode notebook.tex
 pdflatex -interaction=nonstopmode notebook.tex
 
