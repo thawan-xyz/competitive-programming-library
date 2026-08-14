@@ -11,18 +11,18 @@ void compute_pow(int n) {
     }
 }
 
-struct hash_val {
+struct hashes {
     int len = 0;
     array<int, 2> ord = {0, 0}, rev = {0, 0};
 
-    bool operator==(const hash_val &o) const {
+    bool operator==(const hashes &o) const {
         return len == o.len and ord == o.ord;
     }
 };
 
-hash_val combine(const hash_val &l, const hash_val &r) {
+hashes combine(const hashes &l, const hashes &r) {
     compute_pow(max(l.len, r.len));
-    hash_val m;
+    hashes m;
     m.len = l.len + r.len;
     for (int i : {0, 1}) {
         m.ord[i] = (l.ord[i] * POW[r.len][i] + r.ord[i]) % MOD[i];
@@ -45,9 +45,9 @@ struct hasher {
         }
     }
 
-    hash_val query(int l, int r) const {
+    hashes query(int l, int r) const {
         assert(l <= r);
-        hash_val h;
+        hashes h;
         h.len = r - l + 1;
         for (int i : {0, 1}) {
             h.ord[i] = (pref[r + 1][i] - pref[l][i] * POW[h.len][i]) % MOD[i];
