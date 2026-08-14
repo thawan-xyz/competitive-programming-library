@@ -44,7 +44,6 @@ struct hasher {
     vector<array<int, 2>> pref, suf;
     
     hasher(string &s): n(s.length()), pref(n + 1), suf(n + 2) {
-        compute_pow(n);
         for (int i = 0; i < n; ++i) {
             for (int j : {0, 1}) {
                 pref[i + 1][j] = (pref[i][j] * BASE[j] + s[i]) % MOD[j];
@@ -57,6 +56,7 @@ struct hasher {
         assert(l <= r);
         hashes h;
         h.len = r - l + 1;
+        compute_pow(h.len);
         for (int i : {0, 1}) {
             h.ord[i] = (pref[r + 1][i] - pref[l][i] * POW[h.len][i]) % MOD[i];
             if (h.ord[i] < 0) h.ord[i] += MOD[i];

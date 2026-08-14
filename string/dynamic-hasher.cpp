@@ -3,7 +3,6 @@ struct dynamic_hasher {
     vector<hashes> tree;
 
     dynamic_hasher(const string &s): n(s.length()), tree(2 * n) {
-        compute_pow(n);
         for (int i = 0; i < n; ++i) tree[n + i] = hashes(s[i]);
         for (int i = n - 1; i > 0; --i) tree[i] = combine(tree[i << 1], tree[(i << 1) | 1]);
     }
