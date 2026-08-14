@@ -1,0 +1,61 @@
+\documentclass[11pt, a4paper, oneside]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb,amsmath}
+\usepackage[english]{babel}
+\usepackage{comment}
+\usepackage[pdfusetitle]{hyperref}
+\usepackage[all]{xy}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{color}
+\usepackage[landscape, left=0.5cm, right=0.5cm, top=1cm, bottom=1.5cm]{geometry}
+
+\addtolength{\parskip}{.5\baselineskip}
+
+\input{env}
+
+\definecolor{gray}{rgb}{0.4, 0.4, 0.4}
+\definecolor{darkgreen}{rgb}{0.0, 0.5, 0.0}
+
+\setlength{\columnseprule}{0.2pt}
+\setlength{\columnsep}{10pt}
+
+\makeatletter
+\renewcommand*\l@section{\@dottedtocline{1}{0em}{1.8em}}
+\renewcommand*\l@subsection{\@dottedtocline{2}{1.2em}{2.6em}}
+\makeatother
+
+\lstset{
+  breaklines=true,
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{darkgreen},
+  breakatwhitespace=true,
+  language=C++,
+  numbers=none,
+  rulecolor=\color{black},
+  showstringspaces=false,
+  stringstyle=\color{blue},
+  tabsize=4,
+  basicstyle=\ttfamily\scriptsize
+}
+
+\lstset{literate=
+    {~}{$\sim$}{1}
+}
+
+\title{
+  \includegraphics[height=3cm, keepaspectratio]{logo.png} \\[0.5em]
+  \teamname \ | \ \teamuni
+}
+\author{\teammembers}
+
+\begin{document}
+\twocolumn
+\date{}
+\maketitle
+
+\renewcommand{\contentsname}{Contents}
+\tableofcontents
+\clearpage
