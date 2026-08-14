@@ -8,9 +8,8 @@
 #include <memory>
 #include <algorithm>
 #include <filesystem>
-
-namespace fs = std::filesystem;
 using namespace std;
+namespace fs = filesystem;
 
 #define RED "\033[0;31m"
 #define RESET "\033[0m"
