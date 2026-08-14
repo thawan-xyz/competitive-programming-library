@@ -24,5 +24,5 @@ pair<int, vector<int>> leaf_peeling(int i, vector<vector<int>> &g) {
     }
     vector<int> c;
     while (q.size()) c.push_back(q.front()), q.pop();
-    return {c, 2 * l + (c.size() == 2)};
+    return {2 * l + (c.size() == 2), c};
 }
