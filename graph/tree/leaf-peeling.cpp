@@ -1,6 +1,6 @@
 // Leaf Peeling: finds the center(s) and diameter of an undirected tree
 // Time: O(N) | Space: O(N)
-// Note: returns {centers, diameter} | 'i' sets 0-based or 1-based indexing
+// Note: returns {diameter, centers} | 'i' sets 0-based or 1-based indexing
 pair<int, vector<int>> leaf_peeling(int i, vector<vector<int>> &g) {
     int n = g.size() - i;
     if (n == 1) return {0, {i}};
