@@ -12,8 +12,16 @@ void compute_pow(int n) {
 }
 
 struct hashes {
-    int len = 0;
-    array<int, 2> ord = {0, 0}, rev = {0, 0};
+    int len;
+    array<int, 2> ord, rev;
+
+    hashes(char c = 0) {
+        len = c != 0;
+        for (int i : {0, 1}) {
+            ord[i] = c % MOD[i];
+            rev[i] = c % MOD[i];
+        }
+    }
 
     bool operator==(const hashes &o) const {
         return len == o.len and ord == o.ord;

@@ -1,55 +1,24 @@
-const array<int, 2> base = {41, 53};
-const array<int, 2> mod = {1000000007, 1000000009};
-
-struct hasher {
-    struct node {
-        int len = 0;
-        array<int, 2> normal = {};
-        array<int, 2> reverse = {};
-        
-        node() = default;
-        
-        node(char c) {
-            len = 1;
-            for (int i : {0, 1}) normal[i] = reverse[i] = c % mod[i];
-        }
-    };
-
+struct dynamic_hasher {
     int n;
-    vector<node> tree;
-    vector<array<int, 2>> pow;
+    vector<hashes> tree;
 
-    node merge(const node &l, const node &r) {
-        node m;
-        m.len = l.len + r.len;
-        for (int i : {0, 1}) {
-            m.normal[i] = (l.normal[i] * pow[r.len][i] + r.normal[i]) % mod[i];
-            m.reverse[i] = (r.reverse[i] * pow[l.len][i] + l.reverse[i]) % mod[i];
-        }
-        return m;
-    }
-
-    hasher(const string &s): n(s.length()), tree(2 * n), pow(n + 1) {
-        pow[0] = {1, 1};
-        for (int i = 0; i < n; ++i) {
-            for (int j : {0, 1}) pow[i + 1][j] = (pow[i][j] * base[j]) % mod[j];
-            tree[n + i] = node(s[i]);
-        }
-        for (int i = n - 1; i > 0; --i) tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
+    dynamic_hasher(const string &s): n(s.length()), tree(2 * n) {
+        compute_pow(n);
+        for (int i = 0; i < n; ++i) tree[n + i] = hashes(s[i]);
+        for (int i = n - 1; i > 0; --i) tree[i] = combine(tree[i << 1], tree[(i << 1) | 1]);
     }
 
     void update(int i, char c) {
-        i += n;
-        tree[i] = node(c);
-        for (i >>= 1; i > 0; i >>= 1) tree[i] = merge(tree[i << 1], tree[(i << 1) | 1]);
+        tree[i += n] = hashes(c);
+        for (i >>= 1; i > 0; i >>= 1) tree[i] = combine(tree[i << 1], tree[(i << 1) | 1]);
     }
 
-    node query(int i, int j) {
-        node l, r;
+    hashes query(int i, int j) {
+        hashes l, r;
         for (i += n, j += n + 1; i < j; i >>= 1, j >>= 1) {
-            if (i & 1) l = merge(l, tree[i++]);
-            if (j & 1) r = merge(tree[--j], r);
+            if (i & 1) l = combine(l, tree[i++]);
+            if (j & 1) r = combine(tree[--j], r);
         }
-        return merge(l, r);
+        return combine(l, r);
     }
 };
