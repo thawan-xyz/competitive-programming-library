@@ -11,10 +11,13 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{titlesec}
-\usepackage[landscape, left=0.5cm, right=0.5cm, top=1cm, bottom=1.5cm]{geometry}
+\usepackage[portrait, left=0.8cm, right=0.8cm, top=1.2cm, bottom=1.5cm]{geometry}
 
-\titlespacing*{\section}{0pt}{1em}{0.2em}
-\titlespacing*{\subsection}{0pt}{0.5em}{0pt}
+\titleformat{\section}{\normalsize\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\small\bfseries}{\thesubsection}{0.8em}{}
+
+\titlespacing*{\section}{0pt}{0.8em}{0.2em}
+\titlespacing*{\subsection}{0pt}{0.4em}{0.1em}
 
 \input{env}
 
@@ -22,11 +25,11 @@
 \definecolor{darkgreen}{rgb}{0.0, 0.5, 0.0}
 
 \setlength{\columnseprule}{0.2pt}
-\setlength{\columnsep}{10pt}
+\setlength{\columnsep}{12pt}
 
 \makeatletter
-\renewcommand*\l@section{\@dottedtocline{1}{0em}{1.8em}}
-\renewcommand*\l@subsection{\@dottedtocline{2}{1.2em}{2.6em}}
+\renewcommand*\l@section[2]{\@dottedtocline{1}{0em}{1.8em}{\small\bfseries#1}{#2}}
+\renewcommand*\l@subsection[2]{\@dottedtocline{2}{1em}{2.2em}{\scriptsize#1}{#2}}
 \makeatother
 
 \lstset{
@@ -39,8 +42,8 @@
   rulecolor=\color{black},
   showstringspaces=false,
   stringstyle=\color{blue},
-  tabsize=4,
-  basicstyle=\ttfamily\scriptsize,
+  tabsize=2,
+  basicstyle=\ttfamily\fontsize{6.5pt}{7.5pt}\selectfont,
   aboveskip=1pt,
   belowskip=1pt
 }
@@ -50,7 +53,7 @@
 }
 
 \title{
-  \includegraphics[height=3cm, keepaspectratio]{logo.png} \\[0.5em]
+  \includegraphics[height=2.5cm, keepaspectratio]{logo.png} \\[0.5em]
   \teamname \ | \ \teamuni
 }
 \author{\teammembers}

@@ -93,10 +93,6 @@ void print_raw_file(string file, bool extra = false) {
     fin.close();
 }
 
-string get_algorithm_name(string file) {
-    return fs::path(file).stem().string();
-}
-
 void print_escaped_string(string text) {
     for (char character : text) {
         if (character == '^') {
@@ -109,14 +105,13 @@ void print_escaped_string(string text) {
     }
 }
 
-bool print_listing(string sub_name, string file, bool extra = false) {
+bool print_listing(string display_name, string file, bool extra = false) {
     set<string> flags = get_flags(file);
 
     if (!print_all && flags.count(NO_PRINT)) return false;
 
     cout << "\\subsection{";
-    if (!extra) print_escaped_string(get_algorithm_name(file));
-    else print_escaped_string(sub_name);
+    print_escaped_string(display_name);
     cout << "}\n";
 
     print_code_file(file, extra);
@@ -134,22 +129,32 @@ bool is_valid_file(const fs::path& filepath) {
     return true;
 }
 
-void dfs(vector<pair<string, string>>& files, string path, bool extra = false) {
-    if (!fs::exists(path)) return;
+struct FileEntry {
+    string rel_path_sort; // Usado apenas para ordenacao
+    string file_name;     // Nome exibido na subsection
+    string full_path;
+};
 
-    for (const auto& entry : fs::recursive_directory_iterator(path)) {
-        if (entry.is_regular_file()) {
+void dfs(vector<FileEntry>& files, string base_path, string current_path, bool extra = false) {
+    if (!fs::exists(current_path)) return;
+
+    for (const auto& entry : fs::directory_iterator(current_path)) {
+        string filename = entry.path().filename().string();
+        if (filename[0] == '.') continue;
+
+        if (entry.is_directory()) {
+            dfs(files, base_path, entry.path().string(), extra);
+        } else if (entry.is_regular_file()) {
             if (!is_valid_file(entry.path())) continue;
 
-            string filename = entry.path().filename().string();
-            string full_path = entry.path().string();
-
-            if (filename[0] == '.') continue;
+            fs::path rel_path = fs::relative(entry.path(), base_path);
+            string sort_key = (rel_path.parent_path() / rel_path.stem()).string();
+            string display_name = entry.path().stem().string();
 
             if (!extra) {
-                files.emplace_back(filename, full_path);
+                files.push_back({sort_key, display_name, entry.path().string()});
             } else {
-                print_listing(filename, full_path, extra && (filename != "vimrc"));
+                print_listing(filename, entry.path().string(), extra && (filename != "vimrc"));
             }
         }
     }
@@ -194,17 +199,17 @@ int main(int argc, char** argv) {
 
             print_section(dir_name);
 
-            vector<pair<string, string>> files;
-            dfs(files, dir_path.string());
+            vector<FileEntry> files;
+            dfs(files, dir_path.string(), dir_path.string());
 
-            sort(files.begin(), files.end(), [&](const auto& f1, const auto& f2) {
-                return to_lower(get_algorithm_name(f1.second)) < to_lower(get_algorithm_name(f2.second));
+            sort(files.begin(), files.end(), [&](const FileEntry& f1, const FileEntry& f2) {
+                return to_lower(f1.rel_path_sort) < to_lower(f2.rel_path_sort);
             });
 
             cerr << "=== " << dir_name << " ===" << endl;
-            for (auto [file, file_path] : files) {
-                bool printed = print_listing(file, file_path);
-                if (printed) cerr << "  " << get_algorithm_name(file_path) << endl;
+            for (const auto& item : files) {
+                bool printed = print_listing(item.file_name, item.full_path);
+                if (printed) cerr << "  " << item.file_name << endl;
             }
             cerr << endl;
         }
@@ -212,8 +217,8 @@ int main(int argc, char** argv) {
 
     if (fs::exists(root_path + "extra")) {
         print_section("extra");
-        vector<pair<string, string>> files;
-        dfs(files, root_path + "extra", true);
+        vector<FileEntry> files;
+        dfs(files, root_path + "extra", root_path + "extra", true);
     }
 
     cout << "\\end{document}\n";
