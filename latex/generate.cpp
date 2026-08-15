@@ -8,8 +8,9 @@
 #include <memory>
 #include <algorithm>
 #include <filesystem>
+
+namespace fs = std::filesystem;
 using namespace std;
-namespace fs = filesystem;
 
 #define RED "\033[0;31m"
 #define RESET "\033[0m"
@@ -130,8 +131,8 @@ bool is_valid_file(const fs::path& filepath) {
 }
 
 struct FileEntry {
-    string rel_path_sort; // Usado apenas para ordenacao
-    string file_name;     // Nome exibido na subsection
+    string rel_path_sort;
+    string file_name;
     string full_path;
 };
 
@@ -175,7 +176,7 @@ string to_lower(string text) {
 int main(int argc, char** argv) {
     if (argc > 1 && string(argv[1]) == "--printall") {
         print_all = true;
-        cerr << "Printing all files..." << endl << endl;
+        cerr << "Printing all files..." << endl;
     }
 
     print_raw_file("header.tex", true);
@@ -206,10 +207,12 @@ int main(int argc, char** argv) {
                 return to_lower(f1.rel_path_sort) < to_lower(f2.rel_path_sort);
             });
 
-            cerr << "=== " << dir_name << " ===" << endl;
+            cerr << "> " << dir_name << endl;
             for (const auto& item : files) {
                 bool printed = print_listing(item.file_name, item.full_path);
-                if (printed) cerr << "  " << item.file_name << endl;
+                if (printed) {
+                    cerr << "  | " << item.file_name << endl;
+                }
             }
             cerr << endl;
         }
@@ -217,8 +220,10 @@ int main(int argc, char** argv) {
 
     if (fs::exists(root_path + "extra")) {
         print_section("extra");
+        cerr << "> extra" << endl;
         vector<FileEntry> files;
         dfs(files, root_path + "extra", root_path + "extra", true);
+        cerr << endl;
     }
 
     cout << "\\end{document}\n";

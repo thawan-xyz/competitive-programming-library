@@ -15,7 +15,7 @@ EOF
 g++ -std=c++17 -o generate generate.cpp -O2
 
 echo "Generating notebook structure..."
-./generate $1 > notebook.tex 2> /dev/null
+./generate $1 > notebook.tex
 
 echo "Compiling PDF [1/3]..."
 pdflatex -interaction=batchmode notebook.tex > /dev/null 2>&1
