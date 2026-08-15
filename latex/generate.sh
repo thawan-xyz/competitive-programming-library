@@ -1,6 +1,6 @@
 #!/bin/bash
 
-: ${TEAMNAME:="team of one"}
+: ${TEAMNAME:="Team"}
 : ${MEMBERS:="Thawan"}
 : ${UNIVERSITY:="UFPE"}
 
@@ -30,4 +30,5 @@ mv notebook.pdf ../pdf
 
 rm -f tmp.cpp generate notebook.aux notebook.toc notebook.out notebook.log env.tex notebook.tex
 
+echo ""
 echo "Done! Notebook saved at ../pdf/notebook.pdf"
