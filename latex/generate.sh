@@ -1,7 +1,7 @@
 #!/bin/bash
 
-: ${TEAMNAME:="Time"}
-: ${MEMBERS:="Thawan"}
+: ${TEAMNAME:="essa caiu no concurso de coveiro"}
+: ${MEMBERS:="Miguel, Thawan \\& Walfrido"}
 : ${UNIVERSITY:="UFPE"}
 
 mkdir -p ../pdf
