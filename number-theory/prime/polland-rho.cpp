@@ -1,3 +1,8 @@
+// Pollard-Rho: fast integer factorization 
+// Time: O(N^(1/4)) expected | Space: O(1)
+// Note: finds a non-trivial divisor | use recursively to fully factor
+mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+
 int f(int128 x, int c, const int mod) {
     return (x * x + c) % mod;
 }
@@ -11,11 +16,9 @@ int polland_rho(int n) {
         y = f(f(y, c, n), c, n);
         d = gcd(abs(x - y), n);
         if (d == n) {
-            uniform_int_distribution<int> rand_x(2, n - 2);
-            uniform_int_distribution<int> rand_c(1, n - 1);
-            x = rand_x(rng);
+            x = uniform_int_distribution<int>(2, n - 2)(rng);
             y = x;
-            c = rand_c(rng);
+            c = uniform_int_distribution<int>(1, n - 1)(rng);
             d = 1;
         }
     }
