@@ -7,7 +7,7 @@ int f(int128 x, int c, const int mod) {
     return (x * x + c) % mod;
 }
 
-int polland_rho(int n) {
+int pollard_rho(int n) {
     if ((n & 1) == 0) return 2;
     if (miller_rabin(n)) return n;
     int x = 2, y = 2, c = 1, d = 1;
