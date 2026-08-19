@@ -19,7 +19,7 @@ bool composite(int n, int a, int s, int d) {
     return true;
 }
 
-bool prime(int n) {
+bool miller_rabin(int n) {
     if (n <= 1) return false;
     static const int P[] = {2, 3, 5, 13, 19, 73, 193, 407521, 299210837};
     for (int p : P) {
