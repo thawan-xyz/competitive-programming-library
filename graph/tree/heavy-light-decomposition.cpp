@@ -22,21 +22,21 @@ struct hld {
     }
 
     int dfs(int a, vector<vector<int>> &g) {
-        int size = 1, max = 0;
+        int size = 1, max_sub = 0;
         for (int &b : g[a]) if (b != p[a]) {
             p[b] = a;
             d[b] = d[a] + 1;
-            int curr = dfs(b, g);
-            if (curr > max) {
-                max = curr;
+            int sub = dfs(b, g);
+            if (sub > max_sub) {
+                max_sub = sub;
                 swap(g[a][0], b);
             }
-            size += curr;
+            size += sub;
         }
         return size;
     }
 
-    void decompose(int a, int &t, vector<vector<int>> &g) {
+    void decompose(int a, int &t, const vector<vector<int>> &g) {
         id[a] = t++;
         for (int b : g[a]) if (b != p[a]) {
             h[b] = b;
@@ -45,7 +45,7 @@ struct hld {
         }
     }
 
-    int lca(int a, int b) {
+    int lca(int a, int b) const {
         while (h[a] != h[b]) {
             if (d[h[a]] < d[h[b]]) swap(a, b);
             a = p[h[a]];
@@ -54,7 +54,7 @@ struct hld {
         return a;
     }
 
-    int query(int a, int b) {
+    int query(int a, int b) const {
         int r = s.neutral;
         while (h[a] != h[b]) {
             if (d[h[a]] < d[h[b]]) swap(a, b);
