@@ -1,4 +1,4 @@
-struct node {
+struct lazy_node {
     int val;
     int sum;
     int lazy;
@@ -18,9 +18,15 @@ struct node {
     }
 };
 
-struct splay_tree {
+struct lazy_splay_tree {
     int root;
-    vector<node> t;
+    vector<lazy_node> t;
+
+    bool is_root(int n) {
+        if (n == 0) return true;
+        int p = t[n].p;
+        return t[p].c[0] != n and t[p].c[1] != n;
+    }
 
     void pull(int n) {
         if (n == 0) return;
@@ -56,8 +62,8 @@ struct splay_tree {
         }
     }
 
-    void path(int n) {
-        if (t[n].p != 0) path(t[n].p);
+    void push_path(int n) {
+        if (not is_root(n)) push_path(t[n].p);
         push(n);
     }
 
@@ -65,7 +71,7 @@ struct splay_tree {
         int p = t[n].p;
         int g = t[p].p;
         bool d = n == t[p].c[1];
-        if (g != 0) t[g].c[p == t[g].c[1]] = n;
+        if (not is_root(p)) t[g].c[p == t[g].c[1]] = n;
         t[n].p = g;
         t[p].c[d] = t[n].c[d ^ 1];
         if (t[n].c[d ^ 1]) t[t[n].c[d ^ 1]].p = p;
@@ -77,17 +83,17 @@ struct splay_tree {
 
     void splay(int n, int s) {
         if (n == 0) return;
-        path(n);
-        while (t[n].p != s) {
+        push_path(n);
+        while (t[n].p != s and not (s == 0 and is_root(n))) {
             int p = t[n].p;
             int g = t[p].p;
-            if (g != s) {
+            if (g != s and not (s == 0 and is_root(p))) {
                 if ((t[g].c[1] == p) ^ (t[p].c[1] == n)) rotate(n);
                 else rotate(p);
             }
             rotate(n);
         }
-        if (s == 0) root = n;
+        if (s == 0 and t[n].p == 0) root = n;
     }
 
     int kth(int k) {
