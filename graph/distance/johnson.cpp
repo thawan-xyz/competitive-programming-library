@@ -4,7 +4,7 @@ vector<vector<int>> johnson(vector<vector<pair<int, int>>> &g) {
     for (int i = 0; i < n; ++i) {
         g[n].emplace_back(i, 0);
     }
-    vector<int> h = shortest_path_faster_algorithm(n, g);
+    vector<int> h = spfa(n, g);
     g.pop_back();
     if (h.empty()) return {};
     h.pop_back();

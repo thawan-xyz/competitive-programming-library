@@ -1,6 +1,6 @@
 // Min Cost K-Flow: successive shortest path with potentials
 // Time: O(F * E log V) where F is flow | Space: O(V + E)
-// Note: initial costs MUST be >= 0
+// Note: // Note: SPFA handles initial negative edge costs. If all costs are non-negative, replace spfa(s) with fill(h.begin(), h.end(), 0)
 struct min_cost_k_flow {
     struct edge {
         int b, i, w, c;
@@ -13,9 +13,35 @@ struct min_cost_k_flow {
 
     min_cost_k_flow(int n): n(n), g(n), d(n), h(n), p(n), e(n) {}
 
-    void directed(int a, int b, int w, int c) {
-        g[a].emplace_back(b, g[b].size(), w, c, true);
-        g[b].emplace_back(a, g[a].size() - 1, 0, -c, false);
+    void insert_edge(int a, int b, int w, int c) {
+        int i = g[b].size();
+        int j = g[a].size();
+        g[a].push_back({b, i, w, c, true});
+        g[b].push_back({a, j, 0, -c, false});
+    }
+
+    bool spfa(int s) {
+        fill(h.begin(), h.end(), inf);
+        vector<int> cnt(n);
+        vector<bool> in(n);
+        queue<int> q;
+        h[s] = 0;
+        in[s] = true;
+        q.push(s);
+        while (q.size()) {
+            int a = q.front(); q.pop();
+            in[a] = false;
+            for (auto &[b, i, w, c, o] : g[a]) if (w > 0 and h[a] + c < h[b]) {
+                h[b] = h[a] + c;
+                if (not in[b]) {
+                    cnt[b] += 1;
+                    if (cnt[b] >= n) return false;
+                    in[b] = true;
+                    q.push(b);
+                }
+            }
+        }
+        return true;
     }
 
     bool dijkstra(int s, int t) {
@@ -45,12 +71,11 @@ struct min_cost_k_flow {
 
     pair<int, int> cost_flow(int s, int t, int k = inf) {
         int flow = 0, cost = 0;
-        fill(h.begin(), h.end(), 0);
+        if (not spfa(s)) return {-1, -1};
         while (flow < k and dijkstra(s, t)) {
             for (int a = 0; a < n; ++a) if (d[a] != inf) {
                 h[a] += d[a];
             }
-
             int push = k - flow;
             for (int a = t; a != s; a = p[a]) {
                 int b = p[a], i = e[a];

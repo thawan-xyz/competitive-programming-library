@@ -10,14 +10,18 @@ struct dinic {
 
     dinic(int n): n(n), g(n), l(n), p(n) {}
 
-    void directed(int a, int b, int w) {
-        g[a].emplace_back(b, w, g[b].size(), true);
-        g[b].emplace_back(a, 0, g[a].size() - 1, false);
+    void insert_directed(int a, int b, int w) {
+        int i = g[b].size();
+        int j = g[a].size();
+        g[a].push_back({b, w, i, true});
+        g[b].push_back({a, 0, j, false});
     }
 
-    void undirected(int a, int b, int w) {
-        g[a].emplace_back(b, w, g[b].size(), true);
-        g[b].emplace_back(a, w, g[a].size() - 1, true);
+    void insert_undirected(int a, int b, int w) {
+        int i = g[b].size();
+        int j = g[a].size();
+        g[a].push_back({b, w, i, true});
+        g[b].push_back({a, w, j, true});
     }
 
     bool bfs(int s, int t) {
@@ -58,8 +62,7 @@ struct dinic {
         int f = 0;
         while (bfs(s, t)) {
             fill(p.begin(), p.end(), 0);
-            int d = 0;
-            while (d = dfs(s, t, inf)) {
+            while (int d = dfs(s, t, inf)) {
                 f += d;
             }
         }

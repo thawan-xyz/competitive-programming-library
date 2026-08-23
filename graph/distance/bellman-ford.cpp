@@ -13,7 +13,7 @@ vector<int> bellman_ford(int s, int n, vector<array<int, 3>> &e) {
     return d;
 }
 
-vector<int> shortest_path_faster_algorithm(int s, vector<vector<pair<int, int>>> &g) {
+vector<int> spfa(int s, vector<vector<pair<int, int>>> &g) {
     int n = g.size();
     vector<int> d(n, inf), c(n);
     vector<bool> in(n);
