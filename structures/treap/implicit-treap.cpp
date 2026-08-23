@@ -27,8 +27,8 @@ struct treap {
 
     void flip(int i) {
         if (i == 0) return;
-        t[i].rev ^= 1;
         swap(t[i].l, t[i].r);
+        t[i].rev ^= 1;
     }
 
     void push(int i) {
