@@ -3,21 +3,21 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amssymb,amsmath}
 \usepackage[english]{babel}
-\usepackage{comment}
 \usepackage[pdfusetitle]{hyperref}
-\usepackage[all]{xy}
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{listings}
-\usepackage{color}
 \usepackage{titlesec}
-\usepackage[portrait, left=0.8cm, right=0.8cm, top=1.2cm, bottom=1.5cm]{geometry}
+\usepackage{multicol}
+\usepackage[landscape, left=0.8cm, right=0.8cm, top=1.2cm, bottom=1.5cm]{geometry}
 
 \titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
-\titleformat{\subsection}{\small\bfseries}{\thesubsection}{0.8em}{}
+\titleformat{\subsection}{\small\bfseries}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\scriptsize\bfseries}{\thesubsubsection}{0.6em}{}
 
 \titlespacing*{\section}{0pt}{1em}{0.3em}
 \titlespacing*{\subsection}{0pt}{0.5em}{0.2em}
+\titlespacing*{\subsubsection}{0pt}{0.4em}{0.1em}
 
 \input{env}
 
@@ -32,8 +32,9 @@
 \setlength{\columnsep}{12pt}
 
 \makeatletter
-\renewcommand*\l@section[2]{\@dottedtocline{1}{0em}{1.8em}{\small\bfseries#1}{#2}}
-\renewcommand*\l@subsection[2]{\@dottedtocline{2}{1em}{2.2em}{\scriptsize#1}{#2}}
+\renewcommand*\l@section[2]{\@dottedtocline{1}{0em}{2.2em}{\small\bfseries#1}{#2}}
+\renewcommand*\l@subsection[2]{\@dottedtocline{2}{0.5em}{2.8em}{\footnotesize\bfseries#1}{#2}}
+\renewcommand*\l@subsubsection[2]{\@dottedtocline{3}{1.0em}{3.2em}{\scriptsize\normalfont#1}{#2}}
 \makeatother
 
 \lstset{
@@ -52,10 +53,7 @@
   tabsize=2,
   basicstyle=\ttfamily\fontsize{6.5pt}{7.5pt}\selectfont,
   aboveskip=1pt,
-  belowskip=1pt
-}
-
-\lstset{
+  belowskip=1pt,
   literate=*{~}{$\sim$}{1}
   {0}{{{\color{redNumber}0}}}{1}
   {1}{{{\color{redNumber}1}}}{1}
@@ -71,12 +69,13 @@
 
 \title{
   \includegraphics[height=2.5cm, keepaspectratio]{logo.png} \\[0.5em]
-  \teamname \ | \ \teamuni
+  \teamname
 }
 \author{\teammembers}
 
 \begin{document}
-\twocolumn
+\begin{multicols}{3}
+
 \date{}
 \maketitle
 

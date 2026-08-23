@@ -2,71 +2,62 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <stack>
 #include <set>
-#include <array>
-#include <memory>
 #include <algorithm>
 #include <filesystem>
 
 namespace fs = std::filesystem;
 using namespace std;
 
-#define RED "\033[0;31m"
-#define RESET "\033[0m"
-
-bool LOOK_FOR_HASH_IN_FILE = false;
-int HASH_LEN = 3;
-
-string NO_HASH = "nohash";
-string NO_PRINT = "noprint";
-
-string root_path = "../";
+const string NO_PRINT = "noprint";
+const string ROOT_PATH = "../";
 
 bool print_all = false;
 
-bool is_comment(string line) {
-    while (line.size() && (line[0] == ' ' || line[0] == '\t')) line = line.substr(1);
-    if (line.empty()) return true;
-    if (line.size() >= 2 && line.substr(0, 2) == "//") return true;
-    if (line.size() >= 2 && line.substr(0, 2) == "/*") return true;
-    return false;
-}
+struct FileEntry {
+    string rel_path_sort;
+    string subfolder;
+    string file_name;
+    string full_path;
+};
 
-vector<string> split(string line, char delimiter) {
+vector<string> split(const string& line, char delimiter) {
     vector<string> result;
     string current;
-    line.push_back(delimiter);
     for (char character : line) {
         if (character == delimiter) {
             if (!current.empty()) result.push_back(current);
             current.clear();
-            continue;
+        } else {
+            current += character;
         }
-        current += character;
     }
+    if (!current.empty()) result.push_back(current);
     return result;
 }
 
-set<string> get_flags(string file) {
+set<string> get_flags(const string& file) {
     ifstream fin(file.c_str());
     string line;
     if (!getline(fin, line)) return {};
     fin.close();
-    while (line.size() && line[0] != '[') line = line.substr(1);
-    if (line.empty() || line.back() != ']') return {};
-    vector<string> flags = split(line.substr(1, line.size() - 2), ',');
+
+    size_t start = line.find('[');
+    size_t end = line.rfind(']');
+    if (start == string::npos || end == string::npos || start >= end) return {};
+
+    vector<string> flags = split(line.substr(start + 1, end - start - 1), ',');
     return set<string>(flags.begin(), flags.end());
 }
 
-void print_code_file(string file, bool extra = false) {
+void print_code_file(const string& file) {
     cout << "\\begin{lstlisting}\n";
     ifstream fin(file.c_str());
     string line;
     int line_count = 0;
 
     while (getline(fin, line)) {
-        if (line_count == 0 && !line.empty() && line[0] == '[' && line.back() == ']') {
+        if (line_count == 0 && !line.empty() && line.front() == '[' && line.back() == ']') {
             line_count++;
             continue;
         }
@@ -85,7 +76,7 @@ void print_code_file(string file, bool extra = false) {
     cout << "\\end{lstlisting}\n\n";
 }
 
-void print_raw_file(string file, bool extra = false) {
+void print_raw_file(const string& file) {
     ifstream fin(file.c_str());
     string line;
     while (getline(fin, line)) {
@@ -94,7 +85,7 @@ void print_raw_file(string file, bool extra = false) {
     fin.close();
 }
 
-void print_escaped_string(string text) {
+void print_escaped_string(const string& text) {
     for (char character : text) {
         if (character == '^') {
             cout << "\\^{}";
@@ -106,22 +97,32 @@ void print_escaped_string(string text) {
     }
 }
 
-bool print_listing(string display_name, string file, bool extra = false) {
+bool print_listing(const string& display_name, const string& file, bool is_inside_subfolder) {
     set<string> flags = get_flags(file);
 
     if (!print_all && flags.count(NO_PRINT)) return false;
 
-    cout << "\\subsection{";
-    print_escaped_string(display_name);
-    cout << "}\n";
+    if (is_inside_subfolder) {
+        cout << "\\subsubsection{";
+        print_escaped_string(display_name);
+        cout << "}\n";
+    } else {
+        cout << "\\refstepcounter{subsection}%\n";
+        cout << "\\subsection*{{\\scriptsize\\bfseries\\thesubsection\\quad ";
+        print_escaped_string(display_name);
+        cout << "}}\n";
+        cout << "\\addcontentsline{toc}{subsubsection}{\\protect\\numberline{\\thesubsection}";
+        print_escaped_string(display_name);
+        cout << "}\n";
+    }
 
-    print_code_file(file, extra);
+    print_code_file(file);
     return true;
 }
 
 bool is_valid_file(const fs::path& filepath) {
     string ext = filepath.extension().string();
-    for (char& c : ext) c = tolower(c);
+    for (char& character : ext) character = tolower(character);
 
     if (ext == ".pdf" || ext == ".o" || ext == ".out" || ext == ".exe" || 
         ext == ".png" || ext == ".jpg" || ext == ".zip" || ext == ".tar") {
@@ -130,18 +131,12 @@ bool is_valid_file(const fs::path& filepath) {
     return true;
 }
 
-struct FileEntry {
-    string rel_path_sort;
-    string file_name;
-    string full_path;
-};
-
-void dfs(vector<FileEntry>& files, string base_path, string current_path, bool extra = false) {
+void dfs(vector<FileEntry>& files, const string& base_path, const string& current_path, bool extra = false) {
     if (!fs::exists(current_path)) return;
 
     for (const auto& entry : fs::directory_iterator(current_path)) {
         string filename = entry.path().filename().string();
-        if (filename[0] == '.') continue;
+        if (filename.empty() || filename[0] == '.') continue;
 
         if (entry.is_directory()) {
             dfs(files, base_path, entry.path().string(), extra);
@@ -151,19 +146,28 @@ void dfs(vector<FileEntry>& files, string base_path, string current_path, bool e
             fs::path rel_path = fs::relative(entry.path(), base_path);
             string sort_key = (rel_path.parent_path() / rel_path.stem()).string();
             string display_name = entry.path().stem().string();
+            
+            string subfolder = rel_path.parent_path().string();
+            if (subfolder == ".") subfolder = "";
 
             if (!extra) {
-                files.push_back({sort_key, display_name, entry.path().string()});
+                files.push_back({sort_key, subfolder, display_name, entry.path().string()});
             } else {
-                print_listing(filename, entry.path().string(), extra && (filename != "vimrc"));
+                print_listing(filename, entry.path().string(), false);
             }
         }
     }
 }
 
-void print_section(string section_name) {
+void print_section(const string& section_name) {
     cout << "\n\\vspace{0.8em}\n\\hrule\n\\vspace{0.5em}\n";
     cout << "\\section{" << section_name << "}\n\n";
+}
+
+void print_subsection_header(const string& subfolder_name) {
+    cout << "\\subsection{";
+    print_escaped_string(subfolder_name);
+    cout << "}\n";
 }
 
 string to_lower(string text) {
@@ -179,14 +183,14 @@ int main(int argc, char** argv) {
         cerr << "Printing all files..." << endl;
     }
 
-    print_raw_file("header.tex", true);
+    print_raw_file("header.tex");
 
-    if (fs::exists(root_path)) {
+    if (fs::exists(ROOT_PATH)) {
         vector<fs::path> directories;
-        for (const auto& entry : fs::directory_iterator(root_path)) {
+        for (const auto& entry : fs::directory_iterator(ROOT_PATH)) {
             if (entry.is_directory()) {
                 string dir_name = entry.path().filename().string();
-                if (dir_name[0] == '.' || dir_name == "latex" || dir_name == "pdf" || dir_name == "extra") continue;
+                if (dir_name.empty() || dir_name[0] == '.' || dir_name == "latex" || dir_name == "pdf" || dir_name == "extra") continue;
                 directories.push_back(entry.path());
             }
         }
@@ -203,13 +207,23 @@ int main(int argc, char** argv) {
             vector<FileEntry> files;
             dfs(files, dir_path.string(), dir_path.string());
 
-            sort(files.begin(), files.end(), [&](const FileEntry& f1, const FileEntry& f2) {
-                return to_lower(f1.rel_path_sort) < to_lower(f2.rel_path_sort);
+            sort(files.begin(), files.end(), [](const FileEntry& a, const FileEntry& b) {
+                return to_lower(a.rel_path_sort) < to_lower(b.rel_path_sort);
             });
 
             cerr << "> " << dir_name << endl;
+            string current_subfolder = "";
             for (const auto& item : files) {
-                bool printed = print_listing(item.file_name, item.full_path);
+                bool is_inside_subfolder = !item.subfolder.empty();
+
+                if (is_inside_subfolder && item.subfolder != current_subfolder) {
+                    current_subfolder = item.subfolder;
+                    print_subsection_header(current_subfolder);
+                } else if (!is_inside_subfolder) {
+                    current_subfolder = "";
+                }
+
+                bool printed = print_listing(item.file_name, item.full_path, is_inside_subfolder);
                 if (printed) {
                     cerr << "  | " << item.file_name << endl;
                 }
@@ -218,14 +232,15 @@ int main(int argc, char** argv) {
         }
     }
 
-    if (fs::exists(root_path + "extra")) {
+    if (fs::exists(ROOT_PATH + "extra")) {
         print_section("extra");
         cerr << "> extra" << endl;
         vector<FileEntry> files;
-        dfs(files, root_path + "extra", root_path + "extra", true);
+        dfs(files, ROOT_PATH + "extra", ROOT_PATH + "extra", true);
         cerr << endl;
     }
 
+    cout << "\\end{multicols}\n";
     cout << "\\end{document}\n";
     return 0;
 }
