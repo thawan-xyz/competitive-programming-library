@@ -1,6 +1,6 @@
 // Segment Tree Beats: advanced range updates via condition pruning
 // Time: update amortized O(log^2 N), query O(log N) | Space: O(N)
-// Note: supports A[i] = min(A[i], v), A[i] = max(A[i], v), A[i] += v and A[i] %= v
+// Note: supports sum, add, chmin, chmax and mod over a range
 struct segment_tree_beats {
 private:
     struct node {
@@ -45,7 +45,7 @@ private:
         }
     }
 
-    void apply_sum(int p, int l, int r, int v) {
+    void apply_add(int p, int l, int r, int v) {
         tree[p].sum += v * (r - l + 1);
         tree[p].max1 += v;
         if (tree[p].max2 != -inf) tree[p].max2 += v;
@@ -75,8 +75,8 @@ private:
         int left = 2 * p, right = 2 * p + 1;
 
         if (tree[p].lazy != 0) {
-            apply_sum(left, l, m, tree[p].lazy);
-            apply_sum(right, m + 1, r, tree[p].lazy);
+            apply_add(left, l, m, tree[p].lazy);
+            apply_add(right, m + 1, r, tree[p].lazy);
             tree[p].lazy = 0;
         }
 
@@ -102,15 +102,15 @@ private:
         }
     }
 
-    void update_sum(int ql, int qr, int v, int p, int l, int r) {
+    void update_add(int ql, int qr, int v, int p, int l, int r) {
         if (ql <= l and r <= qr) {
-            apply_sum(p, l, r, v);
+            apply_add(p, l, r, v);
             return;
         }
         push_down(p, l, r);
         int m = (l + r) / 2;
-        if (ql <= m) update_sum(ql, qr, v, 2 * p, l, m);
-        if (qr > m) update_sum(ql, qr, v, 2 * p + 1, m + 1, r);
+        if (ql <= m) update_add(ql, qr, v, 2 * p, l, m);
+        if (qr > m) update_add(ql, qr, v, 2 * p + 1, m + 1, r);
         push_up(p);
     }
 
@@ -144,7 +144,7 @@ private:
         if (ql <= l and r <= qr) {
             if (tree[p].max1 < v) return;
             if (tree[p].min1 == tree[p].max1) {
-                apply_sum(p, l, r, (tree[p].max1 % v) - tree[p].max1);
+                apply_add(p, l, r, (tree[p].max1 % v) - tree[p].max1);
                 return;
             }
         }
@@ -172,8 +172,8 @@ public:
         build(a, 1, 0, n - 1);
     }
 
-    void update_sum(int l, int r, int v) {
-        update_sum(l, r, v, 1, 0, n - 1);
+    void update_add(int l, int r, int v) {
+        update_add(l, r, v, 1, 0, n - 1);
     }
 
     void update_min(int l, int r, int v) {
