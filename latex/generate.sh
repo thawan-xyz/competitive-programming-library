@@ -1,13 +1,13 @@
 #!/bin/bash
 
-: ${TEAMNAME:="Team"}
+: ${TEAM_NAME:="Team"}
 : ${MEMBERS:="Thawan"}
 : ${UNIVERSITY:="UFPE"}
 
 mkdir -p ../pdf
 
 cat > env.tex << EOF
-\def\teamname{$TEAMNAME}
+\def\teamname{$TEAM_NAME}
 \def\teammembers{$MEMBERS}
 \def\teamuni{$UNIVERSITY}
 EOF
@@ -15,6 +15,7 @@ EOF
 g++ -std=c++17 -o generate generate.cpp -O2
 
 echo "Generating notebook structure..."
+echo ""
 ./generate $1 > notebook.tex
 
 echo "Compiling PDF [1/3]..."
