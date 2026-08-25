@@ -3,7 +3,7 @@
 // Note: kth(k) returns k-th smallest distinct XOR | operator[k] returns k-th smallest among all 2^n subsets (with duplicates)
 struct xor_basis {
     static constexpr int log = 30;
-    int n = 0, s = 0;
+    int n = 0, r = 0;
     array<int, log> basis = {};
 
     void insert(int x) {
@@ -13,7 +13,7 @@ struct xor_basis {
                     x ^= basis[j];
                 }
                 basis[i] = x;
-                s += 1;
+                r += 1;
                 for (int j = log - 1; j > i; --j) if ((basis[j] >> i) & 1) {
                     basis[j] ^= x;
                 }
@@ -41,7 +41,7 @@ struct xor_basis {
     }
 
     int kth(int k) {
-        if ((k >> s) != 0) return -1;
+        if ((k >> r) != 0) return -1;
         int x = 0;
         for (int i = 0; i < log; ++i) if (basis[i] != 0) {
             if (k & 1) x ^= basis[i];
@@ -51,7 +51,12 @@ struct xor_basis {
     }
 
     int operator[](int k) {
-        if (n - s > 60) return 0;
-        return kth(k >> (n - s));
+        if (n - r > 60) return 0;
+        return kth(k >> (n - r));
+    }
+
+    int ways(int x) {
+        if (not contains(x)) return 0;
+        return mod_pow(2, n - r);
     }
 };
