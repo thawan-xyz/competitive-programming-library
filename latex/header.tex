@@ -1,6 +1,7 @@
 \documentclass[10pt, a4paper, landscape]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsfonts}
 \usepackage{listings}
 \usepackage{multicol}
 \usepackage{geometry}
@@ -11,8 +12,9 @@
 \usepackage{tocloft}
 \usepackage{atbegshi}
 \usepackage[hidelinks]{hyperref}
+\usepackage{docmute}
 
-\geometry{a4paper, landscape, hmargin={0.5cm, 0.5cm}, top=1.5cm, bottom=0.4cm, footskip=0pt}
+\geometry{a4paper, landscape, hmargin={0.4cm, 0.4cm}, top=1.3cm, bottom=0.3cm, footskip=0pt}
 
 \input{env}
 
@@ -29,7 +31,7 @@
   breakatwhitespace=true,
   showstringspaces=false,
   tabsize=2,
-  basicstyle=\ttfamily\fontsize{5.8pt}{6.6pt}\selectfont,
+  basicstyle=\ttfamily\fontsize{5.5pt}{6.2pt}\selectfont,
   commentstyle=\color{vscode_green},
   keywordstyle=\color{vscode_blue}\bfseries,
   keywordstyle=[2]\color{vscode_teal}\bfseries,
@@ -53,11 +55,11 @@
 }
 
 \setlength{\columnseprule}{0.4pt}
-\setlength{\columnsep}{8pt}
+\setlength{\columnsep}{6pt}
 
 \renewcommand{\contentsname}{}
 \renewcommand{\cfttoctitlefont}{}
-\setlength{\cftbeforesecskip}{1pt}
+\setlength{\cftbeforesecskip}{0.5pt}
 \setlength{\cftbeforesubsecskip}{0pt}
 \setlength{\cftbeforesubsubsecskip}{0pt}
 \renewcommand{\cftsecfont}{\scriptsize\bfseries}
@@ -89,8 +91,8 @@
 \pagestyle{fancy}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0.4pt}
-\setlength{\headheight}{12pt}
-\setlength{\headsep}{6pt}
+\setlength{\headheight}{10pt}
+\setlength{\headsep}{4pt}
 
 \lhead{}
 \chead{\parbox[b]{0.8\textwidth}{\centering\scriptsize\bfseries\pagefilelist}}
@@ -104,7 +106,7 @@
   \hspace*{0.5cm}
   \begin{minipage}{0.18\textwidth}
     \raggedright
-    \includegraphics[height=1.2cm, keepaspectratio]{logo.png}
+    \includegraphics[height=1.0cm, keepaspectratio]{logo.png}
   \end{minipage}
   \hfill
   \begin{minipage}{0.54\textwidth}
@@ -115,11 +117,11 @@
   \hfill
   \begin{minipage}{0.18\textwidth}
     \raggedleft
-    \includegraphics[height=1.2cm, keepaspectratio]{team.png}
+    \includegraphics[height=1.0cm, keepaspectratio]{team.png}
   \end{minipage}
   \hspace*{0.5cm}
 \end{center}
-\vspace*{-0.5em}
+\vspace*{-0.6em}
 \hrule
 \vspace*{0.2em}
 
@@ -128,4 +130,4 @@
 
 \setcounter{tocdepth}{3}
 {\scriptsize \tableofcontents}
-\vspace{0.3em}
+\vspace{0.2em}

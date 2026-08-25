@@ -27,7 +27,7 @@ string strip_extension(const string& filename) {
     string ext_lower = ext;
     for (char& character : ext_lower) character = tolower(character);
 
-    if (ext_lower == ".cpp" || ext_lower == ".py" || ext_lower == ".java") {
+    if (ext_lower == ".cpp" || ext_lower == ".py" || ext_lower == ".java" || ext_lower == ".tex") {
         return p.stem().string();
     }
     return filename;
@@ -89,6 +89,20 @@ void print_code_file(const string& file) {
     cout << "\\par\\vspace{1pt}\\hrule height 0.2pt\\vspace{2pt}\n";
 }
 
+void print_tex_file(const string& file) {
+    cout << "\\begingroup\n";
+    cout << "\\fontsize{5pt}{6pt}\\selectfont\n";
+    cout << "\\raggedright\\sloppy\n";
+    cout << "\\RenewDocumentCommand{\\section}{s m}{\\par\\vspace{3pt}{\\fontsize{6pt}{7pt}\\bfseries #2}\\par\\vspace{1pt}}\n";
+    cout << "\\RenewDocumentCommand{\\subsection}{s m}{\\par\\vspace{2pt}{\\fontsize{5.5pt}{6.5pt}\\bfseries #2}\\par\\vspace{1pt}}\n";
+    cout << "\\RenewDocumentCommand{\\subsubsection}{s m}{\\par\\vspace{1.5pt}{\\fontsize{5pt}{6pt}\\bfseries #2}\\par\\vspace{1pt}}\n";
+    cout << "\\RenewDocumentEnvironment{itemize}{}{\\begin{list}{\\labelitemi}{\\leftmargin=1em \\topsep=1.5pt \\partopsep=0pt \\parsep=0pt \\itemsep=1pt}}{\\end{list}}\n";
+    cout << "\\RenewDocumentEnvironment{enumerate}{}{\\begin{list}{\\arabic{enumi}.}{\\usecounter{enumi} \\leftmargin=1em \\topsep=1.5pt \\partopsep=0pt \\parsep=0pt \\itemsep=1pt}}{\\end{list}}\n";
+    cout << "\\input{" << file << "}\n";
+    cout << "\\endgroup\n";
+    cout << "\\par\\vspace{1pt}\\hrule height 0.2pt\\vspace{2pt}\n";
+}
+
 void print_raw_file(const string& file) {
     ifstream fin(file.c_str());
     string line;
@@ -127,14 +141,24 @@ bool print_listing(const string& raw_file_name, const string& file) {
     cout << "}\n";
 
     cout << "\\refstepcounter{subsection}%\n";
-    cout << "\\subsection*{{\\scriptsize\\bfseries\\thesubsection\\quad \\underline{";
+    cout << "\\phantomsection\n";
+    cout << "\\subsection*{{\\parbox{\\linewidth}{\\raggedright\\scriptsize\\bfseries\\thesubsection\\quad \\underline{";
     print_escaped_string(display_name);
-    cout << "}}}\n";
+    cout << "}}}}\n";
     cout << "\\addcontentsline{toc}{subsection}{\\protect\\numberline{\\thesubsection}";
     print_escaped_string(display_name);
     cout << "}\n";
 
-    print_code_file(file);
+    fs::path p(file);
+    string ext = p.extension().string();
+    for (char& character : ext) character = tolower(character);
+
+    if (ext == ".tex") {
+        print_tex_file(file);
+    } else {
+        print_code_file(file);
+    }
+
     return true;
 }
 
@@ -172,6 +196,7 @@ void dfs(vector<file_entry>& files, const string& base_path, const string& curre
 
 void register_section_silent(const string& section_name) {
     cout << "\n\\refstepcounter{section}\n";
+    cout << "\\phantomsection\n";
     cout << "\\addcontentsline{toc}{section}{\\protect\\numberline{\\thesection}" << section_name << "}\n";
 }
 
@@ -194,7 +219,7 @@ int main(int argc, char** argv) {
         for (const auto& entry : fs::directory_iterator(ROOT_PATH)) {
             if (entry.is_directory()) {
                 string dir_name = entry.path().filename().string();
-                if (dir_name.empty() || dir_name[0] == '.' || dir_name == "latex" || dir_name == "pdf" || dir_name == "extra") continue;
+                if (dir_name.empty() || dir_name[0] == '.' || dir_name == "latex" || dir_name == "pdf") continue;
                 directories.push_back(entry.path());
             }
         }
@@ -218,15 +243,6 @@ int main(int argc, char** argv) {
             for (const auto& item : files) {
                 print_listing(item.file_name, item.full_path);
             }
-        }
-    }
-
-    if (fs::exists(ROOT_PATH + "extra")) {
-        register_section_silent("extra");
-        vector<file_entry> files;
-        dfs(files, ROOT_PATH + "extra", ROOT_PATH + "extra");
-        for (const auto& item : files) {
-            print_listing(item.file_name, item.full_path);
         }
     }
 
