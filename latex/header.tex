@@ -11,6 +11,7 @@
 \usepackage{titlesec}
 \usepackage{tocloft}
 \usepackage{atbegshi}
+\usepackage{needspace}
 \usepackage[hidelinks]{hyperref}
 \usepackage{docmute}
 
@@ -31,7 +32,7 @@
   breakatwhitespace=true,
   showstringspaces=false,
   tabsize=2,
-  basicstyle=\ttfamily\fontsize{5.5pt}{6.2pt}\selectfont,
+  basicstyle=\ttfamily\fontsize{6.5pt}{7.5pt}\selectfont,
   commentstyle=\color{vscode_green},
   keywordstyle=\color{vscode_blue}\bfseries,
   keywordstyle=[2]\color{vscode_teal}\bfseries,
@@ -77,11 +78,11 @@
 
 \makeatletter
 \newcommand{\pagefilelist}{}
-\newcommand{\addtofilelist}[1]{
+\newcommand{\addtofilelist}[1]{%
   \ifx\pagefilelist\empty
-    \gdef\pagefilelist{#1}
+    \gdef\pagefilelist{#1}%
   \else
-    \g@addto@macro\pagefilelist{\ \textbar\ #1}
+    \g@addto@macro\pagefilelist{\ \textbar\ #1}%
   \fi
 }
 

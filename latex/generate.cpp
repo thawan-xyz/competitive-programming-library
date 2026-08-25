@@ -91,11 +91,11 @@ void print_code_file(const string& file) {
 
 void print_tex_file(const string& file) {
     cout << "\\begingroup\n";
-    cout << "\\fontsize{5pt}{6pt}\\selectfont\n";
+    cout << "\\fontsize{6pt}{7.2pt}\\selectfont\n";
     cout << "\\raggedright\\sloppy\n";
-    cout << "\\RenewDocumentCommand{\\section}{s m}{\\par\\vspace{3pt}{\\fontsize{6pt}{7pt}\\bfseries #2}\\par\\vspace{1pt}}\n";
-    cout << "\\RenewDocumentCommand{\\subsection}{s m}{\\par\\vspace{2pt}{\\fontsize{5.5pt}{6.5pt}\\bfseries #2}\\par\\vspace{1pt}}\n";
-    cout << "\\RenewDocumentCommand{\\subsubsection}{s m}{\\par\\vspace{1.5pt}{\\fontsize{5pt}{6pt}\\bfseries #2}\\par\\vspace{1pt}}\n";
+    cout << "\\RenewDocumentCommand{\\section}{s m}{\\par\\vspace{3pt}{\\fontsize{7pt}{8pt}\\bfseries #2}\\par\\vspace{1pt}}\n";
+    cout << "\\RenewDocumentCommand{\\subsection}{s m}{\\par\\vspace{2pt}{\\fontsize{6.5pt}{7.5pt}\\bfseries #2}\\par\\vspace{1pt}}\n";
+    cout << "\\RenewDocumentCommand{\\subsubsection}{s m}{\\par\\vspace{1.5pt}{\\fontsize{6pt}{7pt}\\bfseries #2}\\par\\vspace{1pt}}\n";
     cout << "\\RenewDocumentEnvironment{itemize}{}{\\begin{list}{\\labelitemi}{\\leftmargin=1em \\topsep=1.5pt \\partopsep=0pt \\parsep=0pt \\itemsep=1pt}}{\\end{list}}\n";
     cout << "\\RenewDocumentEnvironment{enumerate}{}{\\begin{list}{\\arabic{enumi}.}{\\usecounter{enumi} \\leftmargin=1em \\topsep=1.5pt \\partopsep=0pt \\parsep=0pt \\itemsep=1pt}}{\\end{list}}\n";
     cout << "\\input{" << file << "}\n";
