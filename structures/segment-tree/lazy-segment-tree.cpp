@@ -1,18 +1,17 @@
 struct lazy_segment_tree {
 private:
     int n;
-    vector<int> tree;
-    vector<int> lazy;
+    vector<int> tree, lazy;
 
     void build(vector<int> &a, int p, int l, int r) {
         if (l == r) {
             tree[p] = a[l];
-        } else {
-            int m = (l + r) / 2;
-            build(a, 2 * p, l, m);
-            build(a, (2 * p) + 1, m + 1, r);
-            tree[p] = tree[2 * p] + tree[(2 * p) + 1];
+            return;
         }
+        int m = (l + r) / 2;
+        build(a, 2 * p, l, m);
+        build(a, (2 * p) + 1, m + 1, r);
+        tree[p] = tree[2 * p] + tree[(2 * p) + 1];
     }
 
     void apply(int p, int x, int len) {
@@ -21,37 +20,32 @@ private:
     }
 
     void push(int p, int l, int r) {
-        if (lazy[p] != 0) {
-            int m = (l + r) / 2;
-            apply(2 * p, lazy[p], m - l + 1);
-            apply((2 * p) + 1, lazy[p], r - m);
-            lazy[p] = 0;
-        }
+        if (lazy[p] == 0) return;
+        int m = (l + r) / 2;
+        apply(2 * p, lazy[p], m - l + 1);
+        apply((2 * p) + 1, lazy[p], r - m);
+        lazy[p] = 0;
     }
 
     void update(int ql, int qr, int x, int p, int l, int r) {
+        if (qr < l or r < ql) return;
         if (ql <= l and r <= qr) {
             apply(p, x, r - l + 1);
-        } else {
-            push(p, l, r);
-            int m = (l + r) / 2;
-            if (ql <= m) update(ql, qr, x, 2 * p, l, m);
-            if (qr > m) update(ql, qr, x, (2 * p) + 1, m + 1, r);
-            tree[p] = tree[2 * p] + tree[(2 * p) + 1];
+            return;
         }
+        push(p, l, r);
+        int m = (l + r) / 2;
+        update(ql, qr, x, 2 * p, l, m);
+        update(ql, qr, x, (2 * p) + 1, m + 1, r);
+        tree[p] = tree[2 * p] + tree[(2 * p) + 1];
     }
 
     int query(int ql, int qr, int p, int l, int r) {
-        if (ql <= l and r <= qr) {
-            return tree[p];
-        } else {
-            push(p, l, r);
-            int m = (l + r) / 2;
-            int answer = 0;
-            if (ql <= m) answer += query(ql, qr, 2 * p, l, m);
-            if (qr > m) answer += query(ql, qr, (2 * p) + 1, m + 1, r);
-            return answer;
-        }
+        if (qr < l or r < ql) return 0;
+        if (ql <= l and r <= qr) return tree[p];
+        push(p, l, r);
+        int m = (l + r) / 2;
+        return query(ql, qr, 2 * p, l, m) + query(ql, qr, (2 * p) + 1, m + 1, r);
     }
 
 public:
