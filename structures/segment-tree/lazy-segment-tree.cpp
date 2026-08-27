@@ -10,8 +10,8 @@ private:
         }
         int m = (l + r) / 2;
         build(a, 2 * p, l, m);
-        build(a, (2 * p) + 1, m + 1, r);
-        tree[p] = tree[2 * p] + tree[(2 * p) + 1];
+        build(a, 2 * p + 1, m + 1, r);
+        tree[p] = tree[2 * p] + tree[2 * p + 1];
     }
 
     void apply(int p, int x, int len) {
@@ -23,7 +23,7 @@ private:
         if (lazy[p] == 0) return;
         int m = (l + r) / 2;
         apply(2 * p, lazy[p], m - l + 1);
-        apply((2 * p) + 1, lazy[p], r - m);
+        apply(2 * p + 1, lazy[p], r - m);
         lazy[p] = 0;
     }
 
@@ -36,8 +36,8 @@ private:
         push(p, l, r);
         int m = (l + r) / 2;
         update(ql, qr, x, 2 * p, l, m);
-        update(ql, qr, x, (2 * p) + 1, m + 1, r);
-        tree[p] = tree[2 * p] + tree[(2 * p) + 1];
+        update(ql, qr, x, 2 * p + 1, m + 1, r);
+        tree[p] = tree[2 * p] + tree[2 * p + 1];
     }
 
     int query(int ql, int qr, int p, int l, int r) {
@@ -45,7 +45,7 @@ private:
         if (ql <= l and r <= qr) return tree[p];
         push(p, l, r);
         int m = (l + r) / 2;
-        return query(ql, qr, 2 * p, l, m) + query(ql, qr, (2 * p) + 1, m + 1, r);
+        return query(ql, qr, 2 * p, l, m) + query(ql, qr, 2 * p + 1, m + 1, r);
     }
 
 public:
