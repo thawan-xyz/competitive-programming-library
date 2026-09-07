@@ -4,12 +4,22 @@
 using T = float;
 using point = complex<T>;
 
+// Dot: calculates the dot (scalar) product of vectors p and q
+// Note: > 0 if acute angle, < 0 if obtuse, 0 if orthogonal (perpendicular)
 T dot(point p, point q) {
     return (conj(p) * q).x;
 }
 
+// Cross: calculates the 2D cross product (determinant) of vectors p and q
+// Note: > 0 if q is counter-clockwise from p, 0 if colinear (magnitude is parallelogram area)
 T cross(point p, point q) {
     return (conj(p) * q).y;
+}
+
+// Perpendicular: rotates the vector p by 90 degrees counter-clockwise
+// Note: mathematically equivalent to multiplying the complex number by i
+point perp(point p) {
+    return {-p.y, p.x};
 }
 
 // Directed Angle: shortest angle from vector v to vector w
