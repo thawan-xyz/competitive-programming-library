@@ -27,7 +27,7 @@ struct line {
     }
 
     // Projection: calculates the orthogonal projection of point p onto the line
-    // Note: translates p perpendicularly to the line
+    // Note: translates p perpendicularly to the line (assumes perp is counter-clockwise)
     complex<float> proj(complex<float> p) {
         return p - (perp(v) * side(p)) / norm(v);
     }

@@ -4,6 +4,12 @@
 using T = float;
 using point = complex<T>;
 
+// Point Distance: calculates the exact euclidean distance between points a and b
+// Note: always non-negative, returns 0 if and only if points coincide
+float dist(point a, point b) {
+    return sqrt(norm(a - b));
+}
+
 // Dot: calculates the dot (scalar) product of vectors p and q
 // Note: > 0 if acute angle, < 0 if obtuse, 0 if orthogonal (perpendicular)
 T dot(point p, point q) {
@@ -14,6 +20,14 @@ T dot(point p, point q) {
 // Note: > 0 if q is counter-clockwise from p, 0 if colinear (magnitude is parallelogram area)
 T cross(point p, point q) {
     return (conj(p) * q).y;
+}
+
+// Orient: calculates the direction of the turn formed by points a, b, and c
+// Note: returns +1 if counter-clockwise (left), -1 if clockwise (right), 0 if colinear
+int orient(point a, point b, point c) {
+    T o = cross(b - a, c - a);
+    if (o == 0) return 0;
+    return o < 0 ? -1 : +1;
 }
 
 // Perpendicular: rotates the vector p by 90 degrees counter-clockwise
