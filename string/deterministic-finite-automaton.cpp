@@ -1,16 +1,15 @@
-vector<vector<int>> deterministic_finite_automaton(string &s) {
+vector<array<int, 26>> deterministic_finite_automaton(const string &s) {
     int n = s.length();
-    vector<int> lps = longest_prefix_suffix(s);
-    vector<vector<int>> dfa(n + 1, vector<int>(26));
-    for (int i = 0; i <= n; ++i) {
+    vector<array<int, 26>> dfa(n + 1);
+    if (n == 0) return dfa;
+    dfa[0][s[0] - 'a'] = 1;
+    for (int i = 1, j = 0; i <= n; ++i) {
         for (int c = 0; c < 26; ++c) {
-            if (i < n and (s[i] - 'a') == c) {
-                dfa[i][c] = i + 1;
-            } else if (i > 0) {
-                dfa[i][c] = dfa[lps[i - 1]][c];
-            } else {
-                dfa[i][c] = 0;
-            }
+            dfa[i][c] = dfa[j][c];
+        }
+        if (i < n) {
+            dfa[i][s[i] - 'a'] = i + 1;
+            j = dfa[j][s[i] - 'a'];
         }
     }
     return dfa;
