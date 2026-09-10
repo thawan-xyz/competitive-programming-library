@@ -45,8 +45,8 @@ private:
         }
         int m = (l + r) / 2;
         build(2 * p, l, m, a);
-        build((2 * p) + 1, m + 1, r, a);
-        tree[p] = merge(tree[2 * p], tree[(2 * p) + 1]);
+        build(2 * p + 1, m + 1, r, a);
+        tree[p] = merge(tree[2 * p], tree[2 * p + 1]);
     }
 
     void update(int p, int l, int r, int i, int x) {
@@ -57,15 +57,15 @@ private:
         }
         int m = (l + r) / 2;
         update(2 * p, l, m, i, x);
-        update((2 * p) + 1, m + 1, r, i, x);
-        tree[p] = merge(tree[2 * p], tree[(2 * p) + 1]);
+        update(2 * p + 1, m + 1, r, i, x);
+        tree[p] = merge(tree[2 * p], tree[2 * p + 1]);
     }
 
     int query(int p, int l, int r, int ql, int qr) {
         if (qr < l or r < ql) return 0;
         if (ql <= l and r <= qr) return tree[p];
         int m = (l + r) / 2;
-        return merge(query(2 * p, l, m, ql, qr), query((2 * p) + 1, m + 1, r, ql, qr));
+        return merge(query(2 * p, l, m, ql, qr), query(2 * p + 1, m + 1, r, ql, qr));
     }
 
 public:
