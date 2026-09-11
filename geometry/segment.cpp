@@ -12,28 +12,28 @@ bool on_segment(point a, point b, point p) {
 
 // Proper Intersection: finds the strict interior intersection of segments ab and cd
 // Note: returns true and the exact float point if they cross
-pair<bool, complex<float>> proper_inter(point a, point b, point c, point d) {
+pair<bool, point> proper_inter(point a, point b, point c, point d) {
     float oa = cross(d - c, a - c),
           ob = cross(d - c, b - c),
           oc = cross(b - a, c - a),
           od = cross(b - a, d - a);
     if (oa * ob < 0 and oc * od < 0) {
-        return {true, (complex<float>(a) * ob - complex<float>(b) * oa) / (ob - oa)};
+        return {true, (a * ob - b * oa) / (ob - oa)};
     }
     return {false, {}};
 }
 
 // Segment Intersection: finds all intersection points or overlapping segment endpoints
 // Note: handles strict crossings, touching endpoints, and collinear overlaps
-vector<complex<float>> inters(point a, point b, point c, point d) {
+vector<point> inters(point a, point b, point c, point d) {
     auto [f, p] = proper_inter(a, b, c, d);
     if (f) return {p};
-    vector<complex<float>> ps;
-    if (on_segment(c, d, a)) ps.push_back(complex<float>(a));
-    if (on_segment(c, d, b)) ps.push_back(complex<float>(b));
-    if (on_segment(a, b, c)) ps.push_back(complex<float>(c));
-    if (on_segment(a, b, d)) ps.push_back(complex<float>(d));
-    sort(ps.begin(), ps.end(), [&](complex<float> p1, complex<float> p2) {
+    vector<point> ps;
+    if (on_segment(c, d, a)) ps.push_back(a);
+    if (on_segment(c, d, b)) ps.push_back(b);
+    if (on_segment(a, b, c)) ps.push_back(c);
+    if (on_segment(a, b, d)) ps.push_back(d);
+    sort(ps.begin(), ps.end(), [&](point p1, point p2) {
         return pair(p1.x, p1.y) < pair(p2.x, p2.y);
     });
     ps.erase(unique(ps.begin(), ps.end()), ps.end());

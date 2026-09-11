@@ -28,21 +28,19 @@ struct line {
 
     // Projection: calculates the orthogonal projection of point p onto the line
     // Note: translates p perpendicularly to the line (assumes perp is counter-clockwise)
-    complex<float> proj(complex<float> p) {
+    point proj(point p) {
         return p - (perp(v) * side(p)) / norm(v);
     }
 
     // Reflection: finds the mirror image of point p across the line
     // Note: projects p and extends it by the same distance
-    complex<float> refl(complex<float> p) {
+    point refl(point p) {
         return p - (2.0 * perp(v) * side(p)) / norm(v);
     }
 };
 
 // Intersection: finds the unique geometric intersection point of two lines
 // Note: cross(l.v, r.v) MUST be != 0 (lines can't be parallel)
-complex<float> inter(line l, line r) {
-    complex<float> num = l.c * complex<float>(r.v) - r.c * complex<float>(l.v);
-    float den = cross(l.v, r.v);
-    return num / den;
+point inter(line l, line r) {
+    return (l.c * r.v - r.c * l.v) / cross(l.v, r.v);
 }
