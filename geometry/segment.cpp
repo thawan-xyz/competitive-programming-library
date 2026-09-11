@@ -42,7 +42,7 @@ vector<complex<float>> inters(point a, point b, point c, point d) {
 
 // Point-Segment Distance: finds the shortest distance from point p to segment ab
 // Note: uses orthogonal distance if p projects strictly inside ab, otherwise checks endpoints
-float segment_point(point a, point b, point p) {
+float point_segment(point p, point a, point b) {
     if (a != b) {
         line l(a, b);
         if (l.comp(a, p) and l.comp(p, b)) return l.dist(p);
@@ -54,6 +54,6 @@ float segment_point(point a, point b, point p) {
 // Note: returns 0 if they cross, otherwise checks all endpoint-to-segment pairs
 float segment_segment(point a, point b, point c, point d) {
     if (proper_inter(a, b, c, d).first) return 0;
-    return min({segment_point(a, b, c), segment_point(a, b, d),
-                segment_point(c, d, a), segment_point(c, d, b)});
+    return min({point_segment(a, c, d), point_segment(b, c, d),
+                point_segment(c, a, b), point_segment(d, a, b)});
 }
