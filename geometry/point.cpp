@@ -4,6 +4,12 @@
 using T = float;
 using point = complex<T>;
 
+istream &operator>>(istream &is, point &p) {
+    T r, i; is >> r >> i;
+    p = {r, i};
+    return is;
+}
+
 // Point Distance: calculates the exact euclidean distance between points a and b
 // Note: always non-negative, returns 0 if and only if points coincide
 float dist(point a, point b) {
