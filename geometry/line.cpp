@@ -40,7 +40,8 @@ struct line {
 };
 
 // Intersection: finds the unique geometric intersection point of two lines
-// Note: cross(l.v, r.v) MUST be != 0 (lines can't be parallel)
-point inter(line l, line r) {
-    return (l.c * r.v - r.c * l.v) / cross(l.v, r.v);
+// Note: returns false as the first element if the lines are parallel or collinear
+pair<bool, point> inter(line l, line r) {
+    if (cross(l.v, r.v) == 0) return {false, {}};
+    return {true, (l.c * r.v - r.c * l.v) / cross(l.v, r.v)};
 }
