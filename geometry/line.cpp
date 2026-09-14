@@ -53,8 +53,12 @@ vector<point> line_segment_inter(line l, point a, point b) {
     T sb = l.side(b);
     if (sign(sa) * sign(sb) > 0) return {};
     if (sa == 0 and sb == 0) {
-        if (a == b) return {a};
-        return {a, b};
+        vector<point> pts = {a, b};
+        sort(pts.begin(), pts.end(), [&](point p1, point p2) {
+            return pair(p1.x, p1.y) < pair(p2.x, p2.y);
+        });
+        pts.erase(unique(pts.begin(), pts.end()), pts.end());
+        return pts;
     }
     return {(a * sb - b * sa) / (sb - sa)};
 }
