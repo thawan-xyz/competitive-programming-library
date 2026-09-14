@@ -39,11 +39,11 @@ struct line {
     }
 };
 
-// Line Intersection: finds the intersection point of two lines, or true if they are coincident
-// Note: returns false if parallel and distinct. If coincident, the returned point is empty.
-pair<bool, point> line_inter(line l, line r) {
-    if (cross(l.v, r.v) == 0) return {l.c * r.v == r.c * l.v, {}};
-    return {true, (l.c * r.v - r.c * l.v) / cross(l.v, r.v)};
+// Line Intersection: finds the unique intersection point of two lines
+// Note: returns a single point if they cross, or empty if they are parallel or coincident
+vector<point> line_inter(line l, line r) {
+    if (cross(l.v, r.v) == 0) return {};
+    return {(l.c * r.v - r.c * l.v) / cross(l.v, r.v)};
 }
 
 // Line-Segment Intersection: finds the intersection between line l and segment ab
