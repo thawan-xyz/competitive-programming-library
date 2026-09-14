@@ -45,3 +45,16 @@ pair<bool, point> line_inter(line l, line r) {
     if (cross(l.v, r.v) == 0) return {l.c * r.v == r.c * l.v, {}};
     return {true, (l.c * r.v - r.c * l.v) / cross(l.v, r.v)};
 }
+
+// Line-Segment Intersection: finds the intersection between line l and segment ab
+// Note: returns empty if no intersection, 1 point if they cross, or 2 points if collinear
+vector<point> line_segment_inter(line l, point a, point b) {
+    T sa = l.side(a);
+    T sb = l.side(b);
+    if (sign(sa) * sign(sb) > 0) return {};
+    if (sa == 0 and sb == 0) {
+        if (a == b) return {a};
+        return {a, b};
+    }
+    return {(a * sb - b * sa) / (sb - sa)};
+}
