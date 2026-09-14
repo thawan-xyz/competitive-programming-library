@@ -11,33 +11,28 @@ bool on_segment(point a, point b, point p) {
 }
 
 // Proper Intersection: finds the strict interior intersection of segments ab and cd
-// Note: returns true and the exact float point if they cross
-pair<bool, point> proper_inter(point a, point b, point c, point d) {
-    float oa = cross(d - c, a - c),
-          ob = cross(d - c, b - c),
-          oc = cross(b - a, c - a),
-          od = cross(b - a, d - a);
-    if (oa * ob < 0 and oc * od < 0) {
-        return {true, (a * ob - b * oa) / (ob - oa)};
-    }
-    return {false, {}};
+// Note: returns a single-element vector if they strictly cross, or empty otherwise
+vector<point> proper_inter(point a, point b, point c, point d) {
+    T oa = orient(c, d, a),
+      ob = orient(c, d, b),
+      oc = orient(a, b, c),
+      od = orient(a, b, d);
+    if (sign(oa) * sign(ob) >= 0 or sign(oc) * sign(od) >= 0) return {};
+    return {(a * ob - b * oa) / (ob - oa)};
 }
 
 // Segment Intersection: finds all intersection points or overlapping segment endpoints
-// Note: handles strict crossings, touching endpoints, and collinear overlaps
+// Note: handles strict crossings, touching endpoints, and collinear overlap
 vector<point> inters(point a, point b, point c, point d) {
-    auto [f, p] = proper_inter(a, b, c, d);
-    if (f) return {p};
-    vector<point> ps;
-    if (on_segment(c, d, a)) ps.push_back(a);
-    if (on_segment(c, d, b)) ps.push_back(b);
-    if (on_segment(a, b, c)) ps.push_back(c);
-    if (on_segment(a, b, d)) ps.push_back(d);
-    sort(ps.begin(), ps.end(), [&](point p1, point p2) {
-        return pair(p1.x, p1.y) < pair(p2.x, p2.y);
-    });
-    ps.erase(unique(ps.begin(), ps.end()), ps.end());
-    return ps;
+    vector<point> p = proper_inter(a, b, c, d);
+    if (p.size()) return p;
+    if (on_segment(c, d, a)) p.push_back(a);
+    if (on_segment(c, d, b)) p.push_back(b);
+    if (on_segment(a, b, c)) p.push_back(c);
+    if (on_segment(a, b, d)) p.push_back(d);
+    sort(p.begin(), p.end(), [&](point p1, point p2) {return pair(p1.x, p1.y) < pair(p2.x, p2.y);});
+    p.erase(unique(p.begin(), p.end()), p.end());
+    return p;
 }
 
 // Segment-Point Distance: finds the shortest distance from segment ab to point p
@@ -53,7 +48,7 @@ float segment_point(point a, point b, point p) {
 // Segment-Segment Distance: finds the shortest distance between segments ab and cd
 // Note: returns 0 if they cross, otherwise checks all endpoint-to-segment pairs
 float segment_segment(point a, point b, point c, point d) {
-    if (proper_inter(a, b, c, d).first) return 0;
+    if (proper_inter(a, b, c, d).size()) return 0;
     return min({segment_point(a, b, c), segment_point(a, b, d),
                 segment_point(c, d, a), segment_point(c, d, b)});
 }

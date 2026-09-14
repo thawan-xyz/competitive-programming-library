@@ -39,9 +39,9 @@ struct line {
     }
 };
 
-// Intersection: finds the unique geometric intersection point of two lines
-// Note: returns false as the first element if the lines are parallel or collinear
-pair<bool, point> inter(line l, line r) {
-    if (cross(l.v, r.v) == 0) return {false, {}};
+// Line Intersection: finds the intersection point of two lines, or true if they are coincident
+// Note: returns false if parallel and distinct. If coincident, the returned point is empty.
+pair<bool, point> line_inter(line l, line r) {
+    if (cross(l.v, r.v) == 0) return {l.c * r.v == r.c * l.v, {}};
     return {true, (l.c * r.v - r.c * l.v) / cross(l.v, r.v)};
 }

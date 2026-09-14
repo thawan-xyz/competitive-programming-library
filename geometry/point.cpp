@@ -10,6 +10,11 @@ istream &operator>>(istream &is, point &p) {
     return is;
 }
 
+int sign(T n) {
+    if (n == 0) return 0;
+    return n < 0 ? -1 : +1;
+}
+
 // Point Distance: calculates the exact euclidean distance between points a and b
 // Note: always non-negative, returns 0 if and only if points coincide
 float dist(point a, point b) {
@@ -29,11 +34,9 @@ T cross(point p, point q) {
 }
 
 // Orient: calculates the direction of the turn formed by points a, b, and c
-// Note: returns +1 if counter-clockwise (left), -1 if clockwise (right), 0 if colinear
+// Note: returns > 0 if counter-clockwise (left), < 0 if clockwise (right), 0 if colinear
 int orient(point a, point b, point c) {
-    T o = cross(b - a, c - a);
-    if (o == 0) return 0;
-    return o < 0 ? -1 : +1;
+    return cross(b - a, c - a);
 }
 
 // Perpendicular: rotates the vector p by 90 degrees counter-clockwise
