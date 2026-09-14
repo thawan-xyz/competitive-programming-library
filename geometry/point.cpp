@@ -1,7 +1,7 @@
 #define x real()
 #define y imag()
 
-using T = float;
+using T = int;
 using point = complex<T>;
 
 namespace std {
