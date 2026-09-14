@@ -17,6 +17,9 @@ bool crosses_ray(point p, point q, point a) {
     return (equal_above(q, a) - equal_above(p, a)) * orient(a, p, q) > 0;
 }
 
+// Cutting-Ray Test: checks if point 'a' is inside a simple polygon 'p'
+// Time: O(N) | Space: O(1)
+// Note: works for concave polygons, 'strict' flag controls boundary inclusion, robust vertex intersection
 bool cutting_ray_test(const vector<point> &p, point a, bool strict) {
     int c = 0;
     int n = p.size();
