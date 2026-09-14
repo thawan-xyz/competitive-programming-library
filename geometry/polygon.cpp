@@ -1,31 +1,24 @@
-float triangle_area(point a, point b, point c) {
+float area(point a, point b, point c) {
     return abs(cross(b - a, c - a)) / 2.0;
 }
 
-float polygon_area(const vector<point> &p) {
-    T area = 0;
+float area(const vector<point> &p) {
+    T a = 0;
     int n = p.size();
-    for (int i = 0; i < n; ++i) area += cross(p[i], p[(i + 1) % n]);
-    return abs(area) / 2.0;
+    for (int i = 0; i < n; ++i) a += cross(p[i], p[(i + 1) % n]);
+    return abs(a) / 2.0;
 }
 
-bool equal_above(point p, point a) {
-    return p.y >= a.y;
-}
-
-bool crosses_ray(point p, point q, point a) {
-    return (equal_above(q, a) - equal_above(p, a)) * orient(a, p, q) > 0;
-}
-
-// Cutting-Ray Test: checks if point 'a' is inside a simple polygon 'p'
+// Winding Number: computes how many times a polygon wraps around a point
 // Time: O(N) | Space: O(1)
-// Note: works for concave polygons, 'strict' flag controls boundary inclusion, robust vertex intersection
-bool cutting_ray_test(const vector<point> &p, point a, bool strict) {
-    int c = 0;
-    int n = p.size();
+// Note: returns non-zero for inside, zero for outside or boundary
+int winding_number(const vector<point> &g, point a) {
+    int w = 0, n = g.size();
     for (int i = 0; i < n; ++i) {
-        if (on_segment(p[i], p[(i + 1) % n], a)) return not strict;
-        c += crosses_ray(p[i], p[(i + 1) % n], a);
+        point p = g[i], q = g[(i + 1) % n];
+        if (on_segment(p, q, a)) return 0;
+        int d = (q.y >= a.y) - (p.y >= a.y);
+        if (d * orient(p, q, a) > 0) w += d;
     }
-    return c & 1;
+    return w;
 }
