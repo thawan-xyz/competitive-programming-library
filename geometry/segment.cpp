@@ -24,17 +24,15 @@ vector<point> proper_inter(point a, point b, point c, point d) {
 // Segment Intersection: finds all intersection points or overlapping segment endpoints
 // Note: handles strict crossings, touching endpoints, and collinear overlap
 vector<point> inters(point a, point b, point c, point d) {
-    vector<point> pts = proper_inter(a, b, c, d);
-    if (pts.size()) return pts;
-    if (on_segment(c, d, a)) pts.push_back(a);
-    if (on_segment(c, d, b)) pts.push_back(b);
-    if (on_segment(a, b, c)) pts.push_back(c);
-    if (on_segment(a, b, d)) pts.push_back(d);
-    sort(pts.begin(), pts.end(), [&](point p1, point p2) {
-        return pair(p1.x, p1.y) < pair(p2.x, p2.y);
-    });
-    pts.erase(unique(pts.begin(), pts.end()), pts.end());
-    return pts;
+    vector<point> p = proper_inter(a, b, c, d);
+    if (p.size()) return p;
+    if (on_segment(c, d, a)) p.push_back(a);
+    if (on_segment(c, d, b)) p.push_back(b);
+    if (on_segment(a, b, c)) p.push_back(c);
+    if (on_segment(a, b, d)) p.push_back(d);
+    sort(p.begin(), p.end());
+    p.erase(unique(p.begin(), p.end()), p.end());
+    return p;
 }
 
 // Segment-Point Distance: finds the shortest distance from segment ab to point p

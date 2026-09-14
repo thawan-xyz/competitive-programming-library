@@ -4,6 +4,12 @@
 using T = float;
 using point = complex<T>;
 
+namespace std {
+    bool operator<(const point &a, const point &b) {
+        return pair(a.x, a.y) < pair(b.x, b.y);
+    }
+}
+
 istream &operator>>(istream &is, point &p) {
     T r, i; is >> r >> i;
     p = {r, i};
@@ -35,7 +41,7 @@ T cross(point p, point q) {
 
 // Orient: calculates the direction of the turn formed by points a, b, and c
 // Note: returns > 0 if counter-clockwise (left), < 0 if clockwise (right), 0 if colinear
-int orient(point a, point b, point c) {
+T orient(point a, point b, point c) {
     return cross(b - a, c - a);
 }
 
