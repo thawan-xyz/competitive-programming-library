@@ -41,3 +41,29 @@ int winding_number(const vector<point> &g, point a) {
     }
     return w;
 }
+
+vector<point> convex_hull(vector<point> g, bool col) {
+    sort(g.begin(), g.end());
+    g.erase(unique(g.begin(), g.end()), g.end());
+    int n = g.size();
+    if (n < 3) return g;
+    bool all = col;
+    for (int i = 2; i < n and all; ++i) {
+        all &= orient(g[0], g[1], g[i]) == 0;
+    }
+    if (all) return g;
+    vector<point> h;
+    T l = col ? 0 : 1;
+    for (int i = 0; i <= 1; ++i) {
+        int s = h.size();
+        for (point p : g) {
+            while (h.size() >= s + 2 and orient(h[h.size() - 2], h[h.size() - 1], p) < l) {
+                h.pop_back();
+            }
+            h.push_back(p);
+        }
+        h.pop_back();
+        reverse(g.begin(), g.end());
+    }
+    return h;
+}
