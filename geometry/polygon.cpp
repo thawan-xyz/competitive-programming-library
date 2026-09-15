@@ -53,11 +53,11 @@ vector<point> convex_hull(vector<point> g, bool col) {
     }
     if (all) return g;
     vector<point> h;
-    T l = col ? 0 : 1;
+    T lim = col ? 0 : 1;
     for (int i = 0; i <= 1; ++i) {
         int s = h.size();
         for (point p : g) {
-            while (h.size() >= s + 2 and orient(h[h.size() - 2], h[h.size() - 1], p) < l) {
+            while (h.size() >= s + 2 and orient(h[h.size() - 2], h[h.size() - 1], p) < lim) {
                 h.pop_back();
             }
             h.push_back(p);
