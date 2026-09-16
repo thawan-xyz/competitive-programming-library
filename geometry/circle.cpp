@@ -1,3 +1,11 @@
+point circumcenter(point a, point b, point c) {
+    point v = b - a;
+    point w = c - a;
+    T h = cross(v, w);
+    if (h == 0) return {};
+    return a + perp(v * norm(w) - w * norm(v)) / (2.0 * h);
+}
+
 vector<point> circle_line_inter(point o, T r, line l) {
     T s = l.side(o);
     T d2 = (s * s) / norm(l.v);
