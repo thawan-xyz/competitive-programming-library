@@ -1,4 +1,13 @@
-point circumcenter(point a, point b, point c) {
+point incircle(point a, point b, point c) {
+    T ab = dist(a, b);
+    T bc = dist(b, c);
+    T ac = dist(a, c);
+    T p = ab + bc + ac;
+    if (p == 0) return {};
+    return (a * bc + b * ac + c * ab) / p;
+}
+
+point circumcircle(point a, point b, point c) {
     point v = b - a;
     point w = c - a;
     T h = cross(v, w);
