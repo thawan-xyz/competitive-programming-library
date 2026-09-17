@@ -46,3 +46,30 @@ point perp(point p) {
 float angle(point v, point w) {
     return atan2(cross(v, w), dot(v, w));
 }
+
+float closest_pair(vector<point> p) {
+    int n = p.size();
+    sort(p.begin(), p.end());
+    auto compare = [](const point &a, const point &b) {
+        if (a.y != b.y) return a.y < b.y;
+        return a.x < b.x;
+    };
+    multiset<point, decltype(compare)> active(compare);
+    active.insert(p[0]);
+    float d = inf;
+    int l = 0;
+    for (int i = 1; i < n; ++i) {
+        while (l < i and p[i].x - p[l].x >= d) {
+            active.erase(active.find(p[l]));
+            l++;
+        }
+        auto begin = active.lower_bound({p[i].x - d, p[i].y - d});
+        auto end = active.upper_bound({p[i].x + d, p[i].y + d});
+        for (auto itr = begin; itr != end; ++itr) {
+            float c = dist(p[i], *itr);
+            d = min(d, c);
+        }
+        active.insert(p[i]);
+    }
+    return d;
+}
