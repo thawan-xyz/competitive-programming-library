@@ -37,6 +37,17 @@ vector<point> circle_segment_inter(point o, T r, point a, point b) {
     return h;
 }
 
+T circle_inter_area(point o1, T r1, point o2, T r2) {
+    T d = dist(o1, o2);
+    if (d >= r1 + r2) return 0.0;
+    if (d <= abs(r1 - r2)) return pi * min(r1, r2) * min(r1, r2);
+    T h1 = 2.0 * acos((d * d + r1 * r1 - r2 * r2) / (2.0 * d * r1));
+    T h2 = 2.0 * acos((d * d + r2 * r2 - r1 * r1) / (2.0 * d * r2));
+    T a1 = 0.5 * r1 * r1 * (h1 - sin(h1));
+    T a2 = 0.5 * r2 * r2 * (h2 - sin(h2));
+    return a1 + a2;
+}
+
 vector<point> circle_inter(point o1, T r1, point o2, T r2) {
     point v = o2 - o1;
     T d2 = norm(v);
