@@ -66,7 +66,7 @@ float closest_pair(vector<point> p) {
         auto begin = active.lower_bound({p[i].x - d, p[i].y - d});
         auto end = active.upper_bound({p[i].x + d, p[i].y + d});
         for (auto itr = begin; itr != end; ++itr) {
-            float c = dist(p[i], *itr);
+            float c = dist(*itr, p[i]);
             d = min(d, c);
         }
         active.insert(p[i]);
