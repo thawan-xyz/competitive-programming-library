@@ -2,16 +2,16 @@
 // Time: update O(log N), query O(1) | Space: O(N)
 struct xor_cover_tree {
     int n;
-    vector<int> all, cnt, len;
+    vector<int> all, cnt, curr;
 
     void recalc(int i) {
         int child = 0;
-        if (i < n) child = len[i << 1] + len[i << 1 | 1];
-        if (cnt[i] & 1) len[i] = all[i] - child;
-        else len[i] = child;
+        if (i < n) child = curr[i << 1] + curr[i << 1 | 1];
+        if (cnt[i] & 1) curr[i] = all[i] - child;
+        else curr[i] = child;
     }
 
-    xor_cover_tree(vector<int> &x): n(x.size() - 1), all(2 * n), cnt(2 * n), len(2 * n) {
+    xor_cover_tree(vector<int> &x): n(x.size() - 1), all(2 * n), cnt(2 * n), curr(2 * n) {
         for (int i = 0; i < n; ++i) all[n + i] = x[i + 1] - x[i];
         for (int i = n - 1; i > 0; --i) all[i] = all[i << 1] + all[i << 1 | 1];
     }
@@ -29,6 +29,6 @@ struct xor_cover_tree {
     }
 
     int query() {
-        return len[1];
+        return curr[1];
     }
 };

@@ -3,16 +3,16 @@
 struct k_cover_tree {
     int n, k;
     vector<int> all, cnt;
-    vector<vector<int>> len;
+    vector<vector<int>> curr;
 
     void recalc(int i) {
         vector<int> base(k + 1);
         base[0] = all[i];
-        if (i < n) for (int h = 1; h <= k; ++h) base[h] = len[i << 1][h] + len[i << 1 | 1][h];
-        for (int h = 1; h <= k; ++h) len[i][h] = base[max<int>(0, h - cnt[i])];
+        if (i < n) for (int h = 1; h <= k; ++h) base[h] = curr[i << 1][h] + curr[i << 1 | 1][h];
+        for (int h = 1; h <= k; ++h) curr[i][h] = base[max<int>(0, h - cnt[i])];
     }
 
-    k_cover_tree(int k, vector<int> &x): n(x.size() - 1), k(k), all(2 * n), cnt(2 * n), len(2 * n, vector<int>(k + 1)) {
+    k_cover_tree(int k, vector<int> &x): n(x.size() - 1), k(k), all(2 * n), cnt(2 * n), curr(2 * n, vector<int>(k + 1)) {
         for (int i = 0; i < n; ++i) all[n + i] = x[i + 1] - x[i];
         for (int i = n - 1; i > 0; --i) all[i] = all[i << 1] + all[i << 1 | 1];
     }
@@ -30,6 +30,6 @@ struct k_cover_tree {
     }
 
     int query() {
-        return len[1][k];
+        return curr[1][k];
     }
 };
