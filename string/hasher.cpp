@@ -26,13 +26,13 @@ struct hasher {
     vector<array<int, 2>> pref, suf;
     
     hasher(const string &s): n(s.length()), pref(n + 1), suf(n + 2) {
-        extend(n);
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j <= 1; ++j) {
                 pref[i + 1][j] = (pref[i][j] * base[j] + s[i]) % mod[j];
                 suf[n - i][j] = (suf[n - i + 1][j] * base[j] + s[n - i - 1]) % mod[j];
             }
         }
+        extend(n);
     }
 
     block query(int l, int r) const {
