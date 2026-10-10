@@ -124,4 +124,21 @@ struct treap {
         root = merge(merge(l, m), r);
         return q;
     }
+
+    int kth(int k) {
+        int i = root;
+        while (i != 0) {
+            push(i);
+            int s = t[t[i].l].size;
+            if (k < s) {
+                i = t[i].l;
+            } else if (k > s) {
+                k -= s + 1;
+                i = t[i].r;
+            } else {
+                return t[i].x;
+            }
+        }
+        return -1;
+    }
 };
