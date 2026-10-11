@@ -1,2 +1,2 @@
-template<class...T> void scan(T&...a){(cin>>...>>a);}
-template<class...T> void print(T&&...a){(cout<<...<<a);}
+void scan(auto&...args) {(cin >> ... >> args);}
+void print(auto&&...args) {(cout << ... << args);}
