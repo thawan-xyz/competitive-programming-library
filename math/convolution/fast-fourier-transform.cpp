@@ -1,14 +1,17 @@
 const float pi = acos(-1);
-const int max_len = 1 << 20;
+vector<complex<float>> root, inv_root;
 
-array<complex<float>, max_len / 2> root, inv_root;
+void roots(int n) {
+    if (n <= 2 * root.size()) return;
 
-void roots() {
+    root.resize(n / 2);
+    inv_root.resize(n / 2);
+
     root[0] = {1, 0};
     inv_root[0] = {1, 0};
 
-    float ang = 2 * pi / max_len;
-    int half = max_len / 2;
+    float ang = 2 * pi / n;
+    int half = n / 2;
     for (int i = 1; i < half; i *= 2) {
         complex<float> step(cos(ang * i), sin(ang * i));
         for (int j = 0; j < i; ++j) {
@@ -22,10 +25,11 @@ void roots() {
 
 void fft(vector<complex<float>> &p, bool inv) {
     int n = p.size();
+    roots(n);
     if (not inv) {
         for (int len = n; len >= 2; len /= 2) {
             int half = len / 2;
-            int step = max_len / len;
+            int step = 2 * root.size() / len;
             for (int i = 0; i < n; i += len) {
                 for (int j = 0; j < half; ++j) {
                     auto w = root[step * j];
@@ -39,7 +43,7 @@ void fft(vector<complex<float>> &p, bool inv) {
     } else {
         for (int len = 2; len <= n; len *= 2) {
             int half = len / 2;
-            int step = max_len / len;
+            int step = 2 * root.size() / len;
             for (int i = 0; i < n; i += len) {
                 for (int j = 0; j < half; ++j) {
                     auto w = inv_root[step * j];

@@ -1,17 +1,21 @@
 const int g = 3;
 const int mod = 998244353;
-const int max_len = 1 << 20;
 
-array<int, max_len / 2> root, inv_root;
+vector<int> root, inv_root;
 
-void roots() {
+void roots(int n) {
+    if (n <= 2 * root.size()) return;
+
+    root.resize(n / 2);
+    inv_root.resize( n / 2);
+
     root[0] = 1;
     inv_root[0] = 1;
 
-    int ang = mpow(g, (mod - 1) / max_len);
-    int inv_ang = mpow(ang, mod - 2);
+    int ang = mod_pow(g, (mod - 1) / n);
+    int inv_ang = mod_pow(ang, mod - 2);
 
-    int half = max_len / 2;
+    int half = n / 2;
     for (int i = 1; i < half; ++i) {
         root[i] = (ang * root[i - 1]) % mod;
         inv_root[i] = (inv_ang * inv_root[i - 1]) % mod;
@@ -20,10 +24,11 @@ void roots() {
 
 void ntt(vector<int> &p, bool inv) {
     int n = p.size();
+    roots(n);
     if (not inv) {
         for (int len = n; len >= 2; len /= 2) {
             int half = len / 2;
-            int step = max_len / len;
+            int step = 2 * root.size() / len;
             for (int i = 0; i < n; i += len) {
                 for (int j = 0; j < half; ++j) {
                     int w = root[step * j];
@@ -37,7 +42,7 @@ void ntt(vector<int> &p, bool inv) {
     } else {
         for (int len = 2; len <= n; len *= 2) {
             int half = len / 2;
-            int step = max_len / len;
+            int step = 2 * root.size() / len;
             for (int i = 0; i < n; i += len) {
                 for (int j = 0; j < half; ++j) {
                     int w = inv_root[step * j];
@@ -48,7 +53,7 @@ void ntt(vector<int> &p, bool inv) {
                 }
             }
         }
-        int inv_n = mpow(n, mod - 2);
+        int inv_n = mod_pow(n, mod - 2);
         for (int &x : p) x = (x * inv_n) % mod;
     }
 }
