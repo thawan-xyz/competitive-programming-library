@@ -10,7 +10,7 @@ void ntt(vector<int> &p, bool inv, int g, int mod) {
     if (not inv) {
         for (int len = n; len >= 2; len /= 2) {
             int half = len / 2;
-            int ang = mpow(g, (mod - 1) / len, mod);
+            int ang = mod_pow(g, (mod - 1) / len, mod);
             vector<int> w = roots(half, ang, mod);
             for (int i = 0; i < n; i += len) {
                 for (int j = 0; j < half; ++j) {
@@ -24,8 +24,8 @@ void ntt(vector<int> &p, bool inv, int g, int mod) {
     } else {
         for (int len = 2; len <= n; len *= 2) {
             int half = len / 2;
-            int ang = mpow(g, (mod - 1) / len, mod);
-            ang = mpow(ang, mod - 2, mod);
+            int ang = mod_pow(g, (mod - 1) / len, mod);
+            ang = mod_pow(ang, mod - 2, mod);
             vector<int> w = roots(half, ang, mod);
             for (int i = 0; i < n; i += len) {
                 for (int j = 0; j < half; ++j) {
@@ -36,7 +36,7 @@ void ntt(vector<int> &p, bool inv, int g, int mod) {
                 }
             }
         }
-        int inv_n = mpow(n, mod - 2, mod);
+        int inv_n = mod_pow(n, mod - 2, mod);
         for (int &x : p) x = (x * inv_n) % mod;
     }
 }
