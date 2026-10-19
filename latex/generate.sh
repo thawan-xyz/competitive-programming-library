@@ -1,6 +1,6 @@
 #!/bin/bash
 
-: ${TEAM_NAME:="Team"}
+: ${TEAM_NAME:="Team of One"}
 : ${MEMBERS:="Thawan"}
 : ${UNIVERSITY:="UFPE"}
 
@@ -12,7 +12,7 @@ cat > env.tex << EOF
 \def\teamuni{$UNIVERSITY}
 EOF
 
-g++ -std=c++17 -o generate generate.cpp -O2
+g++ generate.cpp -std=c++20 -O2 -o generate
 
 echo "Generating notebook structure..."
 echo ""
