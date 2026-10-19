@@ -1,0 +1,16 @@
+\section{Redução de Expoentes Grandes (Teorema Estendido de Euler)}
+
+Para calcular $a^e \pmod m$ quando o expoente $e$ é extremamente grande (como em strings com $10^5$ dígitos ou torres de potências $a^{b^c}$), utiliza-se a seguinte identidade fundamental:
+
+$$a^e \equiv \begin{cases} 
+a^e \pmod m, & \text{se } e < \varphi(m) \\[6pt]
+a^{(e \bmod \varphi(m)) + \varphi(m)} \pmod m, & \text{se } e \ge \varphi(m)
+\end{cases}$$
+
+\subsection{Resumo de Aplicação}
+
+\begin{itemize}
+    \item \textbf{Quando se aplica:} Funciona universalmente para \textbf{qualquer} par de inteiros $a$ e $m$, mesmo quando $a$ e $m$ não são primos entre si ($\gcd(a, m) \neq 1$).
+    \item \textbf{Caso $e < \varphi(m)$:} Não reduza o expoente. Reduzi-lo antes de atingir $\varphi(m)$ altera o resultado quando $\gcd(a, m) > 1$.
+    \item \textbf{Caso $e \ge \varphi(m)$:} Substitua o expoente $e$ por $(e \bmod \varphi(m)) + \varphi(m)$. A adição do termo $+\varphi(m)$ garante que a fase transitória da potenciação seja respeitada.
+\end{itemize}

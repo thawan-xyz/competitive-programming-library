@@ -1,0 +1,39 @@
+\section{Inversão de Möbius}
+
+A Inversão de Möbius é uma técnica poderosa na teoria dos números e combinatória, frequentemente utilizada para inverter somatórios sobre divisores ou para calcular a cardinalidade de conjuntos com propriedades de coprimalidade restritas.
+
+\textbf{Fórmula Geral (Forma de Divisores):}
+$$ g(n) = \sum_{d \mid n} f(d) \iff f(n) = \sum_{d \mid n} \mu(d) g\left(\frac{n}{d}\right) $$
+Onde $\mu(d)$ é a função de Möbius, definida como:
+\begin{itemize}
+    \item $\mu(1) = 1$.
+    \item $\mu(d) = 0$ se $d$ possui um fator quadrado perfeito (i.e., $p^2 \mid d$).
+    \item $\mu(d) = (-1)^k$ se $d$ é o produto de $k$ números primos distintos.
+\end{itemize}
+
+A propriedade fundamental que conecta essa função à contagem de MDC é dada por:
+$$ \sum_{d \mid \gcd(a, b)} \mu(d) = \begin{cases} 1, & \text{se } \gcd(a, b) = 1 \\ 0, & \text{se } \gcd(a, b) > 1 \end{cases} $$
+
+\subsection*{Aplicação Clássica: Pares com MDC igual a $x$}
+Dado um vetor $A$ de tamanho $n$ com elementos positivos, o objetivo é contar quantos pares de índices $(i, j)$ com $1 \le i, j \le n$ satisfazem $\gcd(A[i], A[j]) = x$.
+
+Para resolver esse problema, definimos uma função auxiliar $C(v)$, que representa a quantidade de elementos no vetor $A$ que são múltiplos de $v$.
+
+\textbf{Dedução da Fórmula:}
+Queremos contar os pares $(i, j)$ tais que $\gcd(A[i], A[j]) = x$. Isso equivale a exigir que $A[i]$ e $A[j]$ sejam múltiplos de $x$, e que ao dividi-los por $x$, eles sejam coprimos: $\gcd\left(\frac{A[i]}{x}, \frac{A[j]}{x}\right) = 1$.
+
+Podemos escrever a quantidade total de pares desejados como:
+$$ \text{Pares} = \sum_{\substack{1 \le i \le n \\ x \mid A[i]}} \sum_{\substack{1 \le j \le n \\ x \mid A[j]}} \left[ \gcd\left(\frac{A[i]}{x}, \frac{A[j]}{x}\right) = 1 \right] $$
+
+Substituindo a condição de coprimalidade pela propriedade fundamental de Möbius, temos:
+$$ \text{Pares} = \sum_{\substack{1 \le i \le n \\ x \mid A[i]}} \sum_{\substack{1 \le j \le n \\ x \mid A[j]}} \sum_{k \mid \gcd\left(\frac{A[i]}{x}, \frac{A[j]}{x}\right)} \mu(k) $$
+
+A condição de que $k$ divide o $\gcd$ de $\frac{A[i]}{x}$ e $\frac{A[j]}{x}$ significa que $k$ divide $\frac{A[i]}{x}$ e $k$ divide $\frac{A[j]}{x}$. Isso é matematicamente equivalente a dizer que $(k \cdot x)$ divide tanto $A[i]$ quanto $A[j]$.
+
+Agora, invertemos a ordem dos somatórios. Em vez de iterar sobre os pares e depois sobre os divisores, iteramos sobre $k$ (o multiplicador) e contamos quantos pares satisfazem a condição de serem múltiplos de $(k \cdot x)$. 
+
+Como o número de elementos em $A$ que são múltiplos de $(k \cdot x)$ é $C(k \cdot x)$, o número de pares que podemos formar com esses elementos é simplesmente $C(k \cdot x)^2$. Agrupando tudo, chegamos à fórmula final.
+
+\textbf{Fórmula para Contagem de Pares:}
+$$ \text{Pares} = \sum_{k=1}^{\lfloor M/x \rfloor} \mu(k) \cdot C(k \cdot x)^2 \pmod{10^9+7} $$
+Onde $M$ é o valor máximo presente no vetor $A$. A função $C(v)$ pode ser pré-computada para todos os valores em $O(M \log M)$ através de uma abordagem semelhante ao Crivo de Eratóstenes, permitindo responder à consulta para qualquer $x$ em $O(M/x)$.

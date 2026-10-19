@@ -1,0 +1,20 @@
+\section{Lema de Burnside}
+
+O Lema de Burnside é utilizado em combinatória matemática para contar o número de objetos estruturalmente únicos (classes de equivalência) em um conjunto, eliminando duplicatas geradas por simetrias (como rotações ou reflexões).
+
+\textbf{Fórmula Geral:}
+$$ |X/G| = \frac{1}{|G|} \sum_{\pi \in G} |X^\pi| $$
+Onde:
+\begin{itemize}
+    \item $|X/G|$: Número de objetos únicos.
+    \item $|G|$: Tamanho do grupo de simetrias (total de permutações).
+    \item $|X^\pi|$: Número de pontos fixos (representações que não mudam ao aplicar a permutação $\pi$).
+\end{itemize}
+
+\subsection*{Aplicação Clássica: Problema do Colar (Necklace)}
+Conta o número de formas únicas de montar um colar de tamanho $n$ com $m$ cores possíveis para as pérolas, considerando que colares rotacionados são iguais.
+
+Para uma rotação de tamanho $i$ em um colar de tamanho $n$, a permutação se decompõe em $\gcd(n, i)$ ciclos. Para que a coloração seja um ponto fixo sob essa rotação, todas as pérolas de um mesmo ciclo devem ter a mesma cor. Como temos $m$ cores, existem $m^{\gcd(n, i)}$ colorações invariantes (pontos fixos) para essa rotação.
+
+\textbf{Fórmula para Rotações em O(N):}
+$$ \text{Colares} = \frac{1}{n} \sum_{i=1}^{n} m^{\gcd(n, i)} \pmod{10^9+7} $$

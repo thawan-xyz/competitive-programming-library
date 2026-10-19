@@ -1,0 +1,32 @@
+\section{Identidade de Vandermonde}
+
+A Identidade de Vandermonde é uma ferramenta essencial em combinatória para otimizar somatórios envolvendo multiplicações de coeficientes binomiais, reduzindo cálculos de complexidade $O(N)$ para $O(1)$ (com pré-computação de fatoriais).
+
+\subsection*{Fórmula Clássica}
+Para quaisquer inteiros não negativos $m$, $n$ e $r$:
+\[
+\sum_{k=0}^{r} \binom{m}{k} \binom{n}{r-k} = \binom{m+n}{r}
+\]
+\textbf{Intuição Combinatória:} Escolher um comitê de $r$ pessoas de um grupo contendo $m$ homens e $n$ mulheres é equivalente a somar todos os cenários possíveis de escolha (onde escolhemos $k$ homens e $r-k$ mulheres).
+
+\subsection*{Uso em Programação Competitiva (O Truque da Simetria)}
+
+Em problemas de contagem, raramente a fórmula aparece pronta. O cenário mais comum é encontrar uma soma onde os índices inferiores \textbf{crescem simultaneamente}. 
+
+Para aplicar Vandermonde, a soma dos termos inferiores deve ser \textbf{constante}. Alcançamos isso aplicando a simetria do binômio:
+\[ \binom{n}{k} = \binom{n}{n-k} \]
+
+\subsubsection*{Padrão 1: Índices Iguais}
+Se a sua modelagem resultou na soma:
+\[ \sum_{k=0}^{\min(x,y)} \binom{x}{k} \binom{y}{k} \]
+Aplique a simetria no primeiro termo ($\binom{x}{k} \rightarrow \binom{x}{x-k}$):
+\[ \sum_{k} \binom{x}{x-k} \binom{y}{k} = \binom{x+y}{x} \]
+\textit{Nota: A soma dos índices inferiores agora é $(x-k) + k = x$ (constante).}
+
+\subsubsection*{Padrão 2: Índices Deslocados (Exemplo Prático)}
+Se você precisar escolher $k-1$ itens de um grupo e $k$ de outro:
+\[ \sum_{k \ge 1} \binom{x}{k-1} \binom{y}{k} \]
+Transforme o primeiro termo usando $\binom{x}{k-1} = \binom{x}{x - (k-1)} = \binom{x}{x - k + 1}$:
+\[ \sum_{k \ge 1} \binom{x}{x - k + 1} \binom{y}{k} = \binom{x+y}{x+1} \]
+
+\textbf{Dica de Implementação:} Sempre pré-compute os fatoriais e seus inversos modulares para responder a $\binom{n}{k} \pmod M$ em $O(1)$.

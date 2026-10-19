@@ -1,0 +1,27 @@
+\section{Manhattan para Chebyshev}
+
+Na programação competitiva, problemas que envolvem distâncias em um grid (plano 2D) frequentemente utilizam a \textbf{Distância de Manhattan}. A distância de Manhattan entre dois pontos $A = (x_1, y_1)$ e $B = (x_2, y_2)$ é calculada pela soma das diferenças absolutas de suas coordenadas:
+\[ d_M(A, B) = |x_1 - x_2| + |y_1 - y_2| \]
+
+\subsection{A Dificuldade da Distância de Manhattan}
+Matematicamente, lidar com a soma de dois valores absolutos pode ser desconfortável e custoso. Como as coordenadas $x$ e $y$ estão "amarradas" na mesma equação pela soma, não podemos analisá-las ou otimizá-las separadamente. 
+
+Se um problema pede para encontrarmos a maior distância entre $N$ pontos, testar todos os pares possíveis exigiria um tempo da ordem de $O(N^2)$, o que é muito lento e frequentemente resulta em \textit{Time Limit Exceeded} (TLE) em competições. Precisamos de uma forma de separar $x$ e $y$.
+
+\subsection{A Transformação: Rotacionando o Plano}
+Para desvincular as coordenadas, utilizamos um truque geométrico elegante: rotacionar o sistema de coordenadas em 45 graus. Na prática, pegamos cada ponto original $(x, y)$ e o convertemos em um novo ponto $(u, v)$ aplicando as seguintes equações:
+\[ u = x + y \]
+\[ v = x - y \]
+
+Neste novo plano de coordenadas $(u, v)$, medimos a distância usando a \textbf{Distância de Chebyshev}. Em vez de somar as diferenças, a distância de Chebyshev pega o valor máximo entre as diferenças dos eixos:
+\[ d_C(A', B') = \max(|u_1 - u_2|, |v_1 - v_2|) \]
+
+A grande "mágica" dessa transformação é a garantia de que a distância de Manhattan no plano original é \textbf{exatamente igual} à distância de Chebyshev no plano transformado:
+\[ d_M(A, B) = d_C(A', B') \]
+
+\subsection{A Intuição: Por que isso é tão útil?}
+A vantagem monumental de converter a fórmula para usar a função $\max$ é a \textbf{independência das dimensões}. 
+
+Na fórmula original da soma, um $x$ pequeno poderia ser compensado por um $y$ grande, nos obrigando a olhar para o par sempre junto. Com a função $\max$, podemos olhar para o eixo $u$ isoladamente e para o eixo $v$ isoladamente. 
+
+Voltando ao exemplo de encontrar a distância máxima entre $N$ pontos: com o plano transformado, tudo o que precisamos fazer é encontrar a maior distância no eixo $u$ (ou seja, o maior $u$ menos o menor $u$) e a maior distância no eixo $v$ (o maior $v$ menos o menor $v$). O resultado final será simplesmente o maior desses dois valores. Isso derruba a complexidade do problema de $O(N^2)$ para um rápido e eficiente $O(N)$.
