@@ -318,4 +318,3 @@ int main(int argc, char** argv) {
     cerr << file_count << " files in " << sections.size() << " sections\n";
     return 0;
 }
-

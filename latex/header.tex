@@ -56,18 +56,19 @@
   numbers=none,
   aboveskip=0pt,
   belowskip=0pt,
+  alsoletter={0123456789},
   literate=*{~}{$\sim$}{1}
-  {0}{{{\color{red_number}0}}}{1}
-  {1}{{{\color{red_number}1}}}{1}
-  {2}{{{\color{red_number}2}}}{1}
-  {3}{{{\color{red_number}3}}}{1}
-  {4}{{{\color{red_number}4}}}{1}
-  {5}{{{\color{red_number}5}}}{1}
-  {6}{{{\color{red_number}6}}}{1}
-  {7}{{{\color{red_number}7}}}{1}
-  {8}{{{\color{red_number}8}}}{1}
-  {9}{{{\color{red_number}9}}}{1}
 }
+
+\makeatletter
+\newcommand{\lst@numberstyle@color}{\color{red_number}}
+\newcommand{\lst@startsdigit}[1]{%
+  \expandafter\lst@startsdigit@\detokenize\expandafter{#1}\@nil}
+\def\lst@startsdigit@#1#2\@nil{%
+  \ifnum`#1>47 \ifnum`#1<58 \let\lst@thestyle\lst@numberstyle@color\fi\fi}
+\lst@AddToHook{Output}{%
+  \ifx\lst@currstyle\relax\lst@startsdigit{\the\lst@token}\fi}
+\makeatother
 
 \makeatletter
 \patchcmd{\lst@Init}{\par\penalty-50\relax}{\par\relax}{}{%
@@ -107,7 +108,7 @@
 
 \fancypagestyle{firstpage}{%
   \fancyhf{}%
-  \renewcommand{\headrulewidth}{0.4pt}%
+  \renewcommand{\headrulewidth}{0pt}%
 }
 
 \newcommand{\barbox}[3]{%
@@ -138,7 +139,6 @@
 \makeatletter
 \newbox\tocbox
 \newbox\tocpart
-\newbox\toctmp
 \newdimen\toccap
 \newdimen\toc@firstht
 \newcount\toccol
@@ -151,14 +151,13 @@
 }
 
 \newcommand{\tocbar}[2]{%
-  \expandafter\gdef\csname toc@name@#1\endcsname{#2}%
-  \tocbarbox{#2}\mark{#1}\nobreak
+  \tocbarbox{#2}\nobreak
 }
 \newcommand{\tocgap}{\par\vskip 2pt }
 \newcommand{\tocitem}[3]{%
   \noindent\hangindent=0.9em \hangafter=1
   \hyperref[f#2]{#3}\nobreak\hskip 0.25em{\color{black!40}\dotfill}\nobreak\hskip 0.25em
-  \textbf{\pageref{f#2}}\par\mark{#1}%
+  \textbf{\pageref{f#2}}\par
 }
 
 \newcommand{\tocbegin}{\setbox\tocbox\vbox\bgroup\tocstyle}
@@ -167,21 +166,9 @@
   \ifnum\toccol>\col@number \toccap=\dimexpr\@colht-1pt\relax \else \toccap=\toc@firstht \fi
   \ifdim\dimexpr\ht\tocbox+\dp\tocbox\relax>\toccap
     \setbox\tocpart\vsplit\tocbox to \toccap
-    \edef\toc@last{\splitbotmark}%
-    \setbox\toctmp\copy\tocbox
-    \setbox\toctmp\vsplit\toctmp to 0pt
-    \edef\toc@first{\splitfirstmark}%
-    \setbox\toctmp\box\voidb@x
     \box\tocpart
     \columnbreak
     \advance\toccol\@ne
-    \ifx\toc@first\toc@last
-      \ifx\toc@last\@empty\else
-        \setbox\tocbox\vbox{%
-          \tocbarbox{\csname toc@name@\toc@last\endcsname\ (cont.)}%
-          \unvbox\tocbox}%
-      \fi
-    \fi
     \expandafter\toc@place
   \else
     \box\tocbox
@@ -241,4 +228,3 @@
 
 \begin{multicols*}{3}
 \raggedcolumns
-
