@@ -17,7 +17,7 @@ struct line_container : multiset<line, less<>> {
     const int inf = 1e18;
 
     int div(int x, int y) {
-        return (x / y) - (((x ^ y) < 0) and x % y);
+        return (x / y) - (((x ^ y) < 0) and x % y != 0);
     }
 
     bool isect(iterator s, iterator t) {
