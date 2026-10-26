@@ -1,7 +1,7 @@
 // XOR Gaussian Elimination: solves XOR systems (mod 2)
 // Time: O(N * n * m / 64) | Space: O(N * m / 64) auxiliary
 // Note: returns {(-1: none, r: rank), solution} | 2^(n - r) solutions and undetermined vars = d
-template<int N> pair<int, vector<int>> xor_gaussian_elimination(int n, vector<bitset<N + 1>> &a, int d) {
+template<int N> pair<int, vector<int>> xor_gaussian_elimination(int n, vector<bitset<N + 1>> a, int d) {
     int m = a.size(), r = 0;
     vector<int> where(n, -1);
     for (int c = 0; c < n and r < m; ++c) {
