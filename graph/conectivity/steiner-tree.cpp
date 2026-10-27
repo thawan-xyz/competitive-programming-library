@@ -1,3 +1,7 @@
+// Steiner Tree: minimum cost to connect k terminal nodes in a graph of n nodes
+// Time: O(3^k * n + 2^k * n^2) | Space: O(2^k * n)
+// Note: assumes terminals are nodes 0 to k-1 | dist[u][v] must be the shortest path between u and v
+// State: steiner[(1<<k)-1][i] = min cost to connect all k terminals and node i
 vector<vector<int>> steiner_tree(int n, int k, const vector<vector<int>> &dist) {
     vector<vector<int>> steiner(1 << k, vector<int>(n, inf));
     for (int i = 0; i < n; ++i) steiner[0][i] = 0;
