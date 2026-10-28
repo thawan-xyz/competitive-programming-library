@@ -2,7 +2,7 @@ struct segment_tree {
     int n;
     vector<int> tree;
 
-    int merge(int x, int y) {
+    static int merge(int x, int y) {
         return x + y;
     }
 

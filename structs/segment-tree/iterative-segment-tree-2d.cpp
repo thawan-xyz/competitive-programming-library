@@ -2,7 +2,7 @@ struct segment_tree_2d {
     int n, m;
     vector<segment_tree> tree;
 
-    segment_tree_2d(int n, int m): n(n), m(m), tree(2 * n, segment_tree(m)) {}
+    segment_tree_2d(int r, int c): n(__bit_ceil(r)), m(__bit_ceil(c)), tree(2 * n, segment_tree(m)) {}
 
     segment_tree_2d(vector<vector<int>> &a): segment_tree_2d(a.size(), a[0].size()) {
         for (int i = 0; i < n; ++i) tree[n + i] = segment_tree(a[i]);
