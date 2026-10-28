@@ -3,56 +3,58 @@ struct binary_lifting {
     vector<int> d;
     vector<vector<int>> up;
 
-    void build(int a, int p, const vector<vector<int>> &g) {
-        up[a][0] = p;
-        for (int i = 1; i <= log; ++i) {
-            up[a][i] = up[up[a][i - 1]][i - 1];
-        }
-        for (int b : g[a]) if (b != p) {
-            d[b] = d[a] + 1;
-            build(b, a, g);
-        }
-    }
-
-    void init(const vector<vector<int>> &g) {
+    binary_lifting(vector<vector<int>> &g) {
         n = g.size();
-        log = __bit_width(n) - 1;
+        log = __bit_width(n);
         d.assign(n, -1);
-        up.assign(n, vector<int>(log + 1));
-        for (int i = 0; i < n; ++i) if (d[i] == -1) {
-            d[i] = 0;
-            build(i, i, g);
+        up.assign(log, vector<int>(n));
+        for (int s = 0; s < n; ++s) if (d[s] == -1) {
+            d[s] = 0;
+            up[0][s] = s;
+            queue<int> q;
+            q.push(s);
+            while (q.size()) {
+                int a = q.front(); q.pop();
+                for (int b : g[a]) if (d[b] == -1) {
+                    d[b] = d[a] + 1;
+                    up[0][b] = a;
+                    q.push(b);
+                }
+            }
+        }
+        for (int i = 1; i < log; ++i) {
+            for (int a = 0; a < n; ++a) {
+                up[i][a] = up[i - 1][up[i - 1][a]];
+            }
         }
     }
 
-    int kth(int a, int k) const {
+    int kth(int a, int k) {
         k = min(k, d[a]);
-        while (k > 0) {
-            int i = __bit_width(k) - 1;
-            a = up[a][i];
-            k ^= 1 << i;
+        for (int i = 0; i < log; ++i) {
+            if ((k >> i) & 1) a = up[i][a];
         }
         return a;
     }
 
-    int lca(int a, int b) const {
+    int lca(int a, int b) {
         if (d[a] < d[b]) swap(a, b);
         a = kth(a, d[a] - d[b]);
         if (a == b) return a;
-        for (int i = log; i >= 0; --i) {
-            if (up[a][i] != up[b][i]) {
-                a = up[a][i];
-                b = up[b][i];
+        for (int i = log - 1; i >= 0; --i) {
+            if (up[i][a] != up[i][b]) {
+                a = up[i][a];
+                b = up[i][b];
             }
         }
-        return up[a][0];
+        return up[0][a];
     }
 
-    int dist(int a, int b) const {
+    int dist(int a, int b) {
         return d[a] + d[b] - 2 * d[lca(a, b)];
     }
 
-    int path(int a, int b, int k) const {
+    int path(int a, int b, int k) {
         int p = lca(a, b);
         int l = d[a] - d[p];
         int r = d[b] - d[p];
