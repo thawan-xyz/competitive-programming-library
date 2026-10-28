@@ -1,9 +1,9 @@
-struct rollback_dsu {
+struct rb_dsu {
     int c;
     vector<int> p, s;
     vector<pair<int, int>> h;
 
-    rollback_dsu(int n): c(n), p(n), s(n, 1) {
+    rb_dsu(int n): c(n), p(n), s(n, 1) {
         iota(p.begin(), p.end(), 0);
     }
 

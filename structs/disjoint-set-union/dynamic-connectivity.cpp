@@ -2,7 +2,7 @@ struct dynamic_connectivity {
 private:
     int n, q;
     vector<vector<pair<int, int>>> tree;
-    rollback_dsu dsu;
+    rb_dsu dsu;
 
     void insert(pair<int, int> e, int ql, int qr, int p, int l, int r) {
         if (qr < l or ql > r) return;
