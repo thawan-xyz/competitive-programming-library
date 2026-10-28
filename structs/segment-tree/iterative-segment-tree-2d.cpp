@@ -5,7 +5,7 @@ struct segment_tree_2d {
     segment_tree_2d(int r, int c): n(__bit_ceil(r)), m(__bit_ceil(c)), tree(2 * n, segment_tree(m)) {}
 
     segment_tree_2d(vector<vector<int>> &a): segment_tree_2d(a.size(), a[0].size()) {
-        for (int i = 0; i < n; ++i) tree[n + i] = segment_tree(a[i]);
+        for (int i = 0; i < a.size(); ++i) tree[n + i] = segment_tree(a[i]);
         for (int i = n - 1; i > 0; --i) {
             for (int j = 1; j < 2 * m; ++j) {
                 tree[i].tree[j] = segment_tree::merge(tree[i << 1].tree[j], tree[(i << 1) | 1].tree[j]);
