@@ -14,13 +14,13 @@ struct segment_tree {
     }
 
     int low, high, root = 0;
-    bool persistent;
+    bool keep;
     vector<node> tree = {node()};
 
-    segment_tree(int low, int high, bool persistent): low(low), high(high), persistent(persistent) {}
+    segment_tree(int low, int high, bool keep): low(low), high(high), keep(keep) {}
 
     int touch(int p) {
-        if (p and not persistent) return p;
+        if (p and not keep) return p;
         tree.push_back(tree[p]);
         return tree.size() - 1;
     }
