@@ -1,48 +1,57 @@
+// Sqrt Decomposition: point set, range add and range sum with blocks of size m = f * sqrt(n)
+// Time: O(n / m + m) per operation | Space: O(n)
+// Note: 0-based | the value at i is arr[i] + lazy[i / m]
 struct sqrt_decomposition {
     int n, m;
-    vector<int> a, b;
+    vector<int> arr, sum, lazy;
 
-    sqrt_decomposition(vector<int> &base, float f = 1.0) {
-        n = base.size();
-        m = clamp<int>(f * sqrt(n), 1, n);
-        a.resize(n);
-        b.resize((n + (m - 1)) / m);
-        for (int i = 0; i < n; ++i) {
-            a[i] = base[i];
-            b[i / m] += a[i];
+    void build(int b) {
+        sum[b] = 0;
+        for (int i = first(b); i <= last(b); ++i) {
+            sum[b] += arr[i];
         }
+    }
+
+    sqrt_decomposition(const vector<int> &arr, float f = 1): n(arr.size()), arr(arr) {
+        m = max<int>(1, f * sqrt(n));
+        sum.assign(n / m + 1, 0);
+        lazy.assign(n / m + 1, 0);
+        for (int b = 0; b <= n / m; ++b) build(b);
+    }
+
+    int first(int b) {
+        return b * m;
+    }
+
+    int last(int b) {
+        return min(n, b * m + m) - 1;
     }
 
     void set(int i, int x) {
-        a[i] = x;
-        int b_i = i / m;
-        b[b_i] = 0;
-        int l = b_i * m;
-        int r = min(n, (b_i + 1) * m) - 1;
-        for (int k = l; k <= r; ++k) {
-            b[b_i] += a[k];
+        int b = i / m;
+        arr[i] = x - lazy[b];
+        build(b);
+    }
+
+    void update(int l, int r, int x) {
+        int bl = l / m, br = r / m;
+        if (bl >= br) {
+            for (int i = l; i <= r; ++i) arr[i] += x;
+            build(bl);
+            return;
         }
+        for (int b = bl + 1; b < br; ++b) lazy[b] += x;
+        update(l, last(bl), x);
+        update(first(br), r, x);
     }
 
     int query(int l, int r) {
-        int s = 0;
-        int b_l = l / m;
-        int b_r = r / m;
-        if (b_l == b_r) {
-            for (int i = l; i <= r; ++i) {
-                s += a[i];
-            }
-        } else {
-            for (int i = l; i < (b_l + 1) * m; ++i) {
-                s += a[i];
-            }
-            for (int i = b_l + 1; i < b_r; ++i) {
-                s += b[i];
-            }
-            for (int i = b_r * m; i <= r; ++i) {
-                s += a[i];
-            }
+        int bl = l / m, br = r / m, s = 0;
+        if (bl >= br) {
+            for (int i = l; i <= r; ++i) s += arr[i] + lazy[bl];
+            return s;
         }
-        return s;
+        for (int b = bl + 1; b < br; ++b) s += sum[b] + lazy[b] * m;
+        return s + query(l, last(bl)) + query(first(br), r);
     }
 };
