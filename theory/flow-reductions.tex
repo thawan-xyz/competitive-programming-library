@@ -1,0 +1,35 @@
+\section{Reduções de Fluxo}
+
+\textbf{Base.} Fluxo máximo $=$ corte mínimo: o maior fluxo de $S$ a $T$ é igual à menor soma de capacidades de
+arestas que, removidas, separam $S$ de $T$. Para recuperar o corte, rode uma BFS/DFS de $S$ só por arestas com
+capacidade residual $> 0$; seja $A$ o conjunto alcançado. O corte são as arestas originais $u \to v$ com $u \in A$
+e $v \notin A$ (todas saturadas).
+
+\subsection*{Reduções clássicas}
+
+\begin{itemize}
+  \item \textbf{Caminhos disjuntos em arestas:} capacidade $1$ em cada aresta; o fluxo máximo é o maior número de
+        caminhos de $S$ a $T$ sem aresta em comum.
+  \item \textbf{Capacidade em vértice:} divida $u$ em $u_{in} \to u_{out}$ com capacidade $c(u)$; as arestas que entram
+        vão para $u_{in}$ e as que saem partem de $u_{out}$. Com $c(u) = 1$, dá caminhos disjuntos em vértices.
+  \item \textbf{Project selection:} escolher $u$ obriga escolher $v$. Lucro $p_u > 0$: $S \to u$ com $p_u$;
+        custo $c_u > 0$: $u \to T$ com $c_u$; dependência: $u \to v$ com $\infty$.
+        Lucro máximo $= \sum p_u - \text{corte mínimo}$, e os escolhidos são $A \setminus \{S\}$.
+  \item \textbf{Escolha entre dois lados:} cada $u$ fica do lado de $S$ (custo $b_u$) ou de $T$ (custo $a_u$):
+        $S \to u$ com $a_u$ e $u \to T$ com $b_u$. Penalidade $c$ se $u$ e $v$ ficam em lados diferentes:
+        $u \to v$ e $v \to u$, ambas com $c$. O custo mínimo é o corte mínimo.
+\end{itemize}
+
+\subsection*{Limite inferior nas arestas ($l \le f \le r$)}
+
+Mande os $l$ obrigatórios em cada aresta e corrija o desequilíbrio que isso cria nos vértices.
+\begin{itemize}
+  \item Cada aresta $u \to v$ vira $u \to v$ com capacidade $r - l$, e o saldo muda: $d[v] \mathrel{+}= l$, $d[u] \mathrel{-}= l$.
+  \item Adicione $T \to S$ com $\infty$, uma fonte nova $S'$ e um sumidouro novo $T'$: $S' \to v$ com $d[v]$ se $d[v] > 0$,
+        e $v \to T'$ com $-d[v]$ se $d[v] < 0$.
+  \item \textbf{Viável} $\iff$ $\text{maxflow}(S', T') = \sum_{d[v] > 0} d[v]$. O fluxo real de cada aresta é $l$ mais o fluxo
+        nela na rede nova.
+  \item \textbf{Fluxo máximo de $S$ a $T$:} seja $f_0$ o fluxo na aresta $T \to S$. Remova essa aresta e rode no residual:
+        resposta $= f_0 + \text{maxflow}(S, T)$.
+  \item \textbf{Fluxo mínimo:} igual, mas a resposta é $f_0 - \text{maxflow}(T, S)$.
+\end{itemize}

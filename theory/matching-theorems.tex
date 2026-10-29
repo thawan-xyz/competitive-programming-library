@@ -1,0 +1,53 @@
+\section{Teoremas de Matching}
+
+\textbf{Base.} Um \textbf{matching} é um conjunto de arestas sem vértice em comum. Em bipartido $G = (L \cup R, E)$:
+ligue $S \to L$, $L \to R$ (as arestas do grafo) e $R \to T$, todas com capacidade $1$; o fluxo máximo é o tamanho do
+matching máximo $|M|$ (Dinic em $O(E\sqrt{V})$).
+
+\subsection*{Equivalências em bipartidos}
+
+\begin{itemize}
+  \item \textbf{Cobertura mínima de vértices (MVC):} menor número de vértices tal que toda aresta tenha pelo menos
+        uma ponta neles. Teorema de König: $|\text{MVC}| = |M|$.
+  \item \textbf{Conjunto independente máximo (MIS):} maior número de vértices sem nenhuma aresta entre eles. É o
+        complemento de uma cobertura de vértices: $|\text{MIS}| = |V| - |M|$.
+  \item \textbf{Cobertura mínima de arestas:} menor número de arestas tal que todo vértice seja ponta de pelo menos
+        uma (só existe sem vértices isolados): $|V| - |M|$. Para montar, pegue o matching e adicione uma aresta
+        qualquer de cada vértice que ficou sem par.
+  \item \textbf{Teorema de Hall:} existe um matching que casa \textbf{todos} os vértices de $L$ se, e somente se,
+        todo grupo $X \subseteq L$ tem pelo menos $|X|$ vizinhos em $R$, ou seja, $|N(X)| \ge |X|$, onde $N(X)$ é o
+        conjunto de vértices de $R$ ligados a algum vértice de $X$. Se $k$ vértices de $L$ só conhecem menos de $k$
+        vértices de $R$, falta par para alguém. Uso típico: provar que o matching existe (ex.: todo bipartido em que
+        todos os vértices têm grau $d \ge 1$ tem matching perfeito).
+\end{itemize}
+
+\subsection*{Cobertura de DAG por caminhos}
+
+Divida cada vértice em $u_L$ e $u_R$ e, para cada aresta $u \to v$, ligue $u_L \to v_R$. Cada aresta do matching
+junta dois vértices no mesmo caminho.
+\begin{itemize}
+  \item \textbf{Caminhos disjuntos em vértices:} mínimo $= |V| - |M|$.
+  \item \textbf{Caminhos que podem repetir vértices (cadeias):} faça o mesmo no \textbf{fecho transitivo}
+        ($u \to v$ se $u$ alcança $v$). O mínimo $|V| - |M|$ é igual à \textbf{maior anticadeia}, o maior conjunto em
+        que ninguém alcança ninguém (Dilworth).
+  \item Sem o fecho a resposta pode ser maior: $a \to c$, $b \to c$, $c \to d$, $c \to e$ precisa de $3$ caminhos
+        disjuntos, mas só de $2$ cadeias ($acd$ e $bce$).
+\end{itemize}
+
+\subsection*{Grafos gerais}
+
+\begin{itemize}
+  \item \textbf{Gallai:} $|\text{MIS}| + |\text{MVC}| = |V|$; e, sem vértices isolados,
+        $|\text{matching máximo}| + |\text{cobertura mínima de arestas}| = |V|$.
+  \item König \textbf{não} vale (triângulo: $|\text{MVC}| = 2$, $|M| = 1$), MVC e MIS são NP-difíceis, e matching
+        em grafo geral precisa de Blossom (fluxo não trata ciclos ímpares).
+\end{itemize}
+
+\subsection*{Recuperar a resposta}
+
+Depois do fluxo, rode uma BFS/DFS de $S$ só por arestas com capacidade residual $> 0$; seja $A$ o conjunto alcançado.
+\begin{itemize}
+  \item \textbf{Matching:} arestas $L \to R$ com fluxo $1$.
+  \item \textbf{MVC:} $(L \setminus A) \cup (R \cap A)$. O \textbf{MIS} é o complemento: $(L \cap A) \cup (R \setminus A)$.
+  \item \textbf{Caminhos no DAG:} siga as arestas $u_L \to v_R$ com fluxo $1$; $u$ termina um caminho se $u_L$ não manda fluxo.
+\end{itemize}
