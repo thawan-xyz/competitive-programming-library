@@ -1,0 +1,62 @@
+\section{Stars and Bars}
+
+\textbf{Problema base.} Quantas soluções inteiras tem
+\[
+x_1 + x_2 + \dots + x_k = n, \qquad x_i \ge 0 \;?
+\]
+
+\textbf{Ideia.} Represente $n$ como $n$ estrelas ($\star$) e separe-as em $k$ grupos
+usando $k-1$ barras ($|$). Cada arrumação de $n$ estrelas e $k-1$ barras em fila
+corresponde a exatamente uma solução (o grupo $i$ é a quantidade de estrelas
+entre a barra $i-1$ e a barra $i$). Ex.: $n=5$, $k=3$: \;
+$\star\star|\star|\star\star \;\leftrightarrow\; (2,1,2)$ \; e \;
+$||\star\star\star\star\star \;\leftrightarrow\; (0,0,5)$.
+
+Basta escolher as posições das barras entre $n+k-1$ posições:
+\[
+\boxed{\binom{n+k-1}{k-1}}
+\]
+
+\subsection*{Variações}
+
+\begin{itemize}
+  \item \textbf{Variáveis positivas} ($x_i \ge 1$): coloque as barras nos $n-1$ espaços
+        entre estrelas, no máximo uma por espaço:
+        \[ \binom{n-1}{k-1}. \]
+
+  \item \textbf{Limite inferior} ($x_i \ge l_i$): substitua $y_i = x_i - l_i \ge 0$.
+        Recai no caso base com $n' = n - \sum l_i$ (se $n' < 0$, a resposta é $0$):
+        \[ \binom{n' + k - 1}{k-1}. \]
+
+  \item \textbf{Soma com desigualdade} ($x_1 + \dots + x_k \le n$, $x_i \ge 0$):
+        adicione uma variável de folga $x_{k+1} = n - \sum x_i \ge 0$. Agora são $k+1$ variáveis
+        com soma exatamente $n$:
+        \[ \binom{n+k}{k}. \]
+
+  \item \textbf{Limite superior} ($0 \le x_i \le u_i$): inclusão-exclusão. Para um conjunto $S$
+        de variáveis que \emph{violam} o limite, force $x_i \ge u_i + 1$ para $i \in S$:
+        \[
+        \sum_{S \subseteq \{1,\dots,k\}} (-1)^{|S|}
+        \binom{n - \sum_{i \in S}(u_i+1) + k - 1}{k-1},
+        \]
+        considerando o termo $0$ quando o topo fica negativo.
+
+  \item \textbf{Mesmo limite superior} ($0 \le x_i \le c$ para todo $i$): os conjuntos $S$ de
+        mesmo tamanho contribuem igual, então
+        \[
+        \sum_{j=0}^{k} (-1)^j \binom{k}{j} \binom{n - j(c+1) + k - 1}{k-1},
+        \]
+        parando quando $n - j(c+1) < 0$.
+\end{itemize}
+
+\subsection*{Problemas equivalentes}
+
+A mesma fórmula $\binom{n+k-1}{k-1} = \binom{n+k-1}{n}$ conta:
+\begin{itemize}
+  \item distribuir $n$ objetos \textbf{idênticos} em $k$ caixas \textbf{distintas};
+  \item \textbf{multiconjuntos} de tamanho $n$ com elementos de $k$ tipos
+        (combinação com repetição);
+  \item sequências \textbf{não-decrescentes} de tamanho $n$ com valores em $[1, k]$
+        ($x_i$ = quantas vezes o valor $i$ aparece);
+  \item monômios de grau $n$ em $k$ variáveis.
+\end{itemize}
