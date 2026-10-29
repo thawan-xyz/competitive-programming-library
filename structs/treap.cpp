@@ -1,6 +1,6 @@
 // Treap: dynamic array with insert, erase, set, move, reverse, range update and range query
-// Time: O(log N) expected per operation | Space: O(N) | needs the global rng (mt19937) for priorities
-// Note: positions are 0-based | sorted: insert(less(x), x), less(x) = count < x | edit node, pull and apply
+// Time: O(log N) expected per operation | Space: O(N) | needs rng (mt19937) | edit node, pull and apply
+// Note: 0-based positions | less(x) = count < x, only if the array is kept sorted with insert(less(x), x)
 struct treap {
     struct node {
         int val = 0, pri = rng();
@@ -89,8 +89,8 @@ struct treap {
         root = merge(merge(a, m), c);
     }
 
-    void insert(int k, int x) {
-        auto [a, b] = split(root, k);
+    void insert(int i, int x) {
+        auto [a, b] = split(root, i);
         root = merge(merge(a, make(x)), b);
     }
 
@@ -99,8 +99,8 @@ struct treap {
         root = merge(a, c);
     }
 
-    void set(int k, int x) {
-        auto [a, m, c] = split3(k, k);
+    void set(int i, int x) {
+        auto [a, m, c] = split3(i, i);
         tree[m].val = x;
         pull(m);
         merge3(a, m, c);
@@ -126,18 +126,18 @@ struct treap {
 
     node query(int l, int r) {
         auto [a, m, c] = split3(l, r);
-        node res = tree[m];
+        node q = tree[m];
         merge3(a, m, c);
-        return res;
+        return q;
     }
 
     int less(int x) {
-        int k = 0;
-        for (int n = root; n != 0;) {
+        int i = 0, n = root;
+        while (n != 0) {
             push(n);
-            if (tree[n].val < x) k += tree[tree[n].l].size + 1, n = tree[n].r;
+            if (tree[n].val < x) i += tree[tree[n].l].size + 1, n = tree[n].r;
             else n = tree[n].l;
         }
-        return k;
+        return i;
     }
 };
