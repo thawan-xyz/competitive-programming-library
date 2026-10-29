@@ -13,7 +13,7 @@ struct sqrt_decomposition {
         }
     }
 
-    void update(int i, int x) {
+    void set(int i, int x) {
         a[i] = x;
         int b_i = i / m;
         b[b_i] = 0;
