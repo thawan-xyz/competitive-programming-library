@@ -19,7 +19,7 @@ string to_clock(int x) {
     return pad(x / 3600, 2) + ":" + pad(x / 60 % 60, 2) + ":" + pad(x % 60, 2);
 }
 
-// "dd/mm/yyyy" -> {d, m, y}
+// "dd/mm/yyyy" -> [d, m, y]
 array<int, 3> parse(const string &t) {
     int d, m, y;
     char c;
