@@ -1,18 +1,15 @@
 #!/bin/bash
 set -e
 
-: "${TEAM_NAME:=Team of One}"
-: "${MEMBERS:=Thawan}"
-: "${UNIVERSITY:=UFPE}"
+TITLE="Competitive Programming Library"
+if [[ $# -gt 0 && $1 != --* ]]; then TITLE=$1; shift; fi
 
 trap 'rm -f generate env.tex notebook.{tex,aux,toc,out,log}' EXIT
 
 mkdir -p ../pdf
 
 cat > env.tex << EOF
-\def\teamname{$TEAM_NAME}
-\def\teammembers{$MEMBERS}
-\def\teamuni{$UNIVERSITY}
+\def\notebooktitle{$TITLE}
 EOF
 
 g++ generate.cpp -std=c++20 -O2 -o generate
