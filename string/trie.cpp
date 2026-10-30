@@ -7,26 +7,27 @@ struct trie {
     vector<node> tree = {node()};
 
     int find(const string &s) {
-        int i = 0;
-        for (char c : s) {
-            i = tree[i].child[c - 'a'];
-            if (i == 0) return -1;
+        int a = 0;
+        for (char h : s) {
+            int c = h - 'a';
+            a = tree[a].child[c];
+            if (a == 0) return -1;
         }
-        return i;
+        return a;
     }
 
     void update(const string &s, int d) {
-        int i = 0;
-        tree[i].pref += d;
-        for (char c : s) {
-            int k = c - 'a';
-            if (tree[i].child[k] == 0) {
-                tree[i].child[k] = tree.size();
+        int a = 0;
+        tree[a].pref += d;
+        for (char h : s) {
+            int c = h - 'a';
+            if (tree[a].child[c] == 0) {
+                tree[a].child[c] = tree.size();
                 tree.emplace_back();
             }
-            i = tree[i].child[k];
-            tree[i].pref += d;
+            a = tree[a].child[c];
+            tree[a].pref += d;
         }
-        tree[i].end += d;
+        tree[a].end += d;
     }
 };

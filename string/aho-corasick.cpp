@@ -1,65 +1,52 @@
 struct aho_corasick {
     struct node {
-        int fail = 0;
-        int exit = 0;
-        int len = 0;
-        int cnt = 0;
+        int len = 0, end = 0;
+        int fail = 0, exit = 0;
         array<int, 26> next = {};
     };
 
-    vector<node> trie;
+    vector<node> tree = {node()};
+    vector<int> order;
 
-    aho_corasick(int n = 0) {
-        trie.reserve(n + 5);
-        trie.emplace_back();
-    }
-
-    void insert(string &s) {
-        int i = 0;
-        for (char c : s) {
-            int k = c - 'a';
-            if (trie[i].next[k] == 0) {
-                trie[i].next[k] = trie.size();
-                trie.emplace_back();
+    int insert(const string &s) {
+        int a = 0;
+        for (char h : s) {
+            int c = h - 'a';
+            if (tree[a].next[c] == 0) {
+                tree[a].next[c] = tree.size();
+                tree.emplace_back();
             }
-            i = trie[i].next[k];
+            a = tree[a].next[c];
         }
-        trie[i].len = s.length();
-        trie[i].cnt++;
+        tree[a].end++;
+        return a;
     }
 
-    void compile() {
-        queue<int> q;
-        for (int c = 0; c < 26; ++c) {
-            int i = trie[0].next[c];
-            if (i != 0) q.push(i);
-        }
-        while (q.size()) {
-            int i = q.front(); q.pop();
-            int f = trie[i].fail;
-            trie[i].exit = trie[f].cnt != 0 ? f : trie[f].exit;
+    void build() {
+        order = {0};
+        for (int i = 0; i < order.size(); ++i) {
+            int a = order[i], f = tree[a].fail;
+            tree[a].exit = (tree[f].end > 0) ? f : tree[f].exit;
             for (int c = 0; c < 26; ++c) {
-                int &j = trie[i].next[c];
-                if (j != 0) {
-                    trie[j].fail = trie[f].next[c];
-                    q.push(j);
+                int b = tree[a].next[c];
+                if (b == 0) {
+                    tree[a].next[c] = tree[f].next[c];
                 } else {
-                    j = trie[f].next[c];
+                    tree[b].fail = (a == 0) ? 0 : tree[f].next[c];
+                    tree[b].len = tree[a].len + 1;
+                    order.push_back(b);
                 }
             }
         }
     }
 
-    vector<int> match(string &t) {
-        int n = t.length();
-        vector<int> p;
-        int i = 0;
-        for (int k = 0; k < n; ++k) {
-            i = trie[i].next[t[k] - 'a'];
-            for (int j = i; j != 0; j = trie[j].exit) if (trie[j].cnt != 0) {
-                for (int r = 1; r <= trie[j].cnt; ++r) {
-                    p.push_back(k - trie[j].len + 1);
-                }
+    vector<array<int, 2>> match(const string &t) {
+        vector<array<int, 2>> p;
+        int a = 0;
+        for (int i = 0; i < t.size(); ++i) {
+            a = tree[a].next[t[i] - 'a'];
+            for (int b = a; b != 0; b = tree[b].exit) {
+                if (tree[b].end > 0) p.push_back({i - tree[b].len + 1, b});
             }
         }
         return p;
