@@ -1,49 +1,34 @@
-const array<int, 2> base = {41, 53};
-const array<int, 2> mod = {1000000007, 1000000009};
+const int mod = (1LL << 61) - 1;
+const int128 base = uniform_int_distribution<int>(256, mod - 1)(rng);
 
-vector<array<int, 2>> pows = {{{1, 1}}};
+struct info {
+    int len = 0, norm = 0, rev = 0;
+    int128 pow = 1;
 
-void extend(int n) {
-    while (pows.size() <= n) {
-        array<int, 2> back = pows.back();
-        array<int, 2> curr = {(back[0] * base[0]) % mod[0], (back[1] * base[1]) % mod[1]};
-        pows.push_back(curr);
-    }
-}
-
-struct block {
-    int len = 0;
-    array<int, 2> ord = {};
-    array<int, 2> rev = {};
-
-    bool operator==(const block &o) const {
-        return len == o.len and ord == o.ord;
+    bool operator==(const info &o) const {
+        return len == o.len and norm == o.norm;
     }
 };
 
 struct hasher {
     int n;
-    vector<array<int, 2>> pref, suf;
-    
-    hasher(const string &s): n(s.length()), pref(n + 1), suf(n + 2) {
+    vector<int> pre, suf;
+    vector<int128> pows;
+
+    hasher(const string &s): n(s.size()), pre(n + 1), suf(n + 1), pows(n + 1, 1) {
         for (int i = 0; i < n; ++i) {
-            for (int j = 0; j <= 1; ++j) {
-                pref[i + 1][j] = (pref[i][j] * base[j] + s[i]) % mod[j];
-                suf[n - i][j] = (suf[n - i + 1][j] * base[j] + s[n - i - 1]) % mod[j];
-            }
+            pre[i + 1] = (pre[i] * base + s[i]) % mod;
+            pows[i + 1] = pows[i] * base % mod;
         }
-        extend(n);
+        for (int i = n - 1; i >= 0; --i) suf[i] = (suf[i + 1] * base + s[i]) % mod;
     }
 
-    block query(int l, int r) const {
-        block h;
+    info query(int l, int r) {
+        info h;
         h.len = r - l + 1;
-        for (int i = 0; i <= 1; ++i) {
-            h.ord[i] = (pref[r + 1][i] - pref[l][i] * pows[h.len][i]) % mod[i];
-            h.ord[i] = (h.ord[i] + mod[i]) % mod[i];
-            h.rev[i] = (suf[l + 1][i] - suf[r + 2][i] * pows[h.len][i]) % mod[i];
-            h.rev[i] = (h.rev[i] + mod[i]) % mod[i];
-        }
+        h.pow = pows[h.len];
+        h.norm = (pre[r + 1] - pre[l] * h.pow % mod + mod) % mod;
+        h.rev = (suf[l] - suf[r + 1] * h.pow % mod + mod) % mod;
         return h;
     }
 };
