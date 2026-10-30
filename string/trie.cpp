@@ -1,20 +1,23 @@
 struct trie {
     struct node {
-        int pref = 0;
-        int end = 0;
+        int pref = 0, end = 0;
         array<int, 26> child = {};
     };
 
-    vector<node> tree;
+    vector<node> tree = {node()};
 
-    trie(int n = 0) {
-        tree.reserve(n + 1);
-        tree.emplace_back();
+    int find(const string &s) {
+        int i = 0;
+        for (char c : s) {
+            i = tree[i].child[c - 'a'];
+            if (i == 0) return -1;
+        }
+        return i;
     }
 
-    void insert(string &s) {
+    void update(const string &s, int d) {
         int i = 0;
-        tree[0].pref++;
+        tree[i].pref += d;
         for (char c : s) {
             int k = c - 'a';
             if (tree[i].child[k] == 0) {
@@ -22,30 +25,8 @@ struct trie {
                 tree.emplace_back();
             }
             i = tree[i].child[k];
-            tree[i].pref++;
+            tree[i].pref += d;
         }
-        tree[i].end++;
-    }
-
-    void remove(string &s) {
-        if (not contains(s)) return;
-        int i = 0;
-        tree[i].pref--;
-        for (char c : s) {
-            int k = c - 'a';
-            i = tree[i].child[k];
-            tree[i].pref--;
-        }
-        tree[i].end--;
-    }
-
-    bool contains(string &s) {
-        int i = 0;
-        for (char c : s) {
-            int k = c - 'a';
-            i = tree[i].child[k];
-            if (i == 0) return false;
-        }
-        return tree[i].end != 0;
+        tree[i].end += d;
     }
 };
