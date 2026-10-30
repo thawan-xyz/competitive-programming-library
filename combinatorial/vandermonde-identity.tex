@@ -1,0 +1,35 @@
+\section{Identidade de Vandermonde}
+
+\textbf{Problema base.} Trocar uma soma de produtos de binomiais, $O(N)$, por um único binomial, $O(1)$
+com fatoriais pré-computados.
+
+\textbf{Ideia.} Escolher $r$ pessoas de um grupo com $m$ homens e $n$ mulheres é somar, para cada $k$,
+as formas de escolher $k$ homens e $r - k$ mulheres:
+\[
+\boxed{\sum_{k} \binom{m}{k}\binom{n}{r-k} = \binom{m+n}{r}}
+\]
+A soma é sobre todo $k$ (termos fora do intervalo valem $0$). Para aplicar, \textbf{os índices de baixo precisam somar
+uma constante} ($k + (r - k) = r$). Quando não somam, use a simetria $\binom{n}{k} = \binom{n}{n-k}$ em um dos termos.
+
+\subsection*{Padrões}
+
+\begin{itemize}
+  \item \textbf{Índices iguais:} em $\sum_k \binom{x}{k}\binom{y}{k}$ os de baixo somam $2k$, que não é constante. Trocando
+        $\binom{x}{k}$ por $\binom{x}{x-k}$, eles somam $(x - k) + k = x$:
+        \[ \sum_{k} \binom{x}{k}\binom{y}{k} = \sum_{k} \binom{x}{x-k}\binom{y}{k} = \binom{x+y}{x}. \]
+        Caso particular: $\sum_{k} \binom{n}{k}^2 = \binom{2n}{n}$.
+
+  \item \textbf{Índices deslocados:} em $\sum_k \binom{x}{k+a}\binom{y}{k+b}$, troque $\binom{x}{k+a}$ por $\binom{x}{x-k-a}$;
+        os de baixo somam $(x - k - a) + (k + b) = x - a + b$:
+        \[ \sum_{k} \binom{x}{k+a}\binom{y}{k+b} = \binom{x+y}{x-a+b}. \]
+        Ex.: $\sum_{k} \binom{x}{k-1}\binom{y}{k} = \binom{x+y}{x+1}$ \;($a = -1$, $b = 0$).
+
+  \item \textbf{Índices de cima com soma constante:} escolha $a + b + 1$ números de $\{0, \dots, n\}$ e
+        olhe a posição $k$ do $(a+1)$-ésimo:
+        \[ \sum_{k=0}^{n} \binom{k}{a}\binom{n-k}{b} = \binom{n+1}{a+b+1}. \]
+
+  \item \textbf{Hockey stick} (o caso $b = 0$ acima):
+        \[ \sum_{i=0}^{n} \binom{i}{k} = \binom{n+1}{k+1}. \]
+\end{itemize}
+
+\textbf{Implementação:} pré-compute fatoriais e inversos modulares para calcular $\binom{n}{k} \bmod p$ em $O(1)$.
