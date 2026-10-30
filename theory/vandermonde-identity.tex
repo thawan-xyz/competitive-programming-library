@@ -1,32 +1,35 @@
 \section{Identidade de Vandermonde}
 
-A Identidade de Vandermonde é uma ferramenta essencial em combinatória para otimizar somatórios envolvendo multiplicações de coeficientes binomiais, reduzindo cálculos de complexidade $O(N)$ para $O(1)$ (com pré-computação de fatoriais).
+\textbf{Problema base.} Trocar uma soma de produtos de binomiais, $O(N)$, por um único binomial, $O(1)$
+com fatoriais pré-computados.
 
-\subsection*{Fórmula Clássica}
-Para quaisquer inteiros não negativos $m$, $n$ e $r$:
+\textbf{Ideia.} Escolher $r$ pessoas de um grupo com $m$ homens e $n$ mulheres é somar, para cada $k$,
+as formas de escolher $k$ homens e $r - k$ mulheres:
 \[
-\sum_{k=0}^{r} \binom{m}{k} \binom{n}{r-k} = \binom{m+n}{r}
+\boxed{\sum_{k} \binom{m}{k}\binom{n}{r-k} = \binom{m+n}{r}}
 \]
-\textbf{Intuição Combinatória:} Escolher um comitê de $r$ pessoas de um grupo contendo $m$ homens e $n$ mulheres é equivalente a somar todos os cenários possíveis de escolha (onde escolhemos $k$ homens e $r-k$ mulheres).
+A soma é sobre todo $k$ (termos fora do intervalo valem $0$). Para aplicar, \textbf{os índices de baixo precisam somar
+uma constante} ($k + (r - k) = r$). Quando não somam, use a simetria $\binom{n}{k} = \binom{n}{n-k}$ em um dos termos.
 
-\subsection*{Uso em Programação Competitiva (O Truque da Simetria)}
+\subsection*{Padrões}
 
-Em problemas de contagem, raramente a fórmula aparece pronta. O cenário mais comum é encontrar uma soma onde os índices inferiores \textbf{crescem simultaneamente}. 
+\begin{itemize}
+  \item \textbf{Índices iguais:} em $\sum_k \binom{x}{k}\binom{y}{k}$ os de baixo somam $2k$, que não é constante. Trocando
+        $\binom{x}{k}$ por $\binom{x}{x-k}$, eles somam $(x - k) + k = x$:
+        \[ \sum_{k} \binom{x}{k}\binom{y}{k} = \sum_{k} \binom{x}{x-k}\binom{y}{k} = \binom{x+y}{x}. \]
+        Caso particular: $\sum_{k} \binom{n}{k}^2 = \binom{2n}{n}$.
 
-Para aplicar Vandermonde, a soma dos termos inferiores deve ser \textbf{constante}. Alcançamos isso aplicando a simetria do binômio:
-\[ \binom{n}{k} = \binom{n}{n-k} \]
+  \item \textbf{Índices deslocados:} em $\sum_k \binom{x}{k+a}\binom{y}{k+b}$, troque $\binom{x}{k+a}$ por $\binom{x}{x-k-a}$;
+        os de baixo somam $(x - k - a) + (k + b) = x - a + b$:
+        \[ \sum_{k} \binom{x}{k+a}\binom{y}{k+b} = \binom{x+y}{x-a+b}. \]
+        Ex.: $\sum_{k} \binom{x}{k-1}\binom{y}{k} = \binom{x+y}{x+1}$ \;($a = -1$, $b = 0$).
 
-\subsubsection*{Padrão 1: Índices Iguais}
-Se a sua modelagem resultou na soma:
-\[ \sum_{k=0}^{\min(x,y)} \binom{x}{k} \binom{y}{k} \]
-Aplique a simetria no primeiro termo ($\binom{x}{k} \rightarrow \binom{x}{x-k}$):
-\[ \sum_{k} \binom{x}{x-k} \binom{y}{k} = \binom{x+y}{x} \]
-\textit{Nota: A soma dos índices inferiores agora é $(x-k) + k = x$ (constante).}
+  \item \textbf{Índices de cima com soma constante:} escolha $a + b + 1$ números de $\{0, \dots, n\}$ e
+        olhe a posição $k$ do $(a+1)$-ésimo:
+        \[ \sum_{k=0}^{n} \binom{k}{a}\binom{n-k}{b} = \binom{n+1}{a+b+1}. \]
 
-\subsubsection*{Padrão 2: Índices Deslocados (Exemplo Prático)}
-Se você precisar escolher $k-1$ itens de um grupo e $k$ de outro:
-\[ \sum_{k \ge 1} \binom{x}{k-1} \binom{y}{k} \]
-Transforme o primeiro termo usando $\binom{x}{k-1} = \binom{x}{x - (k-1)} = \binom{x}{x - k + 1}$:
-\[ \sum_{k \ge 1} \binom{x}{x - k + 1} \binom{y}{k} = \binom{x+y}{x+1} \]
+  \item \textbf{Hockey stick} (o caso $b = 0$ acima):
+        \[ \sum_{i=0}^{n} \binom{i}{k} = \binom{n+1}{k+1}. \]
+\end{itemize}
 
-\textbf{Dica de Implementação:} Sempre pré-compute os fatoriais e seus inversos modulares para responder a $\binom{n}{k} \pmod M$ em $O(1)$.
+\textbf{Implementação:} pré-compute fatoriais e inversos modulares para calcular $\binom{n}{k} \bmod p$ em $O(1)$.
