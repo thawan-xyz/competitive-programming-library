@@ -1,25 +1,25 @@
-int ternary_search(int low, int high, bool is_max) {
-    while (high - low >= 3) {
-        int mid1 = low + (high - low) / 3;
-        int mid2 = high - (high - low) / 3;
-
-        if (is_max == (fun(mid1) < fun(mid2))) low = mid1;
-        else high = mid2;
+int ternary_search(int l, int r, bool is_max) {
+    int a = l, b = r;
+    while (l < r) {
+        int m = l + (r - l) / 2;
+        bool is_up = fun(m) < fun(m + 1);
+        if (is_up == is_max) l = m + 1;
+        else r = m;
     }
-
-    int ans = low;
-    for (int i = low + 1; i <= high; ++i) if (is_max == (fun(ans) < fun(i))) ans = i;
-    return ans;
+    for (int x : {a, b}) {
+        bool is_up = fun(l) < fun(x);
+        if (is_up == is_max) l = x;
+    }
+    return l;
 }
 
-float ternary_search(float low, float high, bool is_max) {
-    for (int itr = 1; itr <= 100; ++itr) {
-        float mid1 = low + (high - low) / 3.0;
-        float mid2 = high - (high - low) / 3.0;
-
-        if (is_max == (fun(mid1) < fun(mid2))) low = mid1;
-        else high = mid2;
+float ternary_search(float l, float r, bool is_max) {
+    for (int i = 0; i < 100; ++i) {
+        float m1 = l + (r - l) / 3;
+        float m2 = r - (r - l) / 3;
+        bool is_up = fun(m1) < fun(m2);
+        if (is_up == is_max) l = m1;
+        else r = m2;
     }
-
-    return (low + high) / 2.0;
+    return (l + r) / 2;
 }
