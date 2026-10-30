@@ -62,18 +62,18 @@
 
 \makeatletter
 \newcommand{\lst@numberstyle@color}{\color{red_number}}
-\newcommand{\lst@startsdigit}[1]{%
+\newcommand{\lst@startsdigit}[1]{
   \expandafter\lst@startsdigit@\detokenize\expandafter{#1}\@nil}
-\def\lst@startsdigit@#1#2\@nil{%
+\def\lst@startsdigit@#1#2\@nil{
   \ifnum`#1>47 \ifnum`#1<58 \let\lst@thestyle\lst@numberstyle@color\fi\fi}
-\lst@AddToHook{Output}{%
+\lst@AddToHook{Output}{
   \ifx\lst@currstyle\relax\lst@startsdigit{\the\lst@token}\fi}
 \makeatother
 
 \makeatletter
-\patchcmd{\lst@Init}{\par\penalty-50\relax}{\par\relax}{}{%
+\patchcmd{\lst@Init}{\par\penalty-50\relax}{\par\relax}{}{
   \PackageWarning{header}{Could not patch \string\lst@Init (titles may be orphaned)}}
-\patchcmd{\lst@MakeCaption}{\allowbreak\ifx\lst@@caption}{\ifx\lst@@caption}{}{%
+\patchcmd{\lst@MakeCaption}{\allowbreak\ifx\lst@@caption}{\ifx\lst@@caption}{}{
   \PackageWarning{header}{Could not patch \string\lst@MakeCaption (titles may be orphaned)}}
 \makeatother
 
@@ -83,11 +83,11 @@
 
 \makeatletter
 \newcommand{\pagefilelist}{}
-\newcommand{\addtofilelist}[1]{%
+\newcommand{\addtofilelist}[1]{
   \ifx\pagefilelist\empty
-    \gdef\pagefilelist{#1}%
+    \gdef\pagefilelist{#1}
   \else
-    \g@addto@macro\pagefilelist{\ \textbar\ #1}%
+    \g@addto@macro\pagefilelist{\ \textbar\ #1}
   \fi
 }
 
@@ -106,33 +106,33 @@
 
 \renewcommand{\footrulewidth}{0pt}
 
-\fancypagestyle{firstpage}{%
-  \fancyhf{}%
-  \renewcommand{\headrulewidth}{0pt}%
+\fancypagestyle{firstpage}{
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
 }
 
-\newcommand{\barbox}[3]{%
+\newcommand{\barbox}[3]{
   \nointerlineskip
   \begingroup
-  \setlength{\fboxsep}{0.9pt}%
-  \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\raggedright #2 #3}}%
+  \setlength{\fboxsep}{0.9pt}
+  \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\raggedright #2 #3}}
   \endgroup
   \par\nobreak
 }
 
-\newcommand{\secbar}[2]{%
-  \par\addvspace{2.5pt}%
-  \pdfbookmark[0]{#2}{sec#1}%
-  \barbox{black!85}{\color{white}\fontsize{7pt}{7.6pt}\selectfont\bfseries}{#2}%
+\newcommand{\secbar}[2]{
+  \par\addvspace{2.5pt}
+  \pdfbookmark[0]{#2}{sec#1}
+  \barbox{black!85}{\color{white}\fontsize{7pt}{7.6pt}\selectfont\bfseries}{#2}
   \vskip 0.8pt\nobreak
 }
 
-\newcommand{\filebar}[3]{%
-  \par\addvspace{1.5pt}%
-  \phantomsection\label{f#1}\pdfbookmark[1]{#2}{file#1}%
-  \addtofilelist{#2}%
-  \barbox{gray!22}{\fontsize{7pt}{7.6pt}\selectfont\bfseries}%
-    {#2\hfill{\mdseries\tiny\color{black!60}#3}}%
+\newcommand{\filebar}[3]{
+  \par\addvspace{1.5pt}
+  \phantomsection\label{f#1}\pdfbookmark[1]{#2}{file#1}
+  \addtofilelist{#2}
+  \barbox{gray!22}{\fontsize{7pt}{7.6pt}\selectfont\bfseries}
+    {#2\hfill{\mdseries\tiny\color{black!60}#3}}
   \vskip 0.8pt\nobreak
 }
 
@@ -145,16 +145,16 @@
 
 \newcommand{\tocstyle}{\fontsize{6.5pt}{7pt}\selectfont\raggedright\clubpenalty=10000 \widowpenalty=10000 }
 
-\newcommand{\tocbarbox}[1]{%
-  \barbox{black!85}{\color{white}\fontsize{6.5pt}{7pt}\selectfont\bfseries}{#1}%
+\newcommand{\tocbarbox}[1]{
+  \barbox{black!85}{\color{white}\fontsize{6.5pt}{7pt}\selectfont\bfseries}{#1}
   \vskip 0.8pt\nobreak
 }
 
-\newcommand{\tocbar}[2]{%
+\newcommand{\tocbar}[2]{
   \tocbarbox{#2}\nobreak
 }
 \newcommand{\tocgap}{\par\vskip 2pt }
-\newcommand{\tocitem}[3]{%
+\newcommand{\tocitem}[3]{
   \noindent\hangindent=0.9em \hangafter=1
   \hyperref[f#2]{#3}\nobreak\hskip 0.25em{\color{black!40}\dotfill}\nobreak\hskip 0.25em
   \textbf{\pageref{f#2}}\par
@@ -162,7 +162,7 @@
 
 \newcommand{\tocbegin}{\setbox\tocbox\vbox\bgroup\tocstyle}
 
-\newcommand{\toc@place}{%
+\newcommand{\toc@place}{
   \ifnum\toccol>\col@number \toccap=\dimexpr\@colht-1pt\relax \else \toccap=\toc@firstht \fi
   \ifdim\dimexpr\ht\tocbox+\dp\tocbox\relax>\toccap
     \setbox\tocpart\vsplit\tocbox to \toccap
@@ -175,7 +175,7 @@
   \fi
 }
 
-\newcommand{\tocend}{%
+\newcommand{\tocend}{
   \par\egroup
   \begingroup
     \vbadness=\@M \vfuzz=\maxdimen \splittopskip=0pt \relax
@@ -185,17 +185,17 @@
 }
 \makeatother
 
-\NewDocumentCommand{\texfile}{m}{%
+\NewDocumentCommand{\texfile}{m}{
   \begingroup
   \fontsize{6pt}{7.2pt}\selectfont
   \raggedright\sloppy
-  \setlength{\parskip}{1pt plus 0.5pt}%
-  \RenewDocumentCommand{\section}{s m}{\par\vspace{3pt}{\fontsize{7pt}{8pt}\bfseries ##2}\par\vspace{1pt}}%
-  \RenewDocumentCommand{\subsection}{s m}{\par\vspace{2pt}{\fontsize{6.5pt}{7.5pt}\bfseries ##2}\par\vspace{1pt}}%
-  \RenewDocumentCommand{\subsubsection}{s m}{\par\vspace{1.5pt}{\fontsize{6pt}{7pt}\bfseries ##2}\par\vspace{1pt}}%
-  \RenewDocumentEnvironment{itemize}{}{\begin{list}{\labelitemi}{\leftmargin=1em \topsep=1.5pt \partopsep=0pt \parsep=0pt \itemsep=1pt}}{\end{list}}%
-  \RenewDocumentEnvironment{enumerate}{}{\begin{list}{\arabic{enumi}.}{\usecounter{enumi} \leftmargin=1em \topsep=1.5pt \partopsep=0pt \parsep=0pt \itemsep=1pt}}{\end{list}}%
-  \input{#1}%
+  \setlength{\parskip}{1pt plus 0.5pt}
+  \RenewDocumentCommand{\section}{s m}{\par\vspace{3pt}{\fontsize{7pt}{8pt}\bfseries ##2}\par\vspace{1pt}}
+  \RenewDocumentCommand{\subsection}{s m}{\par\vspace{2pt}{\fontsize{6.5pt}{7.5pt}\bfseries ##2}\par\vspace{1pt}}
+  \RenewDocumentCommand{\subsubsection}{s m}{\par\vspace{1.5pt}{\fontsize{6pt}{7pt}\bfseries ##2}\par\vspace{1pt}}
+  \RenewDocumentEnvironment{itemize}{}{\begin{list}{\labelitemi}{\leftmargin=1em \topsep=1.5pt \partopsep=0pt \parsep=0pt \itemsep=1pt}}{\end{list}}
+  \RenewDocumentEnvironment{enumerate}{}{\begin{list}{\arabic{enumi}.}{\usecounter{enumi} \leftmargin=1em \topsep=1.5pt \partopsep=0pt \parsep=0pt \itemsep=1pt}}{\end{list}}
+  \input{#1}
   \par
   \endgroup
 }
