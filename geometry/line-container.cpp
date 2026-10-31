@@ -2,39 +2,37 @@
 // Time: insert/query O(log N) | Space: O(N)
 // Note: computes max(ax + b) | change '<' to '>' in line operator for min
 struct line {
-    mutable int a, b, i;
+    mutable int a, b, last;
 
     bool operator<(const line &o) const {
         return tie(a, b) < tie(o.a, o.b);
     }
 
-    bool operator<(const int x) const {
-        return i < x;
+    bool operator<(int x) const {
+        return last < x;
     }
 };
 
 struct line_container : multiset<line, less<>> {
-    const int inf = 1e18;
-
-    int div(int x, int y) {
-        return (x / y) - (((x ^ y) < 0) & x % y != 0);
+    int floor(int n, int d) {
+        return n / d - ((n ^ d) < 0 and n % d != 0);
     }
 
-    bool isect(iterator s, iterator t) {
-        if (t == end()) return s->i = inf, false;
-        if (s->a == t->a) s->i = -inf;
-        else s->i = div(t->b - s->b, s->a - t->a);
-        return s->i >= t->i;
+    bool intersect(iterator s, iterator t) {
+        if (t == end()) return s->last = inf, false;
+        if (s->a == t->a) s->last = -inf;
+        else s->last = floor(t->b - s->b, s->a - t->a);
+        return s->last >= t->last;
     }
 
     void insert(int a, int b) {
-        auto z = multiset::insert({a, b, 0}), y = z++, x = y;
-        while (isect(y, z)) z = erase(z);
-        if (x != begin() and isect(--x, y)) isect(x, y = erase(y));
-        while ((y = x) != begin() and (--x)->i >= y->i) isect(x, erase(y));
+        auto curr = multiset::insert({a, b, 0}), after = next(curr), before = curr;
+        while (intersect(curr, after)) after = erase(after);
+        if (before != begin() and intersect(--before, curr)) intersect(before, curr = erase(curr));
+        while ((curr = before) != begin() and (--before)->last >= curr->last) intersect(before, erase(curr));
     }
 
-    int max(int x) {
+    int query(int x) {
         auto l = lower_bound(x);
         return l->a * x + l->b;
     }
