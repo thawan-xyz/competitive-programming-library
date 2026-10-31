@@ -1,67 +1,49 @@
-vector<vector<int>> tarjan(int r, vector<vector<int>> &g) {
-    int n = g.size(), timer = 1;
-    vector<vector<int>> components;
-    vector<int> id(n), low(n);
-    stack<int> trail;
-    vector<bool> in(n);
-
-    auto dfs = [&](auto &self, int a) -> void {
-        id[a] = low[a] = timer++;
-        trail.push(a);
-        in[a] = true;
-        for (int b : g[a]) {
-            if (id[b] == 0) {
-                self(self, b);
-                low[a] = min(low[a], low[b]);
-            } else if (in[b]) {
-                low[a] = min(low[a], id[b]);
+vector<int> tarjan(const vector<vector<int>> &g) {
+    int n = g.size(), timer = 0, m = 0;
+    vector<int> in(n, -1), low(n), comp(n, -1);
+    vector<int> dfs, edge(n), path;
+    for (int s = 0; s < n; ++s) if (in[s] == -1) {
+        dfs = {s};
+        while (dfs.size()) {
+            int a = dfs.back();
+            if (in[a] == -1) {
+                in[a] = low[a] = timer++;
+                path.push_back(a);
             }
-        }
-
-        if (id[a] == low[a]) {
-            vector<int> component;
-            while (true) {
-                int b = trail.top(); trail.pop();
-                in[b] = false;
-                component.push_back(b);
-                if (b == a) break;
+            if (edge[a] < g[a].size()) {
+                int b = g[a][edge[a]++];
+                if (in[b] == -1) dfs.push_back(b);
+                else if (comp[b] == -1) low[a] = min(low[a], in[b]);
+                continue;
             }
-            components.push_back(component);
-        }
-    };
-
-    for (int a = r; a < n; ++a) {
-        if (id[a] == 0) {
-            dfs(dfs, a);
+            dfs.pop_back();
+            if (dfs.size()) {
+                low[dfs.back()] = min(low[dfs.back()], low[a]);
+            }
+            if (low[a] == in[a]) {
+                while (comp[a] == -1) {
+                    comp[path.back()] = m;
+                    path.pop_back();
+                }
+                m++;
+            }
         }
     }
-
-    reverse(components.begin(), components.end());
-    return components;
+    for (int &c : comp) c = m - 1 - c;
+    return comp;
 }
 
-pair<vector<vector<int>>, vector<int>> condensed_graph(int r, vector<vector<int>> &g) {
-    int n = g.size();
-    vector<vector<int>> components = tarjan(r, g);
-    int m = components.size();
-
-    vector<int> id(n);
-    for (int i = 0; i < m; ++i) {
-        for (int a : components[i]) {
-            id[a] = i;
-        }
-    }
-
+vector<vector<int>> condensed_graph(const vector<vector<int>> &g, const vector<int> &comp) {
+    int m = *max_element(comp.begin(), comp.end()) + 1;
     vector<vector<int>> c(m);
-    for (int a = r; a < n; ++a) {
-        for (int b : g[a]) if (id[a] != id[b]) {
-            c[id[a]].push_back(id[b]);
+    for (int a = 0; a < g.size(); ++a) {
+        for (int b : g[a]) if (comp[a] != comp[b]) {
+            c[comp[a]].push_back(comp[b]);
         }
     }
-
-    for (int i = 0; i < m; ++i) {
-        sort(c[i].begin(), c[i].end());
-        c[i].erase(unique(c[i].begin(), c[i].end()), c[i].end());
+    for (auto &h : c) {
+        sort(h.begin(), h.end());
+        h.erase(unique(h.begin(), h.end()), h.end());
     }
-    return {c, id};
+    return c;
 }
