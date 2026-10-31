@@ -1,44 +1,30 @@
-// FWHT / Bitwise Convolution: C[k] = sum(A[i] * B[j]) for i (OPR) j = k
+// Fast Walsh-Hadamard Transform: bitwise convolution, c[k] = sum of a[i] * b[j] over i opr j = k, with opr = '&', '|' or '^'
 // Time: O(N log N) | Space: O(N)
-// Operation: 'A' (AND), 'O' (OR), 'X' (XOR)
-void fwht(vector<int> &p, int sign, char opr) {
-    int n = p.size();
-
-    for (int half = 1; half < n; half *= 2) {
-        for (int i = 0; i < n; i += 2 * half) {
-            for (int j = 0; j < half; ++j) {
-                int x = p[i + j];
-                int y = p[(i + j) + half];
-                if (opr == 'A') {
-                    p[i + j] = ((x + sign * y) + mod) % mod;
-                } else if (opr == 'O') {
-                    p[(i + j) + half] = ((sign * x + y) + mod) % mod;
-                } else if (opr == 'X') {
-                    p[i + j] = (x + y) % mod;
-                    p[(i + j) + half] = ((x - y) + mod) % mod;
-                }
+void fwht(vector<int> &f, char opr, bool inv) {
+    int n = f.size();
+    for (int k = 1; k < n; k *= 2) {
+        for (int i = 0; i < n; i += 2 * k) {
+            for (int j = i; j < i + k; ++j) {
+                int x = f[j], y = f[j + k];
+                if (opr == '&') x += (inv) ? mod - y : y;
+                if (opr == '|') y += (inv) ? mod - x : x;
+                if (opr == '^') tie(x, y) = pair(x + y, x - y + mod);
+                f[j] = x - (x >= mod) * mod, f[j + k] = y - (y >= mod) * mod;
             }
         }
     }
-
-    if (opr == 'X' and sign == -1) {
-        int inv_n = mod_pow(n, mod - 2);
-        for (int &i : p) i = (i * inv_n) % mod;
+    if (opr == '^' and inv) {
+        int inv_n = mod_pow(n, mod - 2, mod);
+        for (int &x : f) x = x * inv_n % mod;
     }
 }
 
 vector<int> convolution(vector<int> a, vector<int> b, char opr) {
-    int n = max(a.size(), b.size());
-    int m = 1;
-    while (m < n) m *= 2;
-
-    a.resize(m);
-    b.resize(m);
-    fwht(a, +1, opr);
-    fwht(b, +1, opr);
-
-    for (int i = 0; i < m; ++i) a[i] = (a[i] * b[i]) % mod;
-    fwht(a, -1, opr);
-
+    int n = 1;
+    while (n < max(a.size(), b.size())) n *= 2;
+    a.resize(n), b.resize(n);
+    fwht(a, opr, false), fwht(b, opr, false);
+    for (int i = 0; i < n; ++i) a[i] = a[i] * b[i] % mod;
+    fwht(a, opr, true);
     return a;
 }
