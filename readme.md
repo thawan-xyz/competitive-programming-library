@@ -23,7 +23,7 @@ Each content folder may have subfolders. `.cpp` files contain code and `.tex` fi
 
 ## Conventions
 
-Every code file starts with a three-line header:
+Most code files start with a three-line header:
 
 ```cpp
 // Name: what the structure or algorithm does
