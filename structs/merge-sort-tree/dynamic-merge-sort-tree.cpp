@@ -1,12 +1,12 @@
-// Merge Sort Tree: range queries with point updates
+// Dynamic Merge Sort Tree: range queries with point updates
 // Time: build O(N log^2 N) | Update/Query: O(log^2 N) | Space: O(N log N)
 // Note: uses PBDS ordered_set | pair<int, int> handles duplicate values
-struct merge_sort_tree {
+struct dynamic_merge_sort_tree {
     int n;
     vector<int> a;
     vector<ordered_set<pair<int, int>>> tree;
 
-    merge_sort_tree(vector<int> &a): n(a.size()), a(a), tree(2 * n) {
+    dynamic_merge_sort_tree(vector<int> &a): n(a.size()), a(a), tree(2 * n) {
         for (int i = 0; i < n; ++i) {
             for (int j = i + n; j > 0; j >>= 1) {
                 tree[j].insert({a[i], i});
