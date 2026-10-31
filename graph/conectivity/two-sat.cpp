@@ -1,10 +1,7 @@
-// 2-SAT: Solves Boolean Satisfiability for 2-CNF Formulas
-// Time: Build O(N + M) | Space: O(N + M)
-// Note: Uses Tarjan's SCC | 0-indexed variables
 struct two_sat {
     int n;
     vector<vector<int>> g;
-    
+
     two_sat(int n): n(n), g(2 * n) {}
 
     // A or B
@@ -32,26 +29,19 @@ struct two_sat {
         implication(b, n_b, a, n_a);
     }
 
-    // A != B / A xor B
+    // A != B | A xor B
     void not_equal(int a, bool n_a, int b, bool n_b) {
         disjunction(a, n_a, b, n_b);
         disjunction(a, !n_a, b, !n_b);
     }
 
-    // Solves the 2-SAT and returns a valid assignment, or empty if unsatisfiable
+    // solves the 2-SAT and returns a valid assignment, or empty if unsatisfiable
     vector<bool> build() {
-        vector<vector<int>> components = tarjan(0, g);
-        int m = components.size();
-        vector<int> id(2 * n);
-        for (int i = 0; i < m; ++i) {
-            for (int a : components[i]) {
-                id[a] = i;
-            }
-        }
+        vector<int> comp = tarjan(g);
         vector<bool> assignment(n);
         for (int i = 0; i < n; ++i) {
-            if (id[2 * i] == id[(2 * i) ^ 1]) return {};
-            assignment[i] = id[2 * i] > id[(2 * i) ^ 1];
+            if (comp[2 * i] == comp[2 * i + 1]) return {};
+            assignment[i] = comp[2 * i] > comp[2 * i + 1];
         }
         return assignment;
     }
