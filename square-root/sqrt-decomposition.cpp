@@ -1,4 +1,4 @@
-// Sqrt Decomposition: point set, range add and range sum with blocks of size m = f * sqrt(n)
+// Sqrt Decomposition: point set, range add and range sum with blocks of size m = sqrt(n)
 // Time: O(n / m + m) per operation | Space: O(n)
 // Note: 0-based | the value at i is arr[i] + lazy[i / m]
 struct sqrt_decomposition {
@@ -12,8 +12,8 @@ struct sqrt_decomposition {
         }
     }
 
-    sqrt_decomposition(const vector<int> &arr, float f = 1): n(arr.size()), arr(arr) {
-        m = max<int>(1, f * sqrt(n));
+    sqrt_decomposition(const vector<int> &arr): n(arr.size()), arr(arr) {
+        m = max<int>(1, sqrt(n));
         sum.assign(n / m + 1, 0);
         lazy.assign(n / m + 1, 0);
         for (int b = 0; b <= n / m; ++b) build(b);
@@ -46,12 +46,12 @@ struct sqrt_decomposition {
     }
 
     int query(int l, int r) {
-        int bl = l / m, br = r / m, s = 0;
+        int bl = l / m, br = r / m, ans = 0;
         if (bl >= br) {
-            for (int i = l; i <= r; ++i) s += arr[i] + lazy[bl];
-            return s;
+            for (int i = l; i <= r; ++i) ans += arr[i] + lazy[bl];
+            return ans;
         }
-        for (int b = bl + 1; b < br; ++b) s += sum[b] + lazy[b] * m;
-        return s + query(l, last(bl)) + query(first(br), r);
+        for (int b = bl + 1; b < br; ++b) ans += sum[b] + lazy[b] * m;
+        return ans + query(l, last(bl)) + query(first(br), r);
     }
 };
