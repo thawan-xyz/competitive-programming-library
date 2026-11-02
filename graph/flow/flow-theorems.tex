@@ -1,15 +1,18 @@
 \section{Teoremas de Fluxo}
 
 \textbf{Notação.} $S$ é a fonte, $T$ é o sumidouro, $c(u, v)$ é a capacidade e $\text{maxflow}(S, T)$ é o fluxo
-máximo. Depois do fluxo, $A$ é o que a BFS de $S$ alcança no residual (arestas com capacidade residual $> 0$).
+máximo. O \textbf{residual} tem a aresta $u \to v$ se ainda cabe fluxo em $u \to v$ ou se há fluxo em $v \to u$
+(que pode ser desfeito). Depois do fluxo máximo, $A$ é o conjunto de vértices que $S$ alcança no residual.
 
 \subsection*{Base}
 
 \begin{itemize}
   \item \textbf{Corte mínimo:} $\text{maxflow}(S, T)$ é a menor soma de capacidades de arestas que, removidas,
         separam $S$ de $T$. O corte são as arestas originais $u \to v$ com $u \in A$ e $v \notin A$.
-  \item \textbf{Aresta em todo corte mínimo:} $u \in A$ e $v$ alcança $T$ no residual.
-  \item \textbf{Aresta em algum corte mínimo:} saturada e $v$ não é alcançável a partir de $u$ no residual.
+  \item Pode haver vários cortes mínimos. Uma aresta $u \to v$ está em \textbf{todo} corte mínimo (aumentar
+        $c(u, v)$ aumenta o fluxo máximo) $\iff$ $u \in A$ e $T$ é alcançável a partir de $v$ no residual.
+  \item Ela está em \textbf{algum} corte mínimo (diminuir $c(u, v)$ diminui o fluxo máximo) $\iff$ $u \to v$ está
+        saturada e $v$ não é alcançável a partir de $u$ no residual.
   \item \textbf{Várias fontes ou sumidouros:} $S \to$ cada fonte e cada sumidouro $\to T$, com $\infty$.
   \item \textbf{Aresta não dirigida:} $u \to v$ e $v \to u$, ambas com $c$.
 \end{itemize}
@@ -28,6 +31,17 @@ máximo. Depois do fluxo, $A$ é o que a BFS de $S$ alcança no residual (aresta
   \item \textbf{Escolha entre dois lados:} cada $u$ fica do lado de $S$ (custo $b_u$) ou de $T$ (custo $a_u$):
         $S \to u$ com $a_u$ e $u \to T$ com $b_u$. Penalidade $c$ se $u$ e $v$ ficam em lados diferentes:
         $u \to v$ e $v \to u$, ambas com $c$. O custo mínimo é o corte mínimo.
+\end{itemize}
+
+\subsection*{Duas fontes e dois sumidouros}
+
+Em grafo \textbf{não dirigido}, o fluxo de $s_1$ tem que chegar em $t_1$ ($d_1$ unidades) e o de $s_2$ em $t_2$
+($d_2$ unidades), sem misturar. Rode dois fluxos, cada um com uma fonte $S$ e um sumidouro $T$ novos:
+\begin{itemize}
+  \item $S \to s_1$ e $t_1 \to T$ com $d_1$; $S \to s_2$ e $t_2 \to T$ com $d_2$.
+  \item O mesmo, mas com $s_2$ e $t_2$ trocados: $S \to t_2$ e $s_2 \to T$ com $d_2$.
+  \item É possível $\iff$ os dois fluxos dão $d_1 + d_2$. Se todas as capacidades são pares, dá com fluxo inteiro;
+        senão, pode precisar de meias unidades. Em grafo dirigido isso não vale.
 \end{itemize}
 
 \subsection*{DAG com pesos nos vértices}
