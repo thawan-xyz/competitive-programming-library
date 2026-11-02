@@ -91,25 +91,25 @@ struct segment_tree {
         return merge(query(ql, qr, tree[p].l, l, m), query(ql, qr, tree[p].r, m + 1, r));
     }
 
-    int left(int ql, int x, int p = -1, int l = 1, int r = 0) {
-        if (l > r) return acc = node(), left(ql, x, p < 0 ? root : p, low, high);
-        if (r < ql) return r + 1;
-        node c = merge(acc, tree[p]);
-        if (ql <= l and not good(c, x)) return acc = c, r + 1;
-        if (l == r) return l;
-        push(p, l, r);
-        int m = l + (r - l) / 2, i = left(ql, x, tree[p].l, l, m);
-        return i <= m ? i : left(ql, x, tree[p].r, m + 1, r);
-    }
-
-    int right(int qr, int x, int p = -1, int l = 1, int r = 0) {
-        if (l > r) return acc = node(), right(qr, x, p < 0 ? root : p, low, high);
+    int left(int qr, int x, int p = -1, int l = 1, int r = 0) {
+        if (l > r) return acc = node(), left(qr, x, p < 0 ? root : p, low, high);
         if (qr < l) return l - 1;
         node c = merge(tree[p], acc);
         if (r <= qr and not good(c, x)) return acc = c, l - 1;
         if (l == r) return l;
         push(p, l, r);
-        int m = l + (r - l) / 2, i = right(qr, x, tree[p].r, m + 1, r);
-        return i > m ? i : right(qr, x, tree[p].l, l, m);
+        int m = l + (r - l) / 2, i = left(qr, x, tree[p].r, m + 1, r);
+        return i > m ? i : left(qr, x, tree[p].l, l, m);
+    }
+
+    int right(int ql, int x, int p = -1, int l = 1, int r = 0) {
+        if (l > r) return acc = node(), right(ql, x, p < 0 ? root : p, low, high);
+        if (r < ql) return r + 1;
+        node c = merge(acc, tree[p]);
+        if (ql <= l and not good(c, x)) return acc = c, r + 1;
+        if (l == r) return l;
+        push(p, l, r);
+        int m = l + (r - l) / 2, i = right(ql, x, tree[p].l, l, m);
+        return i <= m ? i : right(ql, x, tree[p].r, m + 1, r);
     }
 };
