@@ -24,7 +24,7 @@ struct segment_tree {
         a.lazy.x += t.x;
     }
 
-    bool reached(const node &a, int x) {
+    bool good(const node &a, int x) {
         return a.sum >= x;
     }
 
@@ -106,7 +106,7 @@ struct segment_tree {
         if (l > r) return acc = node(), right(qr, x, p < 0 ? root : p, low, high);
         if (qr < l) return l - 1;
         node c = merge(tree[p], acc);
-        if (r <= qr and not reached(c, x)) return acc = c, l - 1;
+        if (r <= qr and not good(c, x)) return acc = c, l - 1;
         if (l == r) return l;
         push(p, l, r);
         int m = l + (r - l) / 2, i = right(qr, x, tree[p].r, m + 1, r);
