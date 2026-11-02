@@ -1,24 +1,81 @@
-\section{Teoremas de Matching}
+\section{Matching}
 
-\textbf{Base.} Um \textbf{matching} é um conjunto de arestas sem vértice em comum. Em bipartido $G = (L \cup R, E)$:
-ligue $S \to L$, $L \to R$ (as arestas do grafo) e $R \to T$, todas com capacidade $1$; o fluxo máximo é o tamanho do
-matching máximo $|M|$ (Dinic em $O(E\sqrt{V})$).
+\textbf{Base.} Um \textbf{matching} $M$ é um conjunto de arestas sem vértice em comum, e um vértice é \textbf{livre}
+se não está em nenhuma delas. $M$ é \textbf{máximo} se não existe outro maior, \textbf{maximal} se não dá para
+adicionar aresta (o guloso só garante maximal) e \textbf{perfeito} se não deixa vértice livre. Um
+\textbf{caminho aumentante} liga dois vértices livres alternando arestas fora e dentro de $M$; trocar as arestas
+dele aumenta $M$ em $1$. \textbf{Berge:} $M$ é máximo $\iff$ não existe caminho aumentante. Todos os algoritmos
+abaixo procuram esses caminhos.
 
-\subsection*{Equivalências em bipartidos}
+\subsection*{Algoritmos}
+
+\begin{tabular}{@{}lll@{}}
+  \textbf{Problema} & \textbf{Algoritmo} & \textbf{Tempo} \\
+  Bipartido & Kuhn & $O(VE)$ \\
+  Bipartido & Hopcroft-Karp ou Dinic & $O(E\sqrt{V})$ \\
+  Bipartido com pesos & Húngaro & $O(n^2 m)$ \\
+  Pesos e capacidades & Fluxo de custo mínimo & $O(F \cdot E \log V)$ \\
+  Geral & Blossom (Edmonds) & $O(V^3)$ \\
+  Geral, só o tamanho & Posto da matriz de Tutte & $O(V^3)$ \\
+\end{tabular}
 
 \begin{itemize}
-  \item \textbf{Cobertura mínima de vértices (MVC):} menor número de vértices tal que toda aresta tenha pelo menos
-        uma ponta neles. Teorema de König: $|\text{MVC}| = |M|$.
-  \item \textbf{Conjunto independente máximo (MIS):} maior número de vértices sem nenhuma aresta entre eles. É o
-        complemento de uma cobertura de vértices: $|\text{MIS}| = |V| - |M|$.
-  \item \textbf{Cobertura mínima de arestas:} menor número de arestas tal que todo vértice seja ponta de pelo menos
-        uma (só existe sem vértices isolados): $|V| - |M|$. Para montar, pegue o matching e adicione uma aresta
-        qualquer de cada vértice que ficou sem par.
-  \item \textbf{Teorema de Hall:} existe um matching que casa \textbf{todos} os vértices de $L$ se, e somente se,
-        todo grupo $X \subseteq L$ tem pelo menos $|X|$ vizinhos em $R$, ou seja, $|N(X)| \ge |X|$, onde $N(X)$ é o
-        conjunto de vértices de $R$ ligados a algum vértice de $X$. Se $k$ vértices de $L$ só conhecem menos de $k$
-        vértices de $R$, falta par para alguém. Uso típico: provar que o matching existe (ex.: todo bipartido em que
-        todos os vértices têm grau $d \ge 1$ tem matching perfeito).
+  \item \textbf{Kuhn:} uma DFS por vértice de $L$ procurando caminho aumentante. Embaralhar a ordem e começar com
+        um matching guloso deixa bem mais rápido na prática.
+  \item \textbf{Fluxo:} $S \to L$, $L \to R$ (as arestas do grafo) e $R \to T$, todas com capacidade $1$; o fluxo
+        máximo é $|M|$. Com capacidade $c$ em $S \to u$, o vértice $u$ pode ter até $c$ pares.
+  \item \textbf{Matriz de Tutte:} $T_{uv} = x_{uv}$ e $T_{vu} = -x_{uv}$ para cada aresta, com $x_{uv}$ aleatório
+        módulo um primo grande, e $0$ no resto. Com alta probabilidade, $\text{posto}(T) = 2|M|$ (eliminação de Gauss).
+\end{itemize}
+
+\subsection*{Bipartido: König, Hall e afins}
+
+\begin{itemize}
+  \item \textbf{König:} cobertura mínima de vértices (MVC), o menor conjunto de vértices que toca toda aresta,
+        tem $|\text{MVC}| = |M|$.
+  \item \textbf{Conjunto independente máximo (MIS):} o complemento de uma cobertura, $|\text{MIS}| = |V| - |M|$.
+  \item \textbf{Cobertura mínima de arestas} (sem vértices isolados): $|V| - |M|$. Pegue o matching e adicione uma
+        aresta qualquer de cada vértice livre.
+  \item \textbf{Hall:} existe matching que casa todo $L$ $\iff$ $|N(X)| \ge |X|$ para todo $X \subseteq L$, onde
+        $N(X)$ são os vizinhos de $X$ em $R$. Em geral, com $X = \emptyset$ valendo $0$:
+        \[
+        \boxed{|M| = |L| - \max_{X \subseteq L} \big(|X| - |N(X)|\big)}
+        \]
+  \item Se cada $u \in L$ precisa de $k$ pares distintos, copie $u$ $k$ vezes; a condição vira $|N(X)| \ge k|X|$.
+  \item \textbf{Regulares:} todo bipartido com todos os graus iguais a $d \ge 1$ tem matching perfeito. Mais forte:
+        as arestas de qualquer bipartido podem ser coloridas com $\Delta$ cores (cada cor é um matching), então um
+        bipartido $d$-regular se divide em $d$ matchings perfeitos.
+\end{itemize}
+
+\subsection*{Recuperar a resposta}
+
+Oriente as arestas: as de fora de $M$ de $L$ para $R$ e as de $M$ de $R$ para $L$. Seja $Z$ o conjunto alcançado
+por uma BFS a partir dos vértices livres de $L$. Com fluxo, $Z$ é o que a BFS de $S$ alcança no residual.
+\begin{itemize}
+  \item \textbf{MVC:} $(L \setminus Z) \cup (R \cap Z)$. O \textbf{MIS} é o complemento: $(L \cap Z) \cup (R \setminus Z)$.
+  \item \textbf{Aresta em algum matching máximo:} $(u, v) \notin M$, com $u \in L$, está em algum $\iff$ $u \in Z$,
+        ou $v$ alcança um vértice livre de $R$, ou $u$ e $v$ estão na mesma SCC. $M$ é o único matching máximo
+        $\iff$ nenhuma aresta fora de $M$ passa nesse teste.
+  \item \textbf{Vértice em todo matching máximo:} $u \in L$ casado com $u \notin Z$; $v \in R$ casado que não
+        alcança nenhum vértice livre de $R$.
+\end{itemize}
+
+\subsection*{Com pesos}
+
+\begin{itemize}
+  \item \textbf{Atribuição:} o Húngaro casa cada linha com uma coluna distinta minimizando a soma. Para maximizar,
+        negue os pesos.
+  \item \textbf{Peso máximo de qualquer tamanho:} troque cada peso $w$ por $\max(w, 0)$, com $0$ nas arestas que não
+        existem, e maximize; no fim, descarte os pares de peso $0$.
+  \item \textbf{Exatamente $k$ pares ou capacidades:} fluxo de custo mínimo com custo $-w$ em $L \to R$. O $i$-ésimo
+        aumento dá o melhor com $i$ pares; para o máximo de qualquer tamanho, pare quando o caminho tiver custo $\ge 0$.
+  \item \textbf{Dualidade (Egerváry):} o custo mínimo de uma atribuição perfeita ($n = m$) é o máximo de $\sum u_i + \sum v_j$
+        com $u_i + v_j \le c_{ij}$; os potenciais do Húngaro são esse $(u, v)$. Já o peso máximo de um matching de
+        qualquer tamanho é o mínimo de $\sum u_i + \sum v_j$ com $u_i + v_j \ge w_{ij}$ e $u, v \ge 0$.
+  \item \textbf{Gargalo:} para minimizar a maior aresta de um matching perfeito, faça busca binária no limite e
+        teste o matching só com as arestas que cabem.
+  \item \textbf{Pesos nos vértices:} $S \to u$ com $w_u$, $u \to v$ com $\infty$ e $v \to T$ com $w_v$. A cobertura
+        de peso mínimo é o corte mínimo, e o independente de peso máximo é $\sum w - \text{corte}$.
 \end{itemize}
 
 \subsection*{Cobertura de DAG por caminhos}
@@ -29,25 +86,40 @@ junta dois vértices no mesmo caminho.
   \item \textbf{Caminhos disjuntos em vértices:} mínimo $= |V| - |M|$.
   \item \textbf{Caminhos que podem repetir vértices (cadeias):} faça o mesmo no \textbf{fecho transitivo}
         ($u \to v$ se $u$ alcança $v$). O mínimo $|V| - |M|$ é igual à \textbf{maior anticadeia}, o maior conjunto em
-        que ninguém alcança ninguém (Dilworth).
+        que ninguém alcança ninguém (Dilworth). A anticadeia são os $v$ com $v_L$ e $v_R$ fora da MVC de König.
   \item Sem o fecho a resposta pode ser maior: $a \to c$, $b \to c$, $c \to d$, $c \to e$ precisa de $3$ caminhos
         disjuntos, mas só de $2$ cadeias ($acd$ e $bce$).
+  \item \textbf{Mirsky:} o menor número de anticadeias que cobre tudo é a maior cadeia (o caminho mais longo).
+  \item \textbf{Caminhos:} siga as arestas $u_L \to v_R$ do matching; $u$ termina um caminho se $u_L$ está livre.
 \end{itemize}
 
 \subsection*{Grafos gerais}
 
 \begin{itemize}
+  \item \textbf{Tutte:} existe matching perfeito $\iff$ $\text{odd}(G - S) \le |S|$ para todo $S \subseteq V$, onde
+        $\text{odd}$ conta as componentes de tamanho ímpar. Em geral (Tutte-Berge):
+        \[
+        \boxed{|M| = \min_{S \subseteq V} \frac{|V| + |S| - \text{odd}(G - S)}{2}}
+        \]
   \item \textbf{Gallai:} $|\text{MIS}| + |\text{MVC}| = |V|$; e, sem vértices isolados,
-        $|\text{matching máximo}| + |\text{cobertura mínima de arestas}| = |V|$.
-  \item König \textbf{não} vale (triângulo: $|\text{MVC}| = 2$, $|M| = 1$), MVC e MIS são NP-difíceis, e matching
-        em grafo geral precisa de Blossom (fluxo não trata ciclos ímpares).
+        $|M| + |\text{cobertura mínima de arestas}| = |V|$.
+  \item König \textbf{não} vale (triângulo: $|\text{MVC}| = 2$, $|M| = 1$), MVC e MIS são NP-difíceis, e o fluxo
+        não trata ciclos ímpares: o matching precisa de Blossom.
+  \item \textbf{Árvores:} percorra das folhas para a raiz e case $v$ com o pai se os dois estão livres; dá o matching
+        máximo em $O(n)$.
+  \item \textbf{Vizing:} as arestas podem ser coloridas com $\Delta$ ou $\Delta + 1$ cores, cada cor um matching.
 \end{itemize}
 
-\subsection*{Recuperar a resposta}
+\subsection*{Modelagens clássicas}
 
-Depois do fluxo, rode uma BFS/DFS de $S$ só por arestas com capacidade residual $> 0$; seja $A$ o conjunto alcançado.
 \begin{itemize}
-  \item \textbf{Matching:} arestas $L \to R$ com fluxo $1$.
-  \item \textbf{MVC:} $(L \setminus A) \cup (R \cap A)$. O \textbf{MIS} é o complemento: $(L \cap A) \cup (R \setminus A)$.
-  \item \textbf{Caminhos no DAG:} siga as arestas $u_L \to v_R$ com fluxo $1$; $u$ termina um caminho se $u_L$ não manda fluxo.
+  \item \textbf{Grade:} pinte $(i + j) \bmod 2$ como num tabuleiro. Dominós são arestas entre casas vizinhas, e a
+        grade pode ser coberta por dominós $\iff$ o matching é perfeito.
+  \item \textbf{Torres:} linhas de um lado, colunas do outro, cada casa livre $(i, j)$ é uma aresta. O máximo de
+        torres sem ataque é $|M|$, e o mínimo de linhas e colunas que cobrem todas as casas também (König).
+  \item \textbf{Soma prima:} um primo $p > 2$ é ímpar, então o par tem um número par e um ímpar: bipartido entre
+        ímpares e pares (cuidado com $1 + 1 = 2$).
+  \item \textbf{Casamento estável (Gale-Shapley):} cada homem livre pede a próxima mulher da sua lista e ela fica com
+        o melhor pedido até agora. Em $O(n^2)$ termina num matching estável (nenhum par se prefere aos seus
+        parceiros), o melhor possível para o lado que pede.
 \end{itemize}
