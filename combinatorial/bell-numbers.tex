@@ -1,0 +1,55 @@
+\section{Números de Bell}
+
+\textbf{Definição.} $B_n$ é o número de formas de dividir $n$ elementos distintos em grupos não vazios, sem ordem
+entre os grupos. Ex.: $B_3 = 5$: $\{123\}$, $\{12\}\{3\}$, $\{13\}\{2\}$, $\{23\}\{1\}$, $\{1\}\{2\}\{3\}$. Também
+conta $n$ bolas distintas em caixas iguais (quantas caixas quiser), relações de equivalência em $n$ elementos e
+formas de colorir $n$ objetos quando só importa quem tem a mesma cor.
+
+\textbf{Valores.} $B_0, \dots, B_{10} = 1, 1, 2, 5, 15, 52, 203, 877, 4140, 21147, 115975$. Cabe em \texttt{long long}
+até $B_{25}$.
+
+\subsection*{Como calcular}
+
+\begin{itemize}
+  \item \textbf{Recorrência:} o grupo do elemento $n + 1$ leva junto alguns dos outros $n$, e os $k$ que sobram se
+        dividem de $B_k$ formas:
+        \[
+        \boxed{B_{n+1} = \sum_{k=0}^{n} \binom{n}{k} B_k}, \qquad B_0 = 1.
+        \]
+  \item \textbf{Triângulo de Bell} (sem binomial): a linha $0$ é $1$; cada linha começa com o último número da
+        anterior, e cada número seguinte é o vizinho da esquerda mais o número acima desse vizinho. $B_n$ é o
+        primeiro da linha $n$, em $O(n^2)$:
+        \[
+        \begin{array}{lllll}
+          1 \\
+          1 & 2 \\
+          2 & 3 & 5 \\
+          5 & 7 & 10 & 15 \\
+          15 & 20 & 27 & 37 & 52
+        \end{array}
+        \]
+  \item \textbf{Stirling de 2ª espécie} $S(n, k)$, com exatamente $k$ grupos: o último elemento entra num dos $k$
+        grupos ou forma um sozinho, então $S(n, k) = k\,S(n - 1, k) + S(n - 1, k - 1)$, com $S(0, 0) = 1$, e
+        $B_n = \sum_k S(n, k)$. Um valor só, em $O(k \log n)$:
+        \[
+        S(n, k) = \frac{1}{k!} \sum_{j=0}^{k} (-1)^{k-j} \binom{k}{j} j^n.
+        \]
+  \item \textbf{$n$ enorme, módulo um primo $p$ pequeno} (Touchard): $B_{n+p} \equiv B_n + B_{n+1} \pmod p$. É uma
+        recorrência linear de ordem $p$: use o \texttt{kth\_term} com $c[p-2] = c[p-1] = 1$ e os $p$ primeiros
+        valores, em $O(p^2 \log n)$.
+\end{itemize}
+
+\subsection*{Bolas e caixas}
+
+$n$ bolas distintas em $k$ caixas (com $k \ge n$ e caixas iguais podendo ficar vazias, dá $B_n$):
+
+\begin{tabular}{@{}lll@{}}
+  & \textbf{pode ficar vazia} & \textbf{não pode} \\
+  \textbf{caixas iguais} & $\sum_{i=0}^{k} S(n, i)$ & $S(n, k)$ \\
+  \textbf{caixas distintas} & $k^n$ & $k!\,S(n, k)$ \\
+\end{tabular}
+
+\subsection*{Listar todas}
+
+Para força bruta ($B_{12} \approx 4 \cdot 10^6$): a partição vira a sequência $a_0, \dots, a_{n-1}$, com $a_i$ o grupo
+do elemento $i$, $a_0 = 0$ e $a_i \le \max(a_0, \dots, a_{i-1}) + 1$.
