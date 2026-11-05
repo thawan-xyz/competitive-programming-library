@@ -3,7 +3,9 @@
 // Note: efficient for huge targets with small weights
 int bounded_subset_sum(const vector<int> &w, int target) {
     int n = w.size(), k = 0, s = 0;
-    while (k < n and s + w[k] <= target) s += w[k++];
+    while (k < n and s + w[k] <= target) {
+        s += w[k++];
+    }
     if (k == n) return s;
     int m = *max_element(w.begin(), w.end());
     vector<int> pre;
