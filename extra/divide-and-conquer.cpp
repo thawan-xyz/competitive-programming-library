@@ -6,7 +6,6 @@ vector<int> divide_and_conquer(vector<int> &arr, vector<array<int, 2>> &queries)
     vector<int> suf(n + 1), pre(n + 1), ans(queries.size());
     vector<array<int, 3>> q;
     for (int k = 0; k < queries.size(); ++k) q.push_back({queries[k][0], queries[k][1], k});
-
     auto rec = [&](auto &self, int l, int r, vector<array<int, 3>> &q) -> void {
         if (l > r or q.empty()) return;
         int m = (l + r) / 2;
@@ -24,7 +23,6 @@ vector<int> divide_and_conquer(vector<int> &arr, vector<array<int, 2>> &queries)
         self(self, l, m - 1, ql);
         self(self, m + 1, r, qr);
     };
-
     rec(rec, 0, n - 1, q);
     return ans;
 }
