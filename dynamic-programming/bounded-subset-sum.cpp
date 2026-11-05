@@ -1,38 +1,26 @@
 // Bounded Subset Sum: maximizes subset sum without exceeding the target
 // Time: O(N * max(W)) | Space: O(max(W))
 // Note: efficient for huge targets with small weights
-int bounded_subset_sum(vector<int> &w, int target) {
-    int k = 0, s = 0;
-    while (k < w.size() and s + w[k] <= target) s += w[k++];
-
-    if (k == w.size() or s == target) return s;
-
-    int bound = *max_element(w.begin(), w.end());
-    int offset = target - bound;
-    
-    vector<int> prev(2 * bound + 1, -1);
-    prev[s - offset] = k;
-
-    for (int i = k; i < w.size(); ++i) {
-        vector<int> curr = prev;
-
-        // insert
-        for (int x = 0; x < bound; ++x) if (prev[x] != -1) {
-            curr[x + w[i]] = max(curr[x + w[i]], prev[x]);
+int bounded_subset_sum(const vector<int> &w, int target) {
+    int n = w.size(), k = 0, s = 0;
+    while (k < n and s + w[k] <= target) s += w[k++];
+    if (k == n) return s;
+    int m = *max_element(w.begin(), w.end());
+    vector<int> pre;
+    vector<int> cur(2 * m, -1);
+    cur[s - target + m] = k;
+    for (int i = k; i < n; ++i) {
+        pre = cur;
+        for (int x = 0; x < m; ++x) {
+            cur[x + w[i]] = max(cur[x + w[i]], pre[x]);
         }
-
-        // remove
-        for (int x = 2 * bound; x > bound; --x) if (curr[x] > prev[x]) {
-            for (int j = max(0ll, prev[x]); j < curr[x]; ++j) {
-                curr[x - w[j]] = max(curr[x - w[j]], j);
+        for (int x = 2 * m - 1; x > m; --x) {
+            for (int j = max<int>(0, pre[x]); j < cur[x]; ++j) {
+                cur[x - w[j]] = max(cur[x - w[j]], j);
             }
         }
-
-        swap(prev, curr);
     }
-
-    for (int x = bound; x >= 0; --x) if (prev[x] != -1) {
-        return x + offset;
-    }
-    return 0;
+    int x = m;
+    while (cur[x] == -1) x--;
+    return x + target - m;
 }

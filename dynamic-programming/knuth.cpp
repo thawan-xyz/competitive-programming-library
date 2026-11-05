@@ -1,22 +1,17 @@
-int knuth() {
-    vector<vector<int>> val(n + 1, vector<int>(n + 1));
-    vector<vector<int>> opt(n + 1, vector<int>(n + 1));
-    for (int i = 1; i <= n; ++i) {
-        val[i][i] = cost(i, i);
-        opt[i][i] = i;
-    }
-    for (int len = 2; len <= n; ++len) {
-        for (int l = 1, r = len; r <= n; ++l, ++r) {
-            val[l][r] = inf;
-            opt[l][r] = opt[l][r - 1];
+int knuth(int n) {
+    vector<vector<int>> ans(n + 2, vector<int>(n + 2));
+    vector<vector<int>> opt(n + 2, vector<int>(n + 2));
+    for (int l = n; l >= 1; --l) {
+        ans[l][l] = cost(l, l);
+        opt[l][l] = l;
+        for (int r = l + 1; r <= n; ++r) {
+            int c = cost(l, r);
+            ans[l][r] = inf;
             for (int k = opt[l][r - 1]; k <= min(r - 1, opt[l + 1][r]); ++k) {
-                int curr = val[l][k] + val[k + 1][r] + cost(l, r);
-                if (curr < val[l][r]) {
-                    val[l][r] = curr;
-                    opt[l][r] = k;
-                }
+                int val = ans[l][k] + ans[k + 1][r] + c;
+                if (val < ans[l][r]) ans[l][r] = val, opt[l][r] = k;
             }
         }
     }
-    return val[1][n];
+    return ans[1][n];
 }
