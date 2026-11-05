@@ -1,0 +1,38 @@
+\section{Números de Stirling}
+
+\textbf{Notação.} $c(n, k)$ (primeiro tipo, sem sinal) é o número de permutações de $n$ elementos com exatamente $k$
+ciclos. $S(n, k)$ (segundo tipo) é o número de formas de dividir $n$ elementos distintos em exatamente $k$ grupos não
+vazios, sem ordem entre os grupos. $x^{\underline{k}} = x(x-1)\cdots(x-k+1)$ e $x^{\overline{k}} = x(x+1)\cdots(x+k-1)$.
+
+\subsection*{Segundo tipo}
+
+\begin{itemize}
+  \item \textbf{Recorrência:} o elemento $n$ entra num dos $k$ grupos ou forma um grupo sozinho:
+        $S(n, k) = k\,S(n - 1, k) + S(n - 1, k - 1)$, com $S(0, 0) = 1$.
+  \item \textbf{Fórmula:} inclusão-exclusão nas caixas vazias, dividida por $k!$ porque os grupos não têm ordem:
+        \[
+        \boxed{S(n, k) = \frac{1}{k!} \sum_{j=0}^{k} (-1)^{k-j} \binom{k}{j} j^n}
+        \]
+        Um valor sai em $O(k \log n)$. A linha inteira é a convolução de $\frac{(-1)^i}{i!}$ com $\frac{j^n}{j!}$.
+  \item \textbf{Usos:} $k!\,S(n, k)$ conta as funções sobrejetoras de $n$ em $k$ elementos (bolas distintas em caixas
+        distintas, nenhuma vazia); $\sum_k S(n, k) = B_n$ (Bell); $x^n = \sum_k S(n, k)\, x^{\underline{k}}$ troca
+        potências por fatoriais caindo.
+\end{itemize}
+
+\subsection*{Primeiro tipo}
+
+\begin{itemize}
+  \item \textbf{Recorrência:} o elemento $n$ forma um ciclo sozinho ou entra logo depois de um dos outros $n - 1$:
+        $c(n, k) = (n - 1)\,c(n - 1, k) + c(n - 1, k - 1)$, com $c(0, 0) = 1$.
+  \item \textbf{Polinômio:}
+        \[
+        \boxed{x^{\overline{n}} = x(x + 1) \cdots (x + n - 1) = \sum_k c(n, k)\, x^k}
+        \]
+        A linha inteira sai multiplicando os $n$ fatores por divisão e conquista com NTT, em $O(n \log^2 n)$.
+  \item \textbf{Com sinal:} $s(n, k) = (-1)^{n-k} c(n, k)$ são os coeficientes de $x^{\underline{n}} = \sum_k s(n, k)\, x^k$.
+  \item $\sum_k c(n, k) = n!$.
+\end{itemize}
+
+\subsection*{Valores especiais}
+
+$c(n, 1) = (n - 1)!$, $S(n, 2) = 2^{n-1} - 1$, $c(n, n - 1) = S(n, n - 1) = \binom{n}{2}$ e $c(n, n) = S(n, n) = 1$.
