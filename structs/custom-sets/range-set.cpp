@@ -74,3 +74,73 @@ struct range_set {
         return s;
     }
 };
+
+// Color Set: disjoint intervals [l, r], each with a color, painting a range and returning what was there before, with lazy moves of all positions
+// Time: paint and erase O(log N) amortized | contains and color O(log N) | shift and flip O(1) | Space: O(N)
+// Note: real position = sign * stored + offset | shift(k) = x -> x + k, flip(c) = x -> c - x (flip(l + r) mirrors [l, r])
+struct color_set {
+    struct node {
+        int l, r, color;
+    };
+
+    map<int, node> s;
+    int sign = 1, offset = 0;
+
+    int stored(int x) {
+        return sign * (x - offset);
+    }
+
+    node real(node a) {
+        int l = sign * a.l + offset, r = sign * a.r + offset;
+        a.l = min(l, r), a.r = max(l, r);
+        return a;
+    }
+
+    void split(int x) {
+        auto it = s.lower_bound(x);
+        if (it == s.begin()) return;
+        node &a = (--it)->second;
+        if (x <= a.r) {
+            node b = a;
+            b.l = x, a.r = x - 1;
+            s[x] = b;
+        }
+    }
+
+    vector<node> erase(int l, int r) {
+        if (l > r) return {};
+        int a = min(stored(l), stored(r)), b = max(stored(l), stored(r));
+        split(a), split(b + 1);
+        vector<node> removed;
+        auto first = s.lower_bound(a), last = s.lower_bound(b + 1);
+        for (auto it = first; it != last; ++it) removed.push_back(real(it->second));
+        s.erase(first, last);
+        if (sign == -1) reverse(removed.begin(), removed.end());
+        return removed;
+    }
+
+    vector<node> paint(int l, int r, int c) {
+        if (l > r) return {};
+        vector<node> removed = erase(l, r);
+        int a = min(stored(l), stored(r)), b = max(stored(l), stored(r));
+        s[a] = {a, b, c};
+        return removed;
+    }
+
+    bool contains(int x) {
+        auto it = s.upper_bound(stored(x));
+        return it != s.begin() and prev(it)->second.r >= stored(x);
+    }
+
+    int color(int x) {
+        return prev(s.upper_bound(stored(x)))->second.color;
+    }
+
+    void shift(int k) {
+        offset += k;
+    }
+
+    void flip(int c) {
+        sign = -sign, offset = c - offset;
+    }
+};
