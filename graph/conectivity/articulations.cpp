@@ -1,27 +1,26 @@
-vector<int> articulations(int one, vector<vector<int>> &g) {
-    int n = g.size(), timer = 1;
-    vector<int> in(n), low(n);
+vector<int> articulations(vector<vector<int>> &g) {
+    int n = g.size(), t = 0;
+    vector<int> tin(n, -1), low(n), points;
     vector<bool> art(n);
 
     auto dfs = [&](auto &self, int a, int p) -> void {
-        in[a] = low[a] = timer++;
+        tin[a] = low[a] = t++;
         int c = 0;
         for (int b : g[a]) if (b != p) {
-            if (in[b] != 0) {
-                low[a] = min(low[a], in[b]);
+            if (tin[b] != -1) {
+                low[a] = min(low[a], tin[b]);
             } else {
                 c++;
                 self(self, b, a);
                 low[a] = min(low[a], low[b]);
-                if (a != p and low[b] >= in[a]) art[a] = true;
+                if (p != -1 and low[b] >= tin[a]) art[a] = true;
             }
         }
-        if (a == p and c > 1) art[a] = true;
+        if (p == -1 and c > 1) art[a] = true;
     };
 
-    vector<int> points;
-    for (int i = one; i < n; ++i) {
-        if (in[i] == 0) dfs(dfs, i, i);
+    for (int i = 0; i < n; ++i) {
+        if (tin[i] == -1) dfs(dfs, i, -1);
         if (art[i]) points.push_back(i);
     }
     return points;

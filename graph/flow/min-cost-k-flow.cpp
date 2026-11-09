@@ -1,6 +1,6 @@
-// Min Cost K-Flow: successive shortest path with potentials
-// Time: O(F * E log V) where F is flow | Space: O(V + E)
-// Note: // Note: SPFA handles initial negative edge costs. If all costs are non-negative, replace spfa(s) with fill(h.begin(), h.end(), 0)
+// Min Cost K-Flow: sends up to k units from s to t with minimum total cost, by successive shortest paths
+// Time: O(F E log V) | Space: O(V + E)
+// Note: if all costs are non-negative, replace spfa with fill(h.begin(), h.end(), 0)
 struct min_cost_k_flow {
     struct edge {
         int b, i, w, c;
@@ -14,78 +14,48 @@ struct min_cost_k_flow {
     min_cost_k_flow(int n): n(n), g(n), d(n), h(n), p(n), e(n) {}
 
     void insert_edge(int a, int b, int w, int c) {
-        int i = g[b].size();
-        int j = g[a].size();
+        int i = g[b].size(), j = g[a].size();
         g[a].push_back({b, i, w, c, true});
         g[b].push_back({a, j, 0, -c, false});
     }
 
-    bool spfa(int s) {
-        fill(h.begin(), h.end(), inf);
-        vector<int> cnt(n);
-        vector<bool> in(n);
-        queue<int> q;
-        h[s] = 0;
-        in[s] = true;
-        q.push(s);
-        while (q.size()) {
-            int a = q.front(); q.pop();
-            in[a] = false;
-            for (auto &[b, i, w, c, o] : g[a]) if (w > 0 and h[a] + c < h[b]) {
-                h[b] = h[a] + c;
-                if (not in[b]) {
-                    cnt[b] += 1;
-                    if (cnt[b] >= n) return false;
-                    in[b] = true;
-                    q.push(b);
-                }
-            }
-        }
-        return true;
-    }
-
     bool dijkstra(int s, int t) {
         fill(d.begin(), d.end(), inf);
-        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
         d[s] = 0;
-        pq.emplace(0, s);
+        pq.push({0, s});
         while (pq.size()) {
             auto [x, a] = pq.top(); pq.pop();
             if (d[a] < x) continue;
-
             for (int i = 0; i < g[a].size(); ++i) {
-                auto &[b, j, w, c, o] = g[a][i];
-                if (w <= 0) continue;
-
+                auto [b, j, w, c, o] = g[a][i];
                 int v = d[a] + c + h[a] - h[b];
-                if (v < d[b]) {
-                    d[b] = v;
-                    p[b] = a;
-                    e[b] = i;
-                    pq.emplace(d[b], b);
-                }
+                if (w == 0 or v >= d[b]) continue;
+                d[b] = v, p[b] = a, e[b] = i;
+                pq.push({v, b});
             }
         }
         return d[t] != inf;
     }
 
     pair<int, int> cost_flow(int s, int t, int k = inf) {
+        vector<vector<pair<int, int>>> adj(n);
+        for (int a = 0; a < n; ++a) {
+            for (auto [b, i, w, c, o] : g[a]) if (w > 0) {
+                adj[a].push_back({b, c});
+            }
+        }
+        h = spfa(s, adj);
+        if (h.empty()) return {-1, -1};
         int flow = 0, cost = 0;
-        if (not spfa(s)) return {-1, -1};
         while (flow < k and dijkstra(s, t)) {
-            for (int a = 0; a < n; ++a) if (d[a] != inf) {
-                h[a] += d[a];
-            }
+            for (int a = 0; a < n; ++a) if (d[a] != inf) h[a] += d[a];
             int push = k - flow;
+            for (int a = t; a != s; a = p[a]) push = min(push, g[p[a]][e[a]].w);
             for (int a = t; a != s; a = p[a]) {
-                int b = p[a], i = e[a];
-                push = min(push, g[b][i].w);
-            }
-            for (int a = t; a != s; a = p[a]) {
-                int b = p[a], i = e[a], j = g[b][i].i;
-                g[b][i].w -= push;
-                g[a][j].w += push;
-                cost += g[b][i].c * push;
+                edge &x = g[p[a]][e[a]];
+                x.w -= push, g[a][x.i].w += push;
+                cost += push * x.c;
             }
             flow += push;
         }
@@ -95,9 +65,7 @@ struct min_cost_k_flow {
     vector<pair<int, int>> saturated_edges() {
         vector<pair<int, int>> edges;
         for (int a = 0; a < n; ++a) {
-            for (auto &[b, i, w, c, o] : g[a]) if (w == 0 and o) {
-                edges.push_back({a, b});
-            }
+            for (auto [b, i, w, c, o] : g[a]) if (w == 0 and o) edges.push_back({a, b});
         }
         return edges;
     }

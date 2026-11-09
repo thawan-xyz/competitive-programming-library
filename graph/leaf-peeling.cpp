@@ -1,28 +1,19 @@
 // Leaf Peeling: finds the center(s) and diameter of an undirected tree
 // Time: O(N) | Space: O(N)
-// Note: returns {diameter, centers} | 'i' sets 0-based or 1-based indexing
-pair<int, vector<int>> leaf_peeling(int i, vector<vector<int>> &g) {
-    int n = g.size() - i;
-    if (n == 1) return {0, {i}};
-    vector<int> d(g.size());
-    queue<int> q;
-    for (int a = i; a < g.size(); ++a) {
+// Note: returns {diameter, centers} | root is the first vertex, 0 or 1
+pair<int, vector<int>> leaf_peeling(int root, vector<vector<int>> &g) {
+    int n = g.size() - root, layers = 0;
+    if (n == 1) return {0, {root}};
+    vector<int> d(g.size()), leaves, next;
+    for (int a = root; a < g.size(); ++a) {
         d[a] = g[a].size();
-        if (d[a] == 1) q.push(a);
+        if (d[a] == 1) leaves.push_back(a);
     }
-    int r = n, l = 0;
-    while (r > 2) {
-        int s = q.size();
-        r -= s;
-        l++;
-        while (s--) {
-            int a = q.front(); q.pop();
-            for (int b : g[a]) {
-                if (--d[b] == 1) q.push(b);
-            }
-        }
+    while (n > 2) {
+        n -= leaves.size(), layers++;
+        next.clear();
+        for (int a : leaves) for (int b : g[a]) if (--d[b] == 1) next.push_back(b);
+        swap(leaves, next);
     }
-    vector<int> c;
-    while (q.size()) c.push_back(q.front()), q.pop();
-    return {2 * l + (c.size() == 2), c};
+    return {2 * layers + (leaves.size() == 2), leaves};
 }
