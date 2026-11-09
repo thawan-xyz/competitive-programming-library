@@ -1,39 +1,39 @@
+// Dynamic Connectivity: offline number of components at each time, with edges alive in time intervals
+// Time: O(q + k log q log n) | Space: O(n + q + k log q), with k calls to insert
+// Note: requires rb_dsu; insert(a, b, l, r) means edge (a, b) exists at times l..r of [0, q - 1]
 struct dynamic_connectivity {
-private:
     int n, q;
     vector<vector<pair<int, int>>> tree;
-    rb_dsu dsu;
 
-    void insert(pair<int, int> e, int ql, int qr, int p, int l, int r) {
-        if (qr < l or ql > r) return;
-        if (ql <= l and qr >= r) return void(tree[p].push_back(e));
-        int m = (l + r) / 2;
-        insert(e, ql, qr, 2 * p, l, m);
-        insert(e, ql, qr, 2 * p + 1, m + 1, r);
-    }
+    dynamic_connectivity(int n, int q): n(n), q(q), tree(4 * q) {}
 
-    void compute(vector<int> &ans, int p, int l, int r) {
-        for (auto [a, b] : tree[p]) dsu.unite(a, b);
-        if (l == r) {
-            ans[l] = dsu.c;
-        } else {
-            int m = (l + r) / 2;
-            compute(ans, 2 * p, l, m);
-            compute(ans, 2 * p + 1, m + 1, r);
-        }
-        for (auto [a, b] : tree[p]) dsu.rollback();
-    }
-
-public:
-    dynamic_connectivity(int n, int q): n(n), q(q), tree(4 * q), dsu(n) {}
-
-    void insert(pair<int, int> e, int ql, int qr) {
-        insert(e, ql, qr, 1, 0, q - 1);
+    void insert(int a, int b, int ql, int qr) {
+        auto rec = [&](auto &self, int p, int l, int r) -> void {
+            if (qr < l or r < ql) return;
+            if (ql <= l and r <= qr) return tree[p].push_back({a, b});
+            int m = l + (r - l) / 2;
+            self(self, 2 * p, l, m);
+            self(self, 2 * p + 1, m + 1, r);
+        };
+        rec(rec, 1, 0, q - 1);
     }
 
     vector<int> compute() {
+        rb_dsu d(n);
         vector<int> ans(q);
-        compute(ans, 1, 0, q - 1);
+        auto rec = [&](auto &self, int p, int l, int r) -> void {
+            int t = d.state();
+            for (auto [a, b] : tree[p]) d.unite(a, b);
+            if (l == r) {
+                ans[l] = d.c;
+            } else {
+                int m = l + (r - l) / 2;
+                self(self, 2 * p, l, m);
+                self(self, 2 * p + 1, m + 1, r);
+            }
+            while (d.state() > t) d.rollback();
+        };
+        rec(rec, 1, 0, q - 1);
         return ans;
     }
 };
