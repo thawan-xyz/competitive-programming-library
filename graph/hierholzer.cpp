@@ -1,64 +1,41 @@
-// Undirected Eulerian Path: Hierholzer's algorithm for paths and circuits
+// Eulerian Path: Hierholzer's algorithm for paths and circuits, in directed or undirected graphs
 // Time: O(V + E) | Space: O(V + E)
-// Note: returns sequence of vertices or empty if impossible | s must be a valid start node
-vector<int> undirected_eulerian_path(int s, vector<vector<pair<int, int>>> &g, int e) {
-    int n = g.size();
-    int odd = 0;
-    for (int i = 0; i < n; ++i) {
-        if (g[i].size() & 1) odd++;
-    }
-    if (odd != 0 and odd != 2) return {};
-    if (odd == 2 and (g[s].size() & 1) == 0) return {};
-    vector<bool> used(e + 1);
-    vector<int> next(n), path;
-    auto hierholzer = [&](auto &self, int a) -> void {
-        while (next[a] < g[a].size()) {
-            auto [b, id] = g[a][next[a]];
-            next[a]++;
-            if (not used[id]) {
-                used[id] = true;
-                self(self, b);
-            }
-        }
-        path.push_back(a);
-    };
-    hierholzer(hierholzer, s);
-    if (path.size() != e + 1) return {};
-    reverse(path.begin(), path.end());
-    return path;
-}
-
-// Directed Eulerian Path: Hierholzer's algorithm for paths and circuits
-// Time: O(V + E) | Space: O(V + E)
-// Note: returns sequence of vertices or empty if impossible | s must be a valid start node
-vector<int> directed_eulerian_path(int s, vector<vector<int>> &g, int e) {
-    int n = g.size();
-    vector<int> in(n), out(n);
+// Note: s and t are the first and last vertices, -1 for any | returns the vertices, or empty if there is no such path
+vector<int> eulerian_path(bool directed, vector<vector<pair<int, int>>> &g, int s = -1, int t = -1) {
+    int n = g.size(), m = 0, k = 0;
+    vector<int> d(n);
     for (int a = 0; a < n; ++a) {
-        out[a] = g[a].size();
-        for (int b : g[a]) {
-            in[b]++;
+        m += g[a].size();
+        for (auto [b, id] : g[a]) {
+            if (directed) d[a]++, d[b]--;
+            else d[a] ^= 1;
         }
     }
-    int start = 0, end = 0;
-    for (int i = 0; i < n; ++i) {
-        if (out[i] - in[i] == +1) start++;
-        else if (out[i] - in[i] == -1) end++;
-        else if (out[i] - in[i] != 0) return {};
+    if (not directed) m /= 2;
+    for (int a = 0; a < n; ++a) {
+        if (abs(d[a]) > 1) return {};
+        if (d[a] == 1) k++;
     }
-    if (not ((start == 0 and end == 0) or (start == 1 and end == 1))) return {};
-    if (start == 1 and out[s] - in[s] != +1) return {};
-    vector<int> next(n), path;
-    auto hierholzer = [&](auto &self, int a) -> void {
-        while (next[a] < g[a].size()) {
-            int b = g[a][next[a]];
-            next[a]++;
-            self(self, b);
+
+    for (int a = 0; a < n; ++a) if (s == -1 and d[a] == 1 and a != t) s = a;
+    if (s == -1) s = t;
+    for (int a = 0; a < n; ++a) if (s == -1 and g[a].size()) s = a;
+    if (s == -1) s = 0;
+    if (k > 2 or (directed and k > 1) or (k > 0 and d[s] != 1)) return {};
+
+    vector<bool> used(m + 1);
+    vector<int> next(n), path, dfs = {s};
+    while (dfs.size()) {
+        int a = dfs.back();
+        if (next[a] == g[a].size()) {
+            path.push_back(a), dfs.pop_back();
+        } else {
+            auto [b, id] = g[a][next[a]++];
+            if (not used[id]) used[id] = true, dfs.push_back(b);
         }
-        path.push_back(a);
-    };
-    hierholzer(hierholzer, s);
-    if (path.size() != e + 1) return {};
+    }
+    if (path.size() != m + 1) return {};
     reverse(path.begin(), path.end());
+    if (t != -1 and path.back() != t) return {};
     return path;
 }
