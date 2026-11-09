@@ -1,0 +1,55 @@
+\section{Segment Tree Beats}
+
+\textbf{Ideia.} É uma seg com lazy em que o update nem sempre para no nó coberto pelo intervalo. Cada nó guarda
+informação extra que diz se dá para aplicar o update no nó inteiro de uma vez; se não dá, ele desce mais. Uma
+análise amortizada garante que essas descidas extras são raras. A query não muda.
+\begin{lstlisting}
+if (fora do intervalo or break) return;
+if (dentro do intervalo and tag) return aplica_tag(p);
+push, desce nos dois filhos, pull;
+\end{lstlisting}
+
+\subsection*{chmin: $a_i = \min(a_i, x)$}
+
+\begin{itemize}
+  \item \textbf{Nó:} soma, $max_1$ (maior valor), $max_2$ (segundo maior, estrito) e $c$ (quantas vezes $max_1$ aparece).
+  \item \textbf{Merge:} $max_1$ é o maior dos dois; $max_2$ é o maior valor diferente de $max_1$ entre os quatro; $c$
+        soma os $c$ dos filhos que têm o $max_1$.
+  \item \textbf{Break:} $x \ge max_1$, nada muda.
+  \item \textbf{Tag:} $max_2 < x < max_1$, só os máximos mudam: soma $\mathrel{-}= (max_1 - x) \cdot c$ e $max_1 = x$.
+  \item \textbf{Push:} o $max_1$ do pai já é o lazy. Em cada filho com $max_1$ maior que o do pai, aplique a tag com
+        $x = max_1$ do pai.
+  \item \textbf{Custo:} $O((n + q) \log n)$ amortizado.
+\end{itemize}
+
+\subsection*{chmax e os dois juntos}
+
+O chmax é simétrico, com $min_1$, $min_2$ e a contagem do mínimo. Com os dois na mesma seg, um nó com só um ou dois
+valores distintos tem máximo e mínimo se encostando: ao trocar $max_1$ por $x$, troque também $min_1$ (se era igual
+a $max_1$) ou $min_2$ (se era igual a $max_1$), e vice-versa.
+
+\subsection*{Com soma em intervalo}
+
+Um lazy de soma comum. Somar $v$ num nó soma $v \cdot len$ na soma e $v$ em $max_1, max_2, min_1, min_2$, sem mexer nos
+que valem $\pm\infty$. No push, aplique primeiro a soma e depois o chmin e o chmax com o $max_1$ e o $min_1$ do pai.
+O custo passa a ser $O(\log^2 n)$ amortizado por operação.
+
+\subsection*{Updates que só valem com um valor só}
+
+Mod, divisão, raiz e afins não têm uma tag para valores diferentes. Guarde máximo e mínimo:
+\begin{itemize}
+  \item \textbf{Break:} a operação não muda nada no nó (mod $x$ com $max < x$; divisão com $x = 1$ ou $max = 0$; raiz com $max \le 1$).
+  \item \textbf{Tag:} $max = min$, todos os valores são iguais e mudam igual: vira somar $f(max) - max$ no nó.
+  \item \textbf{Custo:} cada valor cai pela metade a cada mod ou divisão efetiva (e a raiz chega a 1 em $O(\log \log C)$
+        passos), então são $O(\log C)$ descidas por elemento. Com soma em intervalo, o custo continua amortizado.
+  \item \textbf{AND e OR:} guarde o AND e o OR do nó. Break se nenhum bit muda; tag se todos os valores concordam nos
+        bits que mudam (AND e OR do nó iguais nesses bits), porque aí todos mudam pelo mesmo valor.
+\end{itemize}
+
+\subsection*{O que mudar numa seg normal}
+
+\begin{enumerate}
+  \item Os campos novos no nó e o merge deles.
+  \item No update, a condição de break junto do teste de fora do intervalo, e a de tag junto do teste de cobertura.
+  \item No push, além do lazy normal, aplicar nos filhos o corte que o pai já sofreu.
+\end{enumerate}
