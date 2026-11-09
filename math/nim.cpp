@@ -1,45 +1,22 @@
-bool nim(vector<int> &piles, vector<int> &moves) {
-    int n = *max(piles.begin(), piles.end());
-    vector<int> grundy(n + 1);
-
+vector<int> grundy(int n, vector<int> &moves) {
+    vector<int> g(n + 1), seen(moves.size() + 1, -1);
     for (int i = 1; i <= n; ++i) {
-        set<int> reach;
-        for (int move : moves) if (move <= i) {
-            reach.insert(grundy[i - move]);
-        }
-
-        int mex = 0;
-        while (reach.contains(mex)) mex++;
-        grundy[i] = mex;
+        for (int m : moves) if (m <= i) seen[g[i - m]] = i;
+        while (seen[g[i]] == i) g[i]++;
     }
-
-    int answer = 0;
-    for (int pile : piles) {
-        answer ^= grundy[pile];
-    }
-    return answer != 0;
+    return g;
 }
 
-bool misere(vector<int> &piles, vector<int> &moves) {
-    int n = *max(piles.begin(), piles.end());
-    vector<int> grundy(n + 1);
+bool nim(vector<int> &piles, vector<int> &moves) {
+    vector<int> g = grundy(*max_element(piles.begin(), piles.end()), moves);
+    int x = 0;
+    for (int p : piles) x ^= g[p];
+    return x != 0;
+}
 
-    for (int i = 1; i <= n; ++i) {
-        set<int> reach;
-        for (int move : moves) if (move <= i) {
-            reach.insert(grundy[i - move]);
-        }
-
-        int mex = 0;
-        while (reach.contains(mex)) mex++;
-        grundy[i] = mex;
-    }
-
-    bool all_one = true;
-    int answer = 0;
-    for (int pile : piles) {
-        all_one &= grundy[pile] == 1;
-        answer ^= grundy[pile];
-    }
-    return all_one ? (piles.size() & 1) == 0 : answer != 0;
+bool misere(vector<int> &piles) {
+    int x = 0;
+    for (int p : piles) x ^= p;
+    if (*max_element(piles.begin(), piles.end()) > 1) return x != 0;
+    return x == 0;
 }
