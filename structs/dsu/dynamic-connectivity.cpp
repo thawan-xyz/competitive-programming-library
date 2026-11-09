@@ -1,6 +1,6 @@
 // Dynamic Connectivity: offline number of components at each time, with edges alive in time intervals
 // Time: O(q + k log q log n) | Space: O(n + q + k log q), with k calls to insert
-// Note: requires rb_dsu; insert(a, b, l, r) means edge (a, b) exists at times l..r of [0, q - 1]
+// Note: requires rollback dsu; insert(a, b, l, r) means edge (a, b) exists at times l..r of [0, q - 1]
 struct dynamic_connectivity {
     int n, q;
     vector<vector<pair<int, int>>> tree;
@@ -19,19 +19,19 @@ struct dynamic_connectivity {
     }
 
     vector<int> compute() {
-        rb_dsu d(n);
+        rollback_dsu dsu(n);
         vector<int> ans(q);
         auto rec = [&](auto &self, int p, int l, int r) -> void {
-            int t = d.state();
-            for (auto [a, b] : tree[p]) d.unite(a, b);
+            int t = dsu.state();
+            for (auto [a, b] : tree[p]) dsu.unite(a, b);
             if (l == r) {
-                ans[l] = d.c;
+                ans[l] = dsu.c;
             } else {
                 int m = l + (r - l) / 2;
                 self(self, 2 * p, l, m);
                 self(self, 2 * p + 1, m + 1, r);
             }
-            while (d.state() > t) d.rollback();
+            while (dsu.state() > t) dsu.rollback();
         };
         rec(rec, 1, 0, q - 1);
         return ans;
