@@ -1,20 +1,20 @@
 // Virtual Tree: compresses the tree to the given vertices and their lcas, at most 2k - 1 vertices
 // Time: O(N log N) build, O(1) lca, O(k log k) per compression | Space: O(N log N)
-// Note: build(v) returns {u, p} sorted by tin, with p = -1 at the root of the compressed tree | edge p-u is a path of d[u] - d[p] edges
+// Note: build(v) returns {u, p} sorted by tin, with p = -1 at the root of the compressed tree | edge p-u is a path of depth[u] - depth[p] edges
 struct virtual_tree {
-    vector<int> tin, d;
-    vector<vector<int>> st;
+    vector<int> tin, depth;
+    vector<vector<int>> table;
 
-    virtual_tree(vector<vector<int>> &g, int root): tin(g.size()), d(g.size()) {
+    virtual_tree(vector<vector<int>> &g, int root): tin(g.size()), depth(g.size()) {
         int n = g.size(), t = 0;
-        st.assign(__lg(n) + 1, vector<int>(n));
+        table.assign(__lg(n) + 1, vector<int>(n));
         auto dfs = [&](auto &self, int a, int p) -> void {
-            tin[a] = t, st[0][t++] = p;
-            for (int b : g[a]) if (b != p) d[b] = d[a] + 1, self(self, b, a);
+            tin[a] = t, table[0][t++] = p;
+            for (int b : g[a]) if (b != p) depth[b] = depth[a] + 1, self(self, b, a);
         };
         dfs(dfs, root, root);
-        for (int j = 1; j < st.size(); ++j) {
-            for (int i = 0; i + (1 << j) <= n; ++i) st[j][i] = first(st[j - 1][i], st[j - 1][i + (1 << (j - 1))]);
+        for (int j = 1; j < table.size(); ++j) {
+            for (int i = 0; i + (1 << j) <= n; ++i) table[j][i] = first(table[j - 1][i], table[j - 1][i + (1 << (j - 1))]);
         }
     }
 
@@ -26,11 +26,11 @@ struct virtual_tree {
         if (a == b) return a;
         if (tin[a] > tin[b]) swap(a, b);
         int l = tin[a] + 1, r = tin[b] + 1, j = __lg(r - l);
-        return first(st[j][l], st[j][r - (1 << j)]);
+        return first(table[j][l], table[j][r - (1 << j)]);
     }
 
     int dist(int a, int b) {
-        return d[a] + d[b] - 2 * d[lca(a, b)];
+        return depth[a] + depth[b] - 2 * depth[lca(a, b)];
     }
 
     vector<pair<int, int>> build(vector<int> v) {
