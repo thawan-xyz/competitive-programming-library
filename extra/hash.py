@@ -13,5 +13,4 @@ for i, line in enumerate(lines):
         if c == '}': start = min(start, stack.pop())
     if i == last: start = 0
     h = hashlib.md5(''.join(code[start:i + 1]).encode()).hexdigest()[:3]
-    if start == i and i != last: h = ''
-    print(f'{h:3} {line}', end='')
+    print(line.rstrip(), h if start < i or i == last else '')
