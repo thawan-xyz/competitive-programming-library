@@ -122,8 +122,8 @@ string sanitize_line(const string& line) {
     return end == string::npos ? "" : clean.substr(0, end + 1);
 }
 
-// hashes[i] is the hash that hash.py prints at line i of a .cpp file, or empty for blank and comment lines
-vector<string> line_hashes(const string& file) {
+// hashes[i] is the hash that hash.py prints at line i of a .cpp file, or empty if the line does not close a block
+vector<string> block_hashes(const string& file) {
     vector<string> hashes;
     if (to_lower(fs::path(file).extension().string()) != ".cpp" || !fs::exists(HASH_SCRIPT)) return hashes;
 
@@ -143,7 +143,7 @@ vector<string> line_hashes(const string& file) {
 
 vector<string> read_code_lines(const string& file) {
     ifstream fin(file);
-    vector<string> lines, hashes = line_hashes(file);
+    vector<string> lines, hashes = block_hashes(file);
     string line;
     bool first = true;
 
@@ -204,7 +204,7 @@ void print_code_file(const string& file) {
     for (const string& line : lines) {
         size_t mark = line.find(HASH_MARK);
         if (mark == string::npos) cout << line << "\n";
-        else cout << "(*@\\codehash{" << line.substr(mark + 1) << "}@*)" << line.substr(0, mark) << "\n";
+        else cout << line.substr(0, mark) << "(*@\\codehash{" << line.substr(mark + 1) << "}@*)\n";
     }
     cout << "\\end{lstlisting}\n";
 }
