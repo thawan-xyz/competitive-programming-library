@@ -1,5 +1,5 @@
 # Hash: prints the code with a hash at each line that closes a block, ignoring spaces and comments
-# Use: python3 hash.py code.cpp | a hash covers from the line of its { up to its line with }, the last one covers the whole file
+# Use: python3 hash.py code.cpp | each hash covers from the line with { to the line with its }, the last one covers the whole file
 import sys, hashlib
 
 lines = open(sys.argv[1]).readlines()
