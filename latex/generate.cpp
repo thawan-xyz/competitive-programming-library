@@ -137,8 +137,8 @@ vector<string> block_hashes(const string& file) {
 
     istringstream stream(output);
     string line;
-    // hash.py prints each line followed by a space and its hash, which is empty if the line does not close a block
-    while (getline(stream, line)) hashes.push_back(line.empty() || line.back() == ' ' ? "" : line.substr(line.size() - 3));
+    // hash.py prints each line followed by a space and its [hash], which is empty if the line does not close a block
+    while (getline(stream, line)) hashes.push_back(line.empty() || line.back() == ' ' ? "" : line.substr(line.size() - 4, 3));
     return hashes;
 }
 
