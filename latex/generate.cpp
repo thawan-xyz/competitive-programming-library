@@ -1,9 +1,11 @@
 #include <algorithm>
+#include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <numeric>
 #include <set>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -12,6 +14,8 @@ using namespace std;
 
 const string NO_PRINT = "noprint";
 const string ROOT_PATH = "../";
+const string HASH_SCRIPT = ROOT_PATH + "extra/hash.py";
+const char HASH_MARK = '\x01';
 
 bool print_all = false;
 bool dense = false;
@@ -118,18 +122,38 @@ string sanitize_line(const string& line) {
     return end == string::npos ? "" : clean.substr(0, end + 1);
 }
 
+// hashes[i] is the hash that hash.py prints at line i of a .cpp file, or empty for blank and comment lines
+vector<string> line_hashes(const string& file) {
+    vector<string> hashes;
+    if (to_lower(fs::path(file).extension().string()) != ".cpp" || !fs::exists(HASH_SCRIPT)) return hashes;
+
+    FILE* pipe = popen(("python3 " + HASH_SCRIPT + " '" + file + "'").c_str(), "r");
+    if (!pipe) return hashes;
+    string output;
+    char buffer[4096];
+    size_t count;
+    while ((count = fread(buffer, 1, sizeof buffer, pipe)) > 0) output.append(buffer, count);
+    pclose(pipe);
+
+    istringstream stream(output);
+    string line;
+    while (getline(stream, line)) hashes.push_back(trim(line.substr(0, 3)));
+    return hashes;
+}
+
 vector<string> read_code_lines(const string& file) {
     ifstream fin(file);
-    vector<string> lines;
+    vector<string> lines, hashes = line_hashes(file);
     string line;
     bool first = true;
 
-    while (getline(fin, line)) {
+    for (size_t index = 0; getline(fin, line); index++) {
         string clean = sanitize_line(line);
         if (first) {
             first = false;
             if (clean.size() >= 2 && clean.front() == '[' && clean.back() == ']') continue;
         }
+        if (index < hashes.size() && !hashes[index].empty()) clean += HASH_MARK + hashes[index];
         lines.push_back(clean);
     }
     return lines;
@@ -174,8 +198,14 @@ void print_code_file(const string& file) {
         squeeze_blank_lines(lines);
     }
 
-    cout << "\\begin{lstlisting}\n";
-    for (const string& line : lines) cout << line << "\n";
+    bool hashed = any_of(lines.begin(), lines.end(), [](const string& line) { return line.find(HASH_MARK) != string::npos; });
+    bool python = to_lower(fs::path(file).extension().string()) == ".py";
+    cout << "\\begin{lstlisting}" << (hashed ? "[style=hashed]" : python ? "[language=Python]" : "") << "\n";
+    for (const string& line : lines) {
+        size_t mark = line.find(HASH_MARK);
+        if (mark == string::npos) cout << line << "\n";
+        else cout << "(*@\\codehash{" << line.substr(mark + 1) << "}@*)" << line.substr(0, mark) << "\n";
+    }
     cout << "\\end{lstlisting}\n";
 }
 

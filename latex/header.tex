@@ -60,6 +60,10 @@
   literate=*{~}{$\sim$}{1}
 }
 
+% hash of each line from extra/hash.py, in a gutter at the left of the code
+\lstdefinestyle{hashed}{escapeinside={(*@}{@*)}, xleftmargin=13pt}
+\newcommand{\codehash}[1]{\llap{\color{black!45}#1\hspace{3pt}}}
+
 \makeatletter
 \newcommand{\lst@numberstyle@color}{\color{red_number}}
 \newcommand{\lst@startsdigit}[1]{%
