@@ -1,0 +1,84 @@
+\section{Interseção de Matroides}
+
+\textbf{Matroide:} uma regra que diz quais conjuntos de elementos são \textbf{válidos}. O vazio é válido, tirar
+elementos de um válido continua válido, e um válido menor sempre pode crescer com algum elemento de um válido
+maior. Os válidos máximos têm todos o mesmo tamanho, o \textbf{posto} $r$.
+
+\subsection*{Matroides comuns}
+
+\begin{itemize}
+  \item \textbf{Floresta:} arestas sem ciclo. Testa com DSU.
+  \item \textbf{Cores:} no máximo $c_i$ elementos da cor $i$. Testa contando.
+  \item \textbf{Vetores:} linearmente independentes (ou em xor). Testa com base xor.
+\end{itemize}
+
+\subsection*{Para que serve}
+
+Achar o maior conjunto válido nos dois matroides ao mesmo tempo. Exemplos:
+\begin{itemize}
+  \item \textbf{Emparelhamento bipartido:} cada vértice da esquerda no máximo uma vez, e cada vértice da direita
+        no máximo uma vez.
+  \item \textbf{Árvore geradora com no máximo $c_i$ arestas da cor $i$:} floresta e cores. Existe se a resposta tem
+        $n - 1$ arestas.
+  \item \textbf{Base xor com limite por cor:} vetores e cores.
+  \item \textbf{Arborescência com raiz $s$:} floresta (sem olhar a direção) e no máximo uma aresta chegando em cada
+        vértice, nenhuma chegando em $s$.
+\end{itemize}
+
+\subsection*{Algoritmo}
+
+Comece com $S$ vazio e, a cada rodada, tente aumentar $S$ em um elemento. Não basta colocar um elemento que caiba
+nos dois matroides: às vezes é preciso tirar alguns de $S$ e colocar outros no lugar, como num caminho aumentante
+de emparelhamento.
+\begin{enumerate}
+  \item \textbf{Grafo de trocas.} Os vértices são os elementos. Para $y$ em $S$ e $x$ fora de $S$:
+        \begin{itemize}
+          \item $y \to x$ se $S - y + x$ é válido no matroide 1 ($x$ pode ocupar o lugar de $y$ no matroide 1);
+          \item $x \to y$ se $S - y + x$ é válido no matroide 2 ($x$ pode ocupar o lugar de $y$ no matroide 2).
+        \end{itemize}
+  \item \textbf{Origens e destinos.} As origens são os $x$ fora de $S$ que cabem em $S$ no matroide 1
+        ($S + x$ válido nele), e os destinos são os que cabem no matroide 2. Um $x$ que é as duas coisas entra
+        direto.
+  \item \textbf{Caminho.} Faça uma BFS que começa em todas as origens ao mesmo tempo e pare no primeiro destino
+        retirado da fila. O caminho fica $x_0 \to y_1 \to x_1 \to \dots \to y_k \to x_k$, alternando quem está fora e
+        quem está em $S$.
+  \item \textbf{Troca.} Os $x$ entram em $S$ e os $y$ saem: entram $k + 1$ e saem $k$, então $S$ cresce em 1.
+        No matroide 1, $x_0$ entra numa vaga livre e cada $x_i$ ocupa o lugar de $y_i$. No matroide 2, cada $x_{i-1}$
+        ocupa o lugar de $y_i$ e $x_k$ entra numa vaga livre.
+  \item \textbf{Por que o mais curto.} Cada troca é válida sozinha, mas todas juntas só são garantidas se o caminho
+        não tem atalho. O caminho da BFS nunca tem atalho.
+\end{enumerate}
+Quando não há caminho, $S$ é o maior possível. São até $r$ rodadas, cada uma com $O(r \cdot |E|)$ testes.
+
+\textbf{Testes rápidos.} Antes de cada rodada, para cada $y$ em $S$, monte uma vez a estrutura de $S$ sem $y$ e teste
+todos os $x$ nela:
+\begin{itemize}
+  \item \textbf{Floresta:} DSU com as arestas de $S - y$; $x = (u, v)$ cabe se $u$ e $v$ estão em componentes
+        diferentes.
+  \item \textbf{Cores:} $x$ cabe se a sua cor $i$ tem menos de $c_i$ elementos em $S - y$.
+  \item \textbf{Vetores:} base xor de $S - y$; $x$ cabe se não é gerado por ela.
+\end{itemize}
+
+\subsection*{Fórmula de Edmonds}
+
+Para um conjunto $A$ de elementos, $r_i(A)$ é o tamanho do maior válido dentro de $A$ no matroide $i$. Então:
+\[ \text{resposta} = \min_{A} \; r_1(A) + r_2(E \setminus A). \]
+\begin{itemize}
+  \item \textbf{Por que vale $\le$:} um $S$ válido nos dois tem no máximo $r_1(A)$ elementos dentro de $A$ e no máximo
+        $r_2(E \setminus A)$ fora dele.
+  \item \textbf{Quem atinge o mínimo:} quando o algoritmo para, $A$ = os elementos que a BFS \textbf{não} alcançou.
+  \item \textbf{Uso:} problemas que pedem o mínimo de uma soma de postos, ou provar que a resposta não pode ser maior.
+\end{itemize}
+
+\subsection*{Com pesos}
+
+Cada elemento tem peso $w$, e queremos o maior peso de um $S$ válido nos dois com $|S| = k$, para cada $k$.
+\begin{itemize}
+  \item \textbf{Mesmo grafo de trocas,} mas cada vértice tem custo: $-w(x)$ para quem está fora (vai entrar) e
+        $+w(y)$ para quem está em $S$ (vai sair). O custo do caminho é a soma dos custos dos vértices, inclusive as
+        pontas.
+  \item \textbf{Caminho mais barato} das origens até os destinos. Entre os de mesmo custo, o de menos vértices. Use
+        Bellman-Ford ou SPFA, porque há custos negativos (mas nunca ciclo negativo).
+  \item \textbf{Garantia:} depois de cada troca, $S$ é o de maior peso entre todos com o mesmo tamanho. Para o maior
+        peso de qualquer tamanho, guarde o melhor $S$ ao longo das rodadas.
+\end{itemize}

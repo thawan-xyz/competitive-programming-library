@@ -1,66 +1,43 @@
-struct hopcroft_karp {
-    const int inf = 1e9;
-    int n, m, s;
-    vector<int> r, l, d;
-    vector<vector<int>> g;
+// Hopcroft-Karp: maximum bipartite matching, augmenting along shortest paths in phases
+// Time: O(E sqrt(V)) | Space: O(V + E)
+// Note: g[a] has the right neighbors of left vertex a | returns match[b], the left vertex of b or -1, for b up to the largest right vertex
+vector<int> hopcroft_karp(vector<vector<int>> &g) {
+    int n = g.size(), m = 0, lim = -1;
+    for (int a = 0; a < n; ++a) for (int b : g[a]) m = max(m, b + 1);
+    vector<int> match(m, -1), d(n), itr(n);
+    vector<bool> used(n);
 
-    hopcroft_karp(int n, int m): n(n), m(m), r(n, -1), l(m, -1), d(n), g(n) {}
-
-    void edge(int a, int b) {
-        g[a].push_back(b);
-    }
-
-    bool bfs() {
-        s = inf;
+    auto bfs = [&]() -> bool {
         queue<int> q;
         for (int a = 0; a < n; ++a) {
-            if (r[a] == -1) {
-                d[a] = 0;
-                q.push(a);
-            } else {
-                d[a] = inf;
-            }
+            d[a] = -1;
+            if (not used[a]) d[a] = 0, q.push(a);
         }
+        lim = -1;
         while (q.size()) {
             int a = q.front(); q.pop();
-            if (d[a] >= s) continue;
+            if (lim != -1 and d[a] >= lim) continue;
             for (int b : g[a]) {
-                if (l[b] == -1) {
-                    s = min(s, d[a] + 1);
-                } else if (d[l[b]] == inf) {
-                    d[l[b]] = d[a] + 1;
-                    q.push(l[b]);
-                }
+                int c = match[b];
+                if (c == -1 and lim == -1) lim = d[a] + 1;
+                if (c != -1 and d[c] == -1) d[c] = d[a] + 1, q.push(c);
             }
         }
-        return s != inf;
-    }
+        return lim != -1;
+    };
 
-    bool dfs(int a) {
-        if (a == -1) return true;
-        for (int b : g[a]) {
-            int h = (l[b] != -1) ? d[l[b]] : s;
-            if (h == d[a] + 1) if (dfs(l[b])) {
-                r[a] = b;
-                l[b] = a;
-                return true;
-            }
+    auto dfs = [&](auto &self, int a) -> bool {
+        for (int &i = itr[a]; i < g[a].size(); ++i) {
+            int b = g[a][i], c = match[b];
+            if (c == -1 and d[a] + 1 != lim) continue;
+            if (c == -1 or (d[c] == d[a] + 1 and self(self, c))) return used[a] = true, match[b] = a, true;
         }
-        d[a] = inf;
-        return false;
-    }
+        return d[a] = -1, false;
+    };
 
-    int match() {
-        int matching = 0;
-        while (bfs()) {
-            for (int a = 0; a < n; ++a) if (r[a] == -1 and dfs(a)) matching++;
-        }
-        return matching;
+    while (bfs()) {
+        fill(itr.begin(), itr.end(), 0);
+        for (int a = 0; a < n; ++a) if (not used[a]) dfs(dfs, a);
     }
-
-    vector<pair<int, int>> matches() {
-        vector<pair<int, int>> m;
-        for (int a = 0; a < n; ++a) if (r[a] != -1) m.emplace_back(a, r[a]);
-        return m;
-    }
-};
+    return match;
+}
