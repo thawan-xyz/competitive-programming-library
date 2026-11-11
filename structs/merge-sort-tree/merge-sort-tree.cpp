@@ -1,18 +1,27 @@
+// Merge Sort Tree: counts the values <= x in a range, with each node keeping its range sorted
+// Time: O(N log N) build, O(log^2 N) query | Space: O(N log N)
 struct merge_sort_tree {
     int n;
     vector<vector<int>> tree;
 
-    merge_sort_tree(vector<int> &a): n(a.size()), tree(2 * n) {
-        for (int i = 0; i < n; ++i) tree[i + n] = {a[i]};
-        for (int i = n - 1; i > 0; --i) merge(tree[i << 1].begin(), tree[i << 1].end(), tree[(i << 1) | 1].begin(), tree[(i << 1) | 1].end(), back_inserter(tree[i]));
+    merge_sort_tree(vector<int> &a): n(a.size()), tree(4 * n) {
+        auto rec = [&](auto &self, int p, int l, int r) -> void {
+            if (l == r) return void(tree[p] = {a[l]});
+            int m = l + (r - l) / 2;
+            self(self, 2 * p, l, m);
+            self(self, 2 * p + 1, m + 1, r);
+            ranges::merge(tree[2 * p], tree[2 * p + 1], back_inserter(tree[p]));
+        };
+        rec(rec, 1, 0, n - 1);
     }
 
-    int less_or_equal(int i, int j, int x) {
-        int c = 0;
-        for (i += n, j += n + 1; i < j; i >>= 1, j >>= 1) {
-            if (i & 1) c += upper_bound(tree[i].begin(), tree[i].end(), x) - tree[i].begin(), i++;
-            if (j & 1) --j, c += upper_bound(tree[j].begin(), tree[j].end(), x) - tree[j].begin();
-        }
-        return c;
+    int less_or_equal(int ql, int qr, int x) {
+        auto rec = [&](auto &self, int p, int l, int r) -> int {
+            if (qr < l or r < ql) return 0;
+            if (ql <= l and r <= qr) return ranges::upper_bound(tree[p], x) - tree[p].begin();
+            int m = l + (r - l) / 2;
+            return self(self, 2 * p, l, m) + self(self, 2 * p + 1, m + 1, r);
+        };
+        return rec(rec, 1, 0, n - 1);
     }
 };
