@@ -1,0 +1,108 @@
+\section{Segmento}
+
+O segmento $[a, b]$ vai de $a$ até $b$, incluindo as pontas.
+
+\subsection*{Ponto no segmento}
+
+\smallskip{\centering
+\begin{tikzpicture}[scale=0.55, >=stealth]
+  \fill[blue!6] (2,0) circle (2);
+  \draw[blue!60!black, dashed] (2,0) circle (2);
+  \draw[thick] (0,0) -- (4,0);
+  \fill (0,0) circle (1.5pt) node[left] {\scriptsize $a$};
+  \fill (4,0) circle (1.5pt) node[right] {\scriptsize $b$};
+  \fill (1.4,1.1) circle (1.5pt) node[above] {\scriptsize $p$};
+  \draw[gray] (0,0) -- (1.4,1.1) -- (4,0);
+  \fill (2.8,0) circle (1.5pt) node[below] {\scriptsize $q$};
+\end{tikzpicture}
+\par}\smallskip
+
+\texttt{in\_disk(a, b, p)} diz se $p$ está no círculo de diâmetro $ab$: o ângulo $a\,p\,b$ é de pelo menos $90^\circ$,
+ou seja, \texttt{dot(a - p, b - p)} $\le 0$. \texttt{on\_segment(a, b, p)} junta isso com \texttt{orient} $= 0$: o
+ponto está na reta e entre as pontas, como $q$.
+
+\subsection*{Interseções}
+
+\smallskip{\centering
+\begin{tikzpicture}[scale=0.55, >=stealth]
+  \draw[thick] (0,0) -- (2.4,1.8);
+  \draw[thick] (0,1.8) -- (2.4,0);
+  \fill[red!70!black] (1.2,0.9) circle (2pt);
+  \node at (1.2,-0.6) {\scriptsize proper};
+  \draw[thick] (3.4,0) -- (5.8,0);
+  \draw[thick] (4.6,0) -- (4.6,1.8);
+  \fill[red!70!black] (4.6,0) circle (2pt);
+  \node at (4.6,-0.6) {\scriptsize encosta};
+  \draw[thick] (6.8,0.75) -- (8.8,0.75);
+  \draw[blue!60!black, thick] (7.8,1.05) -- (9.6,1.05);
+  \draw[red!70!black, dotted] (7.8,0.75) -- (7.8,1.05);
+  \draw[red!70!black, dotted] (8.8,0.75) -- (8.8,1.05);
+  \fill[red!70!black] (7.8,0.9) circle (2pt);
+  \fill[red!70!black] (8.8,0.9) circle (2pt);
+  \node at (8.2,-0.6) {\scriptsize sobrepostos};
+\end{tikzpicture}
+\par}\smallskip
+
+\begin{itemize}
+  \item \texttt{proper(a, b, c, d)}: os segmentos se cruzam num ponto interior aos dois. Acontece quando $c$ e $d$
+        estão em lados opostos da reta $ab$ e $a$ e $b$ em lados opostos da reta $cd$ (sinais de \texttt{orient}
+        com produto negativo). Exato com \texttt{T} inteiro.
+  \item \texttt{intersects(a, b, c, d)}: os segmentos têm algum ponto em comum, em qualquer um dos três casos do
+        desenho. É o \texttt{proper} ou alguma ponta de um em cima do outro (\texttt{on\_segment}). Exato com
+        \texttt{T} inteiro.
+  \item \texttt{proper\_inter(a, b, c, d)} devolve esse ponto de cruzamento.
+  \item \texttt{inters(a, b, c, d)} devolve todos os casos: o ponto do cruzamento, a ponta que encosta no outro
+        segmento, ou as duas pontas do trecho em comum quando são colineares e sobrepostos.
+\end{itemize}
+
+\subsection*{Distâncias}
+
+\smallskip{\centering
+\begin{tikzpicture}[scale=0.55, >=stealth]
+  \fill[blue!6] (0,-1.2) rectangle (4,1.8);
+  \draw[gray, dashed] (0,-1.2) -- (0,1.8);
+  \draw[gray, dashed] (4,-1.2) -- (4,1.8);
+  \draw[thick] (0,0) -- (4,0);
+  \fill (0,0) circle (1.5pt) node[above left] {\scriptsize $a$};
+  \fill (4,0) circle (1.5pt) node[below right] {\scriptsize $b$};
+  \fill (2.2,1.4) circle (1.5pt) node[above] {\scriptsize $p$};
+  \draw[red!70!black, thick] (2.2,1.4) -- (2.2,0);
+  \fill (5.6,1.2) circle (1.5pt) node[above] {\scriptsize $p'$};
+  \draw[red!70!black, thick] (5.6,1.2) -- (4,0);
+  \fill (-1.4,-0.9) circle (1.5pt) node[left] {\scriptsize $p''$};
+  \draw[red!70!black, thick] (-1.4,-0.9) -- (0,0);
+\end{tikzpicture}
+\par}\smallskip
+
+\texttt{segment\_point(a, b, p)}: se $p$ está na faixa azul (à frente de $a$ e de $b$, olhando para dentro do
+segmento), a distância é até a reta, pela perpendicular; fora dela, é até a ponta mais perto. \\
+\texttt{segment\_segment(a, b, c, d)} é $0$ se os segmentos se cruzam; senão, os pontos mais próximos incluem uma
+das quatro pontas, então é o menor entre as distâncias de cada ponta até o outro segmento.
+
+\subsection*{Distância até uma semirreta}
+
+\smallskip{\centering
+\begin{tikzpicture}[scale=0.55, >=stealth]
+  \draw[->, thick] (0,0) -- (3.5,0);
+  \fill (0,0) circle (1.5pt) node[below] {\scriptsize $c$};
+  \draw[blue!60!black, thick] (1,-1.2) -- (2.6,1.0);
+  \fill[red!70!black] (1.873,0) circle (2pt);
+  \node at (1.6,-1.8) {\scriptsize se cruzam: 0};
+  \draw[->, thick] (5.5,0) -- (9,0);
+  \fill (5.5,0) circle (1.5pt) node[below] {\scriptsize $c$};
+  \draw[blue!60!black, thick] (6.8,1.6) -- (8.4,0.9);
+  \draw[red!70!black, thick] (8.4,0.9) -- (8.4,0);
+  \draw[blue!60!black, thick] (4.2,-1.5) -- (4.6,0.9);
+  \draw[red!70!black, thick] (5.5,0) -- (4.47,0.17);
+  \node at (7,-1.8) {\scriptsize ponta do segmento ou origem $c$};
+\end{tikzpicture}
+\par}\smallskip
+
+\texttt{segment\_ray(a, b, c, d)} é a distância do segmento $[a, b]$ até a semirreta \texttt{(c, d)}. Usa o mesmo
+teste do \texttt{ray\_ray}, com o segmento escrito como $a + s \cdot w$ e $0 \le s \le 1$: além dos sinais, testa
+\texttt{cross(a - c, v)} $\le$ \texttt{cross(v, w)} (comparando com o sinal do denominador). Se não se cruzam, a
+resposta é a menor distância de uma ponta $a$ ou $b$ até a semirreta, ou da origem $c$ até o segmento.
+
+\textbf{Exato ou real.} \texttt{in\_disk}, \texttt{on\_segment}, \texttt{proper}, \texttt{intersects} e as distâncias (inclusive
+\texttt{segment\_ray}) funcionam com
+\texttt{T} inteiro. \texttt{proper\_inter} e \texttt{inters} devolvem pontos novos e exigem \texttt{T} real.

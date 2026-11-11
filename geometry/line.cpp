@@ -4,9 +4,9 @@ struct line {
 
     line(point v, T c): v(v), c(c) {}
 
-    line(T a, T b, T c): v({b, -a}), c(c) {}
+    line(T a, T b, T c): v(b, -a), c(c) {}
 
-    line(point p, point q): v(q - p), c(cross(q, p)) {}
+    line(point p, point q): v(q - p), c(cross(v, p)) {}
 
     T side(point p) {
         return cross(v, p) - c;
@@ -20,33 +20,45 @@ struct line {
         return dot(v, p) < dot(v, q);
     }
 
-    // Projection: calculates the orthogonal projection of point p onto the line
-    // Note: translates p perpendicularly to the line (assumes perp is counter-clockwise)
-    point proj(point p) {
-        return p - (perp(v) * side(p)) / norm(v);
+    line perp_through(point p) {
+        return line(p, p + perp(v));
     }
 
-    // Reflection: finds the mirror image of point p across the line
-    // Note: projects p and extends it by the same distance
+    line parallel_through(point p) {
+        return line(v, cross(v, p));
+    }
+
+    line shift(T t) {
+        assert(is_floating_point_v<T>);
+        return line(v, c + t * abs(v));
+    }
+
+    point proj(point p) {
+        assert(is_floating_point_v<T>);
+        return p - perp(v) * side(p) / norm(v);
+    }
+
     point refl(point p) {
-        return p - (2.0 * perp(v) * side(p)) / norm(v);
+        assert(is_floating_point_v<T>);
+        return p - perp(v) * (2 * side(p)) / norm(v);
     }
 };
 
 vector<point> line_inter(line l, line r) {
-    if (cross(l.v, r.v) == 0) return {};
-    return {(l.c * r.v - r.c * l.v) / cross(l.v, r.v)};
+    assert(is_floating_point_v<T>);
+    T d = cross(l.v, r.v);
+    if (sign(d) == 0) return {};
+    return {(r.v * l.c - l.v * r.c) / d};
 }
 
 vector<point> line_segment_inter(line l, point a, point b) {
-    T sa = l.side(a);
-    T sb = l.side(b);
+    assert(is_floating_point_v<T>);
+    T sa = l.side(a), sb = l.side(b);
     if (sign(sa) * sign(sb) > 0) return {};
-    if (sa == 0 and sb == 0) {
-        vector<point> p = {a, b};
-        sort(p.begin(), p.end());
-        p.erase(unique(p.begin(), p.end()), p.end());
-        return p;
+    if (sign(sa) == 0 and sign(sb) == 0) {
+        if (b < a) swap(a, b);
+        if (a == b) return {a};
+        return {a, b};
     }
     return {(a * sb - b * sa) / (sb - sa)};
 }

@@ -1,0 +1,203 @@
+\section{Círculo}
+
+Um círculo é dado pelo centro $o$ e pelo raio $r$. Todas as funções precisam de raiz quadrada, então \texttt{T} tem
+que ser ponto flutuante (o \texttt{assert} garante isso). As interseções e as tangentes devolvem um \texttt{vector}
+com os pontos encontrados.
+
+\subsection*{Incentro e circuncentro}
+
+\smallskip{\centering
+\begin{tikzpicture}[scale=0.55]
+  \draw[red!70!black] (2,1) circle (2.236);
+  \fill[blue!8] (1.460,1.052) circle (1.052);
+  \draw[blue!60!black] (1.460,1.052) circle (1.052);
+  \draw[thick] (0,0) -- (4,0) -- (1,3) -- cycle;
+  \fill (0,0) circle (1.5pt) node[below left] {\scriptsize $a$};
+  \fill (4,0) circle (1.5pt) node[below right] {\scriptsize $b$};
+  \fill (1,3) circle (1.5pt) node[above left] {\scriptsize $c$};
+  \fill[blue!60!black] (1.460,1.052) circle (1.8pt) node[left] {\scriptsize $i$};
+  \draw[blue!60!black, dashed] (1.460,1.052) -- (1.460,0);
+  \fill[red!70!black] (2,1) circle (1.8pt) node[right] {\scriptsize $o$};
+  \draw[red!70!black, dashed] (2,1) -- (4,0);
+\end{tikzpicture}
+\par}\smallskip
+
+\texttt{incircle(a, b, c)} devolve o centro $i$ do círculo inscrito (azul), tangente aos três lados. Ele é a média
+dos vértices com peso igual ao lado oposto: $i = (a \cdot |bc| + b \cdot |ac| + c \cdot |ab|) / (|ab| + |bc| + |ac|)$.
+O raio é a distância de $i$ a qualquer lado, ou $2 \cdot \text{área} / \text{perímetro}$.
+
+\texttt{circumcircle(a, b, c)} devolve o centro $o$ do círculo que passa pelos três vértices (vermelho), o encontro das
+mediatrizes. Com $v = b - a$ e $w = c - a$,
+\[ o = a + \frac{\text{perp}(v \, |w|^2 - w \, |v|^2)}{2 \, \text{cross}(v, w)}, \]
+e o raio é \texttt{sqrt(dist2(o, a))}. As duas devolvem $(0, 0)$ se o triângulo é degenerado (pontos colineares).
+
+\subsection*{Menor círculo que cobre os pontos}
+
+\smallskip{\centering
+\begin{tikzpicture}[scale=0.55]
+  \fill[blue!6] (0,0) circle (2);
+  \draw[blue!60!black] (0,0) circle (2);
+  \foreach \p in {(0.5,0.6), (-0.6,-0.2), (0.9,-0.3), (1.2,1.1), (-1,0.9), (0.1,-1.2)} \fill \p circle (1.5pt);
+  \fill[red!70!black] (-0.347,1.970) circle (2pt);
+  \fill[red!70!black] (-1.532,-1.286) circle (2pt);
+  \fill[red!70!black] (1.879,-0.684) circle (2pt);
+  \draw[gray, dashed] (0,0) -- (1.879,-0.684);
+  \node[gray] at (1.05,-0.15) {\scriptsize $r$};
+  \fill[blue!60!black] (0,0) circle (1.5pt) node[left] {\scriptsize $o$};
+\end{tikzpicture}
+\par}\smallskip
+
+\texttt{min\_enclosing\_circle(p)} devolve \texttt{\{o, r\}}, o menor círculo com todos os pontos dentro. Ele é
+definido por 2 ou 3 pontos da borda (vermelhos). O algoritmo de Welzl embaralha os pontos e vai aumentando o círculo:
+se $p_i$ cai fora do círculo dos anteriores, $p_i$ está na borda do novo, então recomeça com o círculo só de $p_i$ e
+adiciona os anteriores; se $p_j$ também cai fora, os dois estão na borda (círculo de diâmetro $p_i p_j$); se $p_k$ cai
+fora, o círculo é o \texttt{circumcircle} dos três. Como a ordem é aleatória, a chance de $p_i$ cair fora é no máximo
+$3/i$, e o total esperado é $O(n)$.
+
+\subsection*{Círculo e reta}
+
+\smallskip{\centering
+\begin{tikzpicture}[scale=0.55]
+  \draw (0,0) circle (1.6);
+  \fill (0,0) circle (1.5pt) node[below] {\scriptsize $o$};
+  \draw[thick] (-2.6,0.8) -- (2.6,0.8) node[right] {\scriptsize 2 pontos};
+  \draw[thick] (-2.6,1.6) -- (2.6,1.6) node[right] {\scriptsize 1 ponto};
+  \draw[thick] (-2.6,2.3) -- (2.6,2.3) node[right] {\scriptsize nenhum};
+  \draw[gray, dashed] (0,0) -- (0,0.8);
+  \draw[gray] (0,0) -- (1.386,0.8);
+  \node[gray] at (0.95,0.25) {\scriptsize $r$};
+  \fill (0,0.8) circle (1.5pt) node[below left] {\scriptsize $p$};
+  \draw[blue!60!black, very thick] (0,0.8) -- (1.386,0.8);
+  \node[blue!60!black] at (0.69,1.08) {\scriptsize $h$};
+  \fill[red!70!black] (-1.386,0.8) circle (2pt);
+  \fill[red!70!black] (1.386,0.8) circle (2pt);
+  \fill[red!70!black] (0,1.6) circle (2pt);
+\end{tikzpicture}
+\par}\smallskip
+
+\texttt{circle\_line\_inter(o, r, l)}: $p$ é a projeção de $o$ na reta e a distância de $o$ à reta é
+$|\text{side}(o)| / |v|$. Por Pitágoras, $h^2 = r^2 - \text{dist}^2$. Se $h^2 < 0$ a reta passa por fora, se
+$h^2 = 0$ ela é tangente e a resposta é só $p$, e se $h^2 > 0$ os pontos são $p \pm h$ na direção de $v$.
+
+\subsection*{Círculo e segmento}
+
+\smallskip{\centering
+\begin{tikzpicture}[scale=0.55]
+  \draw (0,0) circle (1.6);
+  \fill (0,0) circle (1.5pt) node[below] {\scriptsize $o$};
+  \draw[gray, dashed] (-2.6,0.8) -- (3.4,0.8);
+  \draw[thick] (-0.5,0.8) -- (2.6,0.8);
+  \fill (-0.5,0.8) circle (1.5pt) node[above] {\scriptsize $a$};
+  \fill (2.6,0.8) circle (1.5pt) node[above] {\scriptsize $b$};
+  \draw[red!70!black, fill=white] (-1.386,0.8) circle (2pt);
+  \fill[red!70!black] (1.386,0.8) circle (2pt);
+\end{tikzpicture}
+\par}\smallskip
+
+\texttt{circle\_segment\_inter(o, r, a, b)} intersecta o círculo com a reta $ab$ e mantém só os pontos dentro do
+segmento (\texttt{in\_disk}). O ponto vazado está na reta, mas fora de $[a, b]$. Se $a = b$, o segmento é um ponto e
+a resposta é ele mesmo se estiver na circunferência.
+
+\subsection*{Dois círculos}
+
+\smallskip{\centering
+\begin{tikzpicture}[scale=0.55]
+  \draw (0,0) circle (2);
+  \draw (3,0) circle (1.6);
+  \fill (0,0) circle (1.5pt) node[below left] {\scriptsize $o_1$};
+  \fill (3,0) circle (1.5pt) node[below right] {\scriptsize $o_2$};
+  \draw[gray, dashed] (0,0) -- (3,0);
+  \draw[gray] (0,0) -- (1.74,0.986);
+  \node[gray] at (0.7,0.65) {\scriptsize $r_1$};
+  \draw[gray] (3,0) -- (1.74,0.986);
+  \node[gray] at (2.6,0.75) {\scriptsize $r_2$};
+  \fill (1.74,0) circle (1.5pt);
+  \node at (2.2,-0.35) {\scriptsize $p$};
+  \draw[blue!60!black, very thick] (1.74,-0.986) -- (1.74,0.986);
+  \node[blue!60!black] at (1.25,0.3) {\scriptsize $h$};
+  \fill[red!70!black] (1.74,0.986) circle (2pt);
+  \fill[red!70!black] (1.74,-0.986) circle (2pt);
+\end{tikzpicture}
+\par}\smallskip
+
+\texttt{circle\_inter(o1, r1, o2, r2)}: com $v = o_2 - o_1$ e $d = |v|$, os pontos de interseção ficam na
+perpendicular a $v$ que passa por $p$. Igualando $h^2$ nos dois triângulos retângulos,
+$|o_1 p| = (d^2 + r_1^2 - r_2^2) / 2d$ e $h^2 = r_1^2 - |o_1 p|^2$. O código guarda $\text{op} = d \cdot |o_1 p|$
+para não dividir antes da hora. Como antes, $h^2 < 0$ não tem interseção, $h^2 = 0$ é tangente, e senão os pontos
+são $p \pm h$ na direção de \texttt{perp(v)}. Círculos com o mesmo centro devolvem vazio (mesmo se forem iguais).
+
+\subsection*{Área da interseção}
+
+\smallskip{\centering
+\begin{tikzpicture}[scale=0.55]
+  \begin{scope}
+    \clip (0,0) circle (2);
+    \fill[blue!12] (3,0) circle (1.6);
+  \end{scope}
+  \draw (0,0) circle (2);
+  \draw (3,0) circle (1.6);
+  \fill (0,0) circle (1.5pt) node[left] {\scriptsize $o_1$};
+  \fill (3,0) circle (1.5pt) node[right] {\scriptsize $o_2$};
+  \draw[gray, dashed] (1.74,0.986) -- (0,0) -- (1.74,-0.986);
+  \draw[gray, dashed] (1.74,0.986) -- (3,0) -- (1.74,-0.986);
+  \draw[blue!60!black] (1.74,0.986) -- (1.74,-0.986);
+  \draw[red!70!black] (0.6,-0.34) arc (-29.5:29.5:0.69);
+  \node[red!70!black] at (0.95,0) {\scriptsize $\theta_1$};
+  \draw[red!70!black] (2.645,0.277) arc (142:218:0.45);
+  \node[red!70!black] at (2.27,0) {\scriptsize $\theta_2$};
+\end{tikzpicture}
+\par}\smallskip
+
+\texttt{circle\_inter\_area(o1, r1, o2, r2)}: a lente (azul) é a soma de dois segmentos circulares, um de cada
+círculo, separados pela corda. O segmento do círculo $i$ com ângulo central $\theta_i$ tem área
+$r_i^2 (\theta_i - \sin \theta_i) / 2$, e $\theta_1 = 2 \arccos\big((d^2 + r_1^2 - r_2^2) / 2 d r_1\big)$ vem da
+lei dos cossenos (o \texttt{clamp} evita \texttt{acos} de $1 + \varepsilon$). Se $d \ge r_1 + r_2$ eles não se
+tocam e a área é 0; se $d \le |r_1 - r_2|$ um está dentro do outro e a área é a do menor, $\pi \min(r_1, r_2)^2$.
+
+\subsection*{Tangentes de um ponto}
+
+\smallskip{\centering
+\begin{tikzpicture}[scale=0.55]
+  \draw (0,0) circle (1.5);
+  \fill (0,0) circle (1.5pt) node[left] {\scriptsize $o$};
+  \fill (4,0) circle (1.5pt) node[right] {\scriptsize $p$};
+  \draw[gray, dashed] (0,0) -- (4,0);
+  \draw[thick] (4,0) -- (-0.141,1.675);
+  \draw[thick] (4,0) -- (-0.141,-1.675);
+  \draw[gray] (0,0) -- (0.5625,1.3905);
+  \node[gray] at (0.1,0.85) {\scriptsize $r$};
+  \draw[gray] (0.5625,0) -- (0.5625,1.3905);
+  \fill (0.5625,0) circle (1.5pt) node[below right] {\scriptsize $q$};
+  \fill[red!70!black] (0.5625,1.3905) circle (2pt) node[above right] {\scriptsize $t_2$};
+  \fill[red!70!black] (0.5625,-1.3905) circle (2pt) node[below right] {\scriptsize $t_1$};
+\end{tikzpicture}
+\par}\smallskip
+
+\texttt{circle\_tangents(o, r, p)} devolve os pontos onde as retas que saem de $p$ tocam o círculo. O triângulo
+$o\,t\,p$ tem ângulo reto em $t$, então, com $v = p - o$ e $d = |v|$, a sombra de $t - o$ em $v$ mede $r^2 / d$
+(o ponto $q$) e a altura mede $r \sqrt{d^2 - r^2} / d$, na direção de \texttt{perp(v)}. Se $p$ está dentro do
+círculo não há tangente; se está na borda, a resposta é o próprio $p$.
+
+\subsection*{Tangentes comuns}
+
+\smallskip{\centering
+\begin{tikzpicture}[scale=0.55]
+  \draw (0,0) circle (1.2);
+  \draw (4.5,0) circle (0.8);
+  \fill (0,0) circle (1.5pt) node[left] {\scriptsize $o_1$};
+  \fill (4.5,0) circle (1.5pt) node[right] {\scriptsize $o_2$};
+  \draw[blue!60!black, thick] (-0.563,1.255) -- (5.241,0.737);
+  \draw[blue!60!black, thick] (-0.563,-1.255) -- (5.241,-0.737);
+  \draw[red!70!black, thick] (-0.008,1.344) -- (4.686,-0.985);
+  \draw[red!70!black, thick] (-0.008,-1.344) -- (4.686,0.985);
+  \foreach \p in {(0.107,1.195), (4.571,0.797), (0.107,-1.195), (4.571,-0.797)} \fill[blue!60!black] \p circle (1.8pt);
+  \foreach \p in {(0.533,1.075), (4.144,-0.717), (0.533,-1.075), (4.144,0.717)} \fill[red!70!black] \p circle (1.8pt);
+\end{tikzpicture}
+\par}\smallskip
+
+\texttt{circle\_circle\_tangents(o1, r1, o2, r2)} devolve cada tangente como o par de pontos onde ela toca os dois
+círculos, então \texttt{line(a, b)} é a reta. As externas (azul) deixam os círculos do mesmo lado e as internas
+(vermelho) passam entre eles. Se $w$ é a normal unitária da reta, a distância dela aos centros dá
+\texttt{dot(w, v)} $= r_1 - r_2$ nas externas; as internas são a mesma conta trocando $r_2$ por $-r_2$, e o laço em
+\texttt{s} faz as duas. Separados há 4, tangentes por fora 3, se cortando 2, tangentes por dentro 1, um dentro do
+outro 0. Quando os círculos se tocam, os dois pontos do par são iguais e a reta é \texttt{line(a, a + perp(v))}.
