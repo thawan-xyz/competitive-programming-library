@@ -13,6 +13,7 @@
 \usepackage{fancyhdr}
 \usepackage{graphicx}
 \usepackage{xcolor}
+\usepackage{tikz}
 \usepackage{etoolbox}
 \usepackage{atbegshi}
 \usepackage[hidelinks]{hyperref}
@@ -87,15 +88,21 @@
 
 \makeatletter
 \newcommand{\pagefilelist}{}
+\newcommand{\lastfilename}{}
+% a name equal to the previous one on the same page (like x.cpp and x.tex) is listed once
 \newcommand{\addtofilelist}[1]{%
-  \ifx\pagefilelist\empty
-    \gdef\pagefilelist{#1}%
-  \else
-    \g@addto@macro\pagefilelist{\ \textbar\ #1}%
+  \def\@tempa{#1}%
+  \ifx\@tempa\lastfilename\else
+    \ifx\pagefilelist\empty
+      \gdef\pagefilelist{#1}%
+    \else
+      \g@addto@macro\pagefilelist{\ \textbar\ #1}%
+    \fi
   \fi
+  \global\let\lastfilename\@tempa
 }
 
-\AtBeginShipout{\gdef\pagefilelist{}}
+\AtBeginShipout{\gdef\pagefilelist{}\gdef\lastfilename{}}
 \makeatother
 
 \pagestyle{fancy}

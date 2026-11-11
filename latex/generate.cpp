@@ -294,9 +294,16 @@ void print_toc(const vector<section>& sections) {
         if (sec.id > 1) cout << "\\tocgap\n";
         cout << "\\tocbar{" << sec.id << "}{" << latex_escape(sec.name) << "}\n";
 
-        int count = sec.files.size();
+        // files with the same name in the same folder (like x.cpp and x.tex) appear once, linking to the first
+        vector<const file_entry*> items;
+        for (const file_entry& file : sec.files) {
+            if (!items.empty() && items.back()->name == file.name && items.back()->subdir == file.subdir) continue;
+            items.push_back(&file);
+        }
+
+        int count = items.size();
         for (int i = 0; i < count; i++) {
-            const file_entry& file = sec.files[i];
+            const file_entry& file = *items[i];
             cout << "\\tocitem{" << sec.id << "}{" << file.id << "}{" << latex_escape(file.name) << "}\n";
             if (count >= 2 && (i == 0 || i == count - 2)) cout << "\\nobreak\n";
         }
