@@ -5,13 +5,9 @@ struct pattern {
     int low, free;
 
     int high() const {return low | ((1LL << free) - 1);}
-
     int size() const {return 1LL << free;}
-
     int bit(int i) const {return i < free ? -1 : (low >> i) & 1;}
-
     bool contains(int x) const {return (x >> free) == (low >> free);}
-
     int count(int i, int b) const {return i < free ? size() / 2 : bit(i) == b ? size() : 0;}
 };
 
