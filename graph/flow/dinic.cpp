@@ -1,85 +1,65 @@
+// Dinic: maximum flow from s to t, with the minimum cut and the saturated edges
+// Time: O(V^2 E), O(E sqrt(V)) with unit capacities | Space: O(V + E)
+// Note: after flow, on_cut(a) = a is on the side of s in a minimum cut | saturated_edges = inserted edges a -> b with no capacity left
 struct dinic {
     struct edge {
         int b, w, i;
-        bool h;
+        bool real;
     };
 
     int n;
     vector<vector<edge>> g;
-    vector<int> l, p;
+    vector<int> level, ptr;
 
-    dinic(int n): n(n), g(n), l(n), p(n) {}
+    dinic(int n): n(n), g(n), level(n), ptr(n) {}
 
-    void insert_directed(int a, int b, int w) {
-        int i = g[b].size();
-        int j = g[a].size();
+    void insert(int a, int b, int w, bool undirected = false) {
+        int i = g[b].size(), j = g[a].size();
         g[a].push_back({b, w, i, true});
-        g[b].push_back({a, 0, j, false});
-    }
-
-    void insert_undirected(int a, int b, int w) {
-        int i = g[b].size();
-        int j = g[a].size();
-        g[a].push_back({b, w, i, true});
-        g[b].push_back({a, w, j, true});
+        g[b].push_back({a, undirected ? w : 0, j, undirected});
     }
 
     bool bfs(int s, int t) {
-        fill(l.begin(), l.end(), -1);
-        l[s] = 0;
-        queue<int> q;
-        q.push(s);
-
-        while (not q.empty()) {
-            int a = q.front(); q.pop();
-            for (auto &[b, w, i, h] : g[a]) {
-                if (w > 0 and l[b] < 0) {
-                    l[b] = l[a] + 1;
-                    q.push(b);
-                }
-            }
+        fill(level.begin(), level.end(), -1);
+        level[s] = 0;
+        vector<int> q = {s};
+        for (int i = 0; i < q.size(); ++i) {
+            for (auto &e : g[q[i]]) if (e.w > 0 and level[e.b] == -1) level[e.b] = level[q[i]] + 1, q.push_back(e.b);
         }
-        return l[t] >= 0;
+        return level[t] != -1;
     }
 
     int dfs(int a, int t, int f) {
-        if (a == t or f == 0) return f;
-
-        for (int &k = p[a]; k < g[a].size(); ++k) {
-            auto &[b, w, i, h] = g[a][k];
-            if (w > 0 and l[b] == l[a] + 1) {
-                if (int d = dfs(b, t, min(f, w))) {
-                    w -= d;
-                    g[b][i].w += d;
-                    return d;
-                }
-            }
+        if (a == t) return f;
+        int pushed = 0;
+        for (int &k = ptr[a]; k < g[a].size(); ++k) {
+            auto &[b, w, i, real] = g[a][k];
+            if (w == 0 or level[b] != level[a] + 1) continue;
+            int d = dfs(b, t, min(f - pushed, w));
+            w -= d, g[b][i].w += d, pushed += d;
+            if (pushed == f) return f;
         }
-        return 0;
+        return pushed;
     }
 
     int flow(int s, int t) {
         int f = 0;
         while (bfs(s, t)) {
-            fill(p.begin(), p.end(), 0);
-            while (int d = dfs(s, t, inf)) {
-                f += d;
-            }
+            fill(ptr.begin(), ptr.end(), 0);
+            f += dfs(s, t, inf);
         }
         return f;
     }
 
     bool on_cut(int a) {
-        return l[a] >= 0;
+        return level[a] != -1;
     }
 
     vector<pair<int, int>> saturated_edges() {
-        vector<pair<int, int>> e;
+        vector<pair<int, int>> res;
         for (int a = 0; a < n; ++a) {
-            for (auto [b, w, i, h] : g[a]) if (h and w == 0) {
-                e.push_back({a, b});
-            }
+            for (auto &e : g[a]) if (e.real and e.w == 0) res.push_back({a, e.b});
         }
-        return e;
+        return res;
     }
 };
