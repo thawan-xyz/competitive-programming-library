@@ -23,24 +23,34 @@ string escape(const string &s) {
     return res;
 }
 
-// {line, hash}, hash.py prints each line followed by " [hash]" if it closes a block or by " " otherwise
-vector<pair<string, string>> read_lines(const fs::path &path) {
-    vector<pair<string, string>> res;
-    if (path.extension() == ".cpp" and fs::exists(hash_script)) {
-        FILE *pipe = popen(("python3 " + hash_script + " '" + path.string() + "'").c_str(), "r");
-        string out;
-        char buf[1 << 12];
-        for (size_t k; (k = fread(buf, 1, sizeof buf, pipe)) > 0;) out.append(buf, k);
-        pclose(pipe);
-        istringstream in(out);
-        for (string line; getline(in, line);) {
-            size_t sp = line.rfind(' ');
-            res.push_back({line.substr(0, sp), line.substr(sp + 1)});
-        }
-    } else {
-        ifstream in(path);
-        for (string line; getline(in, line);) res.push_back({line, ""});
+map<fs::path, vector<pair<string, string>>> hashed;
+
+// runs hash.py on every .cpp in a single python, each file ends with a line "\x01"
+// hash.py prints each line followed by " [hash]" if it closes a block or by " " otherwise
+void load_hashes(const vector<fs::path> &paths) {
+    if (paths.empty() or not fs::exists(hash_script)) return;
+    string cmd = "python3 -c 'import sys, runpy\nfor f in sys.argv[1:]:\n"
+                 "    sys.argv = [\"\", f]; runpy.run_path(\"" + hash_script + "\"); print(\"\\x01\")\n' ";
+    for (auto &p : paths) cmd += " \"" + p.string() + "\"";
+    FILE *pipe = popen(cmd.c_str(), "r");
+    string out;
+    char buf[1 << 16];
+    for (size_t k; (k = fread(buf, 1, sizeof buf, pipe)) > 0;) out.append(buf, k);
+    pclose(pipe);
+    istringstream in(out);
+    int i = 0;
+    for (string line; i < paths.size() and getline(in, line);) {
+        if (line == "\x01") i++;
+        else hashed[paths[i]].push_back({line.substr(0, line.rfind(' ')), line.substr(line.rfind(' ') + 1)});
     }
+}
+
+// {line, hash}
+vector<pair<string, string>> read_lines(const fs::path &path) {
+    if (hashed.count(path)) return hashed[path];
+    vector<pair<string, string>> res;
+    ifstream in(path);
+    for (string line; getline(in, line);) res.push_back({line, ""});
     return res;
 }
 
@@ -107,6 +117,9 @@ int main(int argc, char **argv) {
     cout << "\\def\\notebooktitle{" << escape(argc > 1 ? argv[1] : "Competitive Programming Library") << "}\n";
     cout << header.rdbuf();
     auto sections = load_sections();
+    vector<fs::path> cpps;
+    for (auto &[name, files] : sections) for (auto &f : files) if (f.path.extension() == ".cpp") cpps.push_back(f.path);
+    load_hashes(cpps);
 
     // index, a name that repeats in the same folder (like x.tex and x.cpp) appears once, linking to the first
     cout << "\\tocbegin\n";

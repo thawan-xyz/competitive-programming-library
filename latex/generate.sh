@@ -1,10 +1,16 @@
 #!/bin/bash
 # Generate: builds ../pdf/notebook.pdf from the library
-# Use: bash generate.sh ["title"]
+# Use: bash generate.sh ["title"] | build/ keeps the compiled generate and the page numbers of the last build
 set -e
-trap 'rm -f generate notebook.{tex,aux,log,out}' EXIT
-g++ -std=c++20 -O2 generate.cpp -o generate
-./generate "$@" > notebook.tex
-for pass in 1 2; do pdflatex -interaction=batchmode notebook.tex > /dev/null || true; done
-mkdir -p ../pdf && mv notebook.pdf ../pdf/
-echo "notebook saved at ../pdf/notebook.pdf"
+mkdir -p build ../pdf
+[ build/generate -nt generate.cpp ] || g++ -std=c++20 generate.cpp -o build/generate
+build/generate "$@" > build/notebook.tex
+# runs pdflatex again only while the page numbers in notebook.aux change, at most 3 times
+for pass in 1 2 3; do
+    echo "Compiling PDF [$pass]..."
+    cp build/notebook.aux build/old.aux 2> /dev/null || true
+    pdflatex -interaction=batchmode -output-directory=build build/notebook.tex > /dev/null || true
+    cmp -s build/notebook.aux build/old.aux && break
+done
+mv build/notebook.pdf ../pdf/
+echo "Done! Notebook saved at ../pdf/notebook.pdf"
