@@ -1,358 +1,141 @@
-#include <algorithm>
-#include <cstdio>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <numeric>
-#include <set>
-#include <sstream>
-#include <string>
-#include <vector>
-
-namespace fs = std::filesystem;
+// Generate: prints notebook.tex with a section for each folder of the library and a bar for each file
+// Use: ./generate "title" > notebook.tex | run from latex/, a .tex comes before the code with the same name
+#include <bits/stdc++.h>
 using namespace std;
+namespace fs = filesystem;
 
-const string NO_PRINT = "noprint";
-const string ROOT_PATH = "../";
-const string HASH_SCRIPT = ROOT_PATH + "extra/hash.py";
-const char HASH_MARK = '\x01';
+const fs::path root = "..";
+const string hash_script = "../extra/hash.py";
 
-bool print_all = false;
-bool dense = false;
-bool raw = false;
-
-struct file_entry {
-    int id = 0;
-    string name;
-    string subdir;
-    string path;
-    string sort_key;
+struct file {
+    string name, folder;
+    fs::path path;
 };
 
-struct section {
-    int id = 0;
-    string name;
-    vector<file_entry> files;
-};
-
-string to_lower(string text) {
-    for (char& character : text) {
-        if (character >= 'A' && character <= 'Z') character ^= 32;
+string escape(const string &s) {
+    string res;
+    for (char c : s) {
+        if (c == '\\') res += "\\textbackslash{}";
+        else if (c == '^' or c == '~') res += string("\\") + c + "{}";
+        else if (string("&%$#_{}").find(c) != string::npos) res += string("\\") + c;
+        else res += c;
     }
-    return text;
+    return res;
 }
 
-string trim(const string& text) {
-    size_t begin = text.find_first_not_of(" \t\r");
-    if (begin == string::npos) return "";
-    size_t end = text.find_last_not_of(" \t\r");
-    return text.substr(begin, end - begin + 1);
-}
-
-vector<string> split(const string& line, char delimiter) {
-    vector<string> result;
-    string current;
-    for (char character : line) {
-        if (character == delimiter) {
-            if (!current.empty()) result.push_back(current);
-            current.clear();
-        } else {
-            current += character;
+// {line, hash}, hash.py prints each line followed by " [hash]" if it closes a block or by " " otherwise
+vector<pair<string, string>> read_lines(const fs::path &path) {
+    vector<pair<string, string>> res;
+    if (path.extension() == ".cpp" and fs::exists(hash_script)) {
+        FILE *pipe = popen(("python3 " + hash_script + " '" + path.string() + "'").c_str(), "r");
+        string out;
+        char buf[1 << 12];
+        for (size_t k; (k = fread(buf, 1, sizeof buf, pipe)) > 0;) out.append(buf, k);
+        pclose(pipe);
+        istringstream in(out);
+        for (string line; getline(in, line);) {
+            size_t sp = line.rfind(' ');
+            res.push_back({line.substr(0, sp), line.substr(sp + 1)});
         }
+    } else {
+        ifstream in(path);
+        for (string line; getline(in, line);) res.push_back({line, ""});
     }
-    if (!current.empty()) result.push_back(current);
-    return result;
+    return res;
 }
 
-string latex_escape(const string& text) {
-    string out;
-    for (char character : text) {
-        switch (character) {
-            case '\\': out += "\\textbackslash{}"; break;
-            case '^':  out += "\\^{}"; break;
-            case '~':  out += "\\~{}"; break;
-            case '&': case '%': case '$': case '#': case '_': case '{': case '}':
-                out += '\\';
-                out += character;
-                break;
-            default:
-                out += character;
-        }
-    }
-    return out;
-}
-
-string strip_extension(const string& filename) {
-    fs::path p(filename);
-    string ext = to_lower(p.extension().string());
-    if (ext == ".cpp" || ext == ".py" || ext == ".java" || ext == ".tex") {
-        return p.stem().string();
-    }
-    return filename;
-}
-
-set<string> get_flags(const string& file) {
-    ifstream fin(file);
-    string line;
-    if (!getline(fin, line)) return {};
-
-    size_t start = line.find('[');
-    size_t end = line.rfind(']');
-    if (start == string::npos || end == string::npos || start >= end) return {};
-
-    set<string> flags;
-    for (const string& flag : split(line.substr(start + 1, end - start - 1), ',')) {
-        flags.insert(trim(flag));
-    }
-    return flags;
-}
-
-bool should_print(const string& file) {
-    return print_all || !get_flags(file).count(NO_PRINT);
-}
-
-string sanitize_line(const string& line) {
-    string clean;
-    for (unsigned char character : line) {
-        if ((character >= 32 && character <= 126) || character == '\t' || character >= 128) {
-            clean += character;
-        }
-    }
-    size_t end = clean.find_last_not_of(" \t");
-    return end == string::npos ? "" : clean.substr(0, end + 1);
-}
-
-// hashes[i] is the hash that hash.py prints at line i of a .cpp file, or empty if the line does not close a block
-vector<string> block_hashes(const string& file) {
-    vector<string> hashes;
-    if (to_lower(fs::path(file).extension().string()) != ".cpp" || !fs::exists(HASH_SCRIPT)) return hashes;
-
-    FILE* pipe = popen(("python3 " + HASH_SCRIPT + " '" + file + "'").c_str(), "r");
-    if (!pipe) return hashes;
-    string output;
-    char buffer[4096];
-    size_t count;
-    while ((count = fread(buffer, 1, sizeof buffer, pipe)) > 0) output.append(buffer, count);
-    pclose(pipe);
-
-    istringstream stream(output);
-    string line;
-    // hash.py prints each line followed by a space and its [hash], which is empty if the line does not close a block
-    while (getline(stream, line)) hashes.push_back(line.empty() || line.back() == ' ' ? "" : line.substr(line.size() - 4, 3));
-    return hashes;
-}
-
-vector<string> read_code_lines(const string& file) {
-    ifstream fin(file);
-    vector<string> lines, hashes = block_hashes(file);
-    string line;
-    bool first = true;
-
-    for (size_t index = 0; getline(fin, line); index++) {
-        string clean = sanitize_line(line);
-        if (first) {
-            first = false;
-            if (clean.size() >= 2 && clean.front() == '[' && clean.back() == ']') continue;
-        }
-        if (index < hashes.size() && !hashes[index].empty()) clean += HASH_MARK + hashes[index];
-        lines.push_back(clean);
-    }
-    return lines;
-}
-
-void shrink_indent(vector<string>& lines) {
+void print_code(const fs::path &path) {
+    auto lines = read_lines(path);
     int unit = 0;
-    for (const string& line : lines) {
-        if (!line.empty() && line[0] == '\t') return;
-        size_t indent = line.find_first_not_of(' ');
-        if (indent == string::npos || indent == 0) continue;
-        unit = gcd(unit, (int)indent);
+    bool tabs = false;
+    for (auto &[line, h] : lines) {
+        erase_if(line, [](unsigned char c) { return c < 32 and c != '\t'; });
+        while (not line.empty() and isspace(line.back())) line.pop_back();
+        tabs |= line.starts_with('\t');
+        if (not line.empty()) unit = gcd(unit, (int) line.find_first_not_of(' '));
     }
-    if (unit <= 2 || unit % 2 != 0) return;
-
-    for (string& line : lines) {
-        size_t indent = line.find_first_not_of(' ');
-        if (indent == string::npos || indent == 0) continue;
-        line.erase(0, indent - indent / (unit / 2));
-    }
-}
-
-void squeeze_blank_lines(vector<string>& lines) {
-    vector<string> result;
-    bool pending_blank = false;
-    for (string& line : lines) {
-        if (line.empty()) {
-            pending_blank = true;
-            continue;
+    // indentation of 4 spaces becomes 2, blank lines in sequence become one
+    vector<pair<string, string>> out;
+    for (auto &[line, h] : lines) {
+        if (line.empty() and (out.empty() or out.back().first.empty())) continue;
+        if (not tabs and unit > 2 and unit % 2 == 0 and not line.empty()) {
+            int k = line.find_first_not_of(' ');
+            line.erase(0, k - k / (unit / 2));
         }
-        if (pending_blank && !dense && !result.empty()) result.push_back("");
-        pending_blank = false;
-        result.push_back(move(line));
+        out.push_back({line, h});
     }
-    lines = move(result);
-}
+    while (not out.empty() and out.back().first.empty()) out.pop_back();
 
-void print_code_file(const string& file) {
-    vector<string> lines = read_code_lines(file);
-    if (!raw) {
-        shrink_indent(lines);
-        squeeze_blank_lines(lines);
-    }
-
-    bool hashed = any_of(lines.begin(), lines.end(), [](const string& line) { return line.find(HASH_MARK) != string::npos; });
-    bool python = to_lower(fs::path(file).extension().string()) == ".py";
-    cout << "\\begin{lstlisting}" << (hashed ? "[style=hashed]" : python ? "[language=Python]" : "") << "\n";
-    for (const string& line : lines) {
-        size_t mark = line.find(HASH_MARK);
-        if (mark == string::npos) cout << line << "\n";
-        else cout << line.substr(0, mark) << "(*@\\codehash{" << line.substr(mark + 1) << "}@*)\n";
-    }
+    // C++ is the default language of header.tex, setting it again would drop its extra keywords and colors
+    string ext = path.extension(), options = ext == ".py" ? "language=Python" : ext == ".sh" ? "language=bash" : "";
+    if (ranges::any_of(out, [](auto &p) { return not p.second.empty(); })) options += (options.empty() ? "" : ", ") + string("style=hashed");
+    cout << "\\begin{lstlisting}" << (options.empty() ? "" : "[" + options + "]") << "\n";
+    for (auto &[line, h] : out) cout << line << (h.empty() ? "" : "(*@\\codehash{" + h.substr(1, h.size() - 2) + "}@*)") << '\n';
     cout << "\\end{lstlisting}\n";
 }
 
-bool is_valid_file(const fs::path& filepath) {
-    string ext = to_lower(filepath.extension().string());
-    return !(ext == ".pdf" || ext == ".o" || ext == ".out" || ext == ".exe" ||
-             ext == ".png" || ext == ".jpg" || ext == ".zip" || ext == ".tar");
-}
-
-void dfs(vector<file_entry>& files, const fs::path& base_path, const fs::path& current_path) {
-    if (!fs::exists(current_path)) return;
-
-    for (const auto& entry : fs::directory_iterator(current_path)) {
-        string filename = entry.path().filename().string();
-        if (filename.empty() || filename[0] == '.') continue;
-
-        if (entry.is_directory()) {
-            dfs(files, base_path, entry.path());
-        } else if (entry.is_regular_file() && is_valid_file(entry.path())) {
-            fs::path rel_path = fs::relative(entry.path(), base_path);
-
-            file_entry item;
-            item.name = strip_extension(filename);
-            item.subdir = rel_path.parent_path().generic_string();
-            item.path = entry.path().string();
-            item.sort_key = to_lower(rel_path.generic_string());
-            files.push_back(move(item));
-        }
+// sections are the folders of the root, files are found recursively and sorted by path, with the .tex first
+vector<pair<string, vector<file>>> load_sections() {
+    vector<fs::path> folders;
+    for (auto &e : fs::directory_iterator(root)) {
+        string name = e.path().filename();
+        if (e.is_directory() and name[0] != '.' and name != "latex" and name != "pdf") folders.push_back(e.path());
     }
-}
-
-vector<section> load_sections() {
-    vector<fs::path> directories;
-    if (fs::exists(ROOT_PATH)) {
-        for (const auto& entry : fs::directory_iterator(ROOT_PATH)) {
-            if (!entry.is_directory()) continue;
-            string dir_name = entry.path().filename().string();
-            if (dir_name.empty() || dir_name[0] == '.' || dir_name == "latex" || dir_name == "pdf") continue;
-            directories.push_back(entry.path());
+    ranges::sort(folders);
+    vector<pair<string, vector<file>>> sections;
+    for (auto &folder : folders) {
+        vector<pair<string, file>> files;
+        for (auto &e : fs::recursive_directory_iterator(folder)) {
+            fs::path p = e.path(), rel = fs::relative(p, folder);
+            string ext = p.extension(), sub = rel.parent_path();
+            if (not e.is_regular_file() or (ext != ".cpp" and ext != ".py" and ext != ".sh" and ext != ".tex")) continue;
+            string key = sub + "/" + rel.stem().string() + (ext == ".tex" ? "." : ext);
+            ranges::transform(key, key.begin(), ::tolower);
+            files.push_back({key, {p.stem(), sub.empty() ? "" : sub + "/", p}});
         }
-    }
-
-    sort(directories.begin(), directories.end(), [](const fs::path& a, const fs::path& b) {
-        return a.filename().string() < b.filename().string();
-    });
-
-    vector<section> sections;
-    int next_section_id = 0, next_file_id = 0;
-
-    for (const fs::path& dir_path : directories) {
-        vector<file_entry> files;
-        dfs(files, dir_path, dir_path);
-        sort(files.begin(), files.end(), [](const file_entry& a, const file_entry& b) {
-            return a.sort_key < b.sort_key;
-        });
-
-        section sec;
-        sec.name = dir_path.filename().string();
-        for (file_entry& item : files) {
-            if (!should_print(item.path)) continue;
-            item.id = ++next_file_id;
-            sec.files.push_back(move(item));
-        }
-        if (sec.files.empty()) continue;
-
-        sec.id = ++next_section_id;
-        sections.push_back(move(sec));
+        if (files.empty()) continue;
+        ranges::sort(files, {}, &pair<string, file>::first);
+        sections.push_back({folder.filename(), {}});
+        for (auto &[key, f] : files) sections.back().second.push_back(f);
     }
     return sections;
 }
 
-bool print_raw_file(const string& file) {
-    ifstream fin(file);
-    if (!fin) return false;
-    string line;
-    while (getline(fin, line)) cout << line << "\n";
-    return true;
-}
+int main(int argc, char **argv) {
+    ifstream header("header.tex");
+    if (not header) return cerr << "header.tex not found, run from latex/\n", 1;
+    cout << "\\def\\notebooktitle{" << escape(argc > 1 ? argv[1] : "Competitive Programming Library") << "}\n";
+    cout << header.rdbuf();
+    auto sections = load_sections();
 
-void print_toc(const vector<section>& sections) {
-    if (sections.empty()) return;
-
+    // index, a name that repeats in the same folder (like x.tex and x.cpp) appears once, linking to the first
     cout << "\\tocbegin\n";
-    for (const section& sec : sections) {
-        if (sec.id > 1) cout << "\\tocgap\n";
-        cout << "\\tocbar{" << sec.id << "}{" << latex_escape(sec.name) << "}\n";
-
-        // files with the same name in the same folder (like x.cpp and x.tex) appear once, linking to the first
-        vector<const file_entry*> items;
-        for (const file_entry& file : sec.files) {
-            if (!items.empty() && items.back()->name == file.name && items.back()->subdir == file.subdir) continue;
-            items.push_back(&file);
+    for (int s = 0, id = 0; s < sections.size(); ++s) {
+        auto &[name, files] = sections[s];
+        if (s) cout << "\\tocgap\n";
+        cout << "\\tocbar{" << s + 1 << "}{" << escape(name) << "}\n";
+        vector<int> items;
+        for (int i = 0; i < files.size(); ++i) {
+            if (i == 0 or files[i].name != files[i - 1].name or files[i].folder != files[i - 1].folder) items.push_back(i);
         }
-
-        int count = items.size();
-        for (int i = 0; i < count; i++) {
-            const file_entry& file = *items[i];
-            cout << "\\tocitem{" << sec.id << "}{" << file.id << "}{" << latex_escape(file.name) << "}\n";
-            if (count >= 2 && (i == 0 || i == count - 2)) cout << "\\nobreak\n";
+        for (int i = 0; i < items.size(); ++i) {
+            cout << "\\tocitem{" << s + 1 << "}{" << id + items[i] + 1 << "}{" << escape(files[items[i]].name) << "}\n";
+            if (items.size() > 1 and (i == 0 or i == items.size() - 2)) cout << "\\nobreak\n";
         }
+        id += files.size();
     }
-    cout << "\\tocend\n";
-    cout << "\\par\\vspace{1pt}\\hrule height 0.4pt\\vspace{1pt}\n";
-}
+    cout << "\\tocend\n\\par\\vspace{1pt}\\hrule height 0.4pt\\vspace{1pt}\n";
 
-void print_file(const file_entry& item) {
-    string subdir = item.subdir.empty() ? "" : item.subdir + "/";
-    cout << "\\filebar{" << item.id << "}{" << latex_escape(item.name) << "}{"
-         << latex_escape(subdir) << "}\n";
-
-    if (to_lower(fs::path(item.path).extension().string()) == ".tex") {
-        cout << "\\texfile{" << item.path << "}\n";
-    } else {
-        print_code_file(item.path);
-    }
-}
-
-int main(int argc, char** argv) {
-    for (int i = 1; i < argc; i++) {
-        string arg = argv[i];
-        if (arg == "--printall") print_all = true;
-        else if (arg == "--dense") dense = true;
-        else if (arg == "--raw") raw = true;
-        else cerr << "Warning: unknown option " << arg << " (ignored)\n";
-    }
-
-    if (!print_raw_file("header.tex")) {
-        cerr << "Error: header.tex not found (run from the latex/ directory)\n";
-        return 1;
-    }
-
-    vector<section> sections = load_sections();
-    print_toc(sections);
-
-    int file_count = 0;
-    for (const section& sec : sections) {
-        cout << "\\secbar{" << sec.id << "}{" << latex_escape(sec.name) << "}\n";
-        for (const file_entry& item : sec.files) {
-            print_file(item);
-            file_count++;
+    int id = 0;
+    for (int s = 0; s < sections.size(); ++s) {
+        auto &[name, files] = sections[s];
+        cout << "\\secbar{" << s + 1 << "}{" << escape(name) << "}\n";
+        for (auto &f : files) {
+            cout << "\\filebar{" << ++id << "}{" << escape(f.name) << "}{" << escape(f.folder) << "}\n";
+            if (f.path.extension() == ".tex") cout << "\\texfile{" << f.path.string() << "}\n";
+            else print_code(f.path);
         }
     }
-
-    cout << "\\end{multicols*}\n";
-    cout << "\\end{document}\n";
-
-    cerr << file_count << " files in " << sections.size() << " sections\n";
-    return 0;
+    cout << "\\end{multicols*}\n\\end{document}\n";
+    cerr << id << " files in " << sections.size() << " sections\n";
 }

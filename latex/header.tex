@@ -1,11 +1,6 @@
 \documentclass[10pt, a4paper, landscape]{article}
-\usepackage{iftex}
-\ifPDFTeX
-  \usepackage[utf8]{inputenc}
-  \usepackage[T1]{fontenc}
-\else
-  \usepackage{fontspec}
-\fi
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage{amsmath, amssymb, amsfonts}
 \usepackage{listings}
 \usepackage{multicol}
@@ -17,17 +12,8 @@
 \usepackage{etoolbox}
 \usepackage{atbegshi}
 \usepackage[hidelinks]{hyperref}
-\usepackage{docmute}
 
 \geometry{a4paper, landscape, hmargin={0.4cm, 0.4cm}, top=1.3cm, bottom=0.3cm, footskip=0pt}
-
-\input{env}
-
-\ifPDFTeX\else
-  \ifdefined\codefontname
-    \setmonofont{\codefontname}[Scale=MatchLowercase]
-  \fi
-\fi
 
 \definecolor{vscode_green}{rgb}{0.0, 0.5, 0.0}
 \definecolor{vscode_blue}{rgb}{0.0, 0.0, 0.8}
