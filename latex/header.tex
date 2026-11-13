@@ -35,7 +35,7 @@
 \definecolor{stop8}{HTML}{4F46E5}
 \definecolor{stop9}{HTML}{9333EA}
 \foreach \k in {1,...,\numsections} {
-  \pgfmathsetmacro{\t}{\numsections > 1 ? (\k - 1) * 8 / (\numsections - 1) : 0}
+  \pgfmathsetmacro{\t}{(\k - 1) * 8 / max(\numsections - 1, 1)}
   \pgfmathtruncatemacro{\i}{min(floor(\t), 7) + 1}
   \pgfmathtruncatemacro{\j}{\i + 1}
   \pgfmathtruncatemacro{\p}{round(100 * (\i - \t))}
@@ -151,7 +151,7 @@
     \foreach \k in {1,...,\numsections} {\ifnum\getpagerefnumber{s\k}=\value{page}\ifnum\k<\firstsec\global\firstsec=\k\fi\fi}%
   \fi\fi
 }
-\newcommand{\sectiontag}[1]{{\setlength{\fboxsep}{1.2pt}\colorbox{sec#1}{\color{white}\scriptsize\bfseries\strut\,\csname secname#1\endcsname\,}}}
+\newcommand{\sectiontag}[1]{{\setlength{\fboxsep}{1.2pt}\colorbox{sec#1}{\color{white}\scriptsize\bfseries\vphantom{dg}\,\csname secname#1\endcsname\,}}}
 
 \lhead{\findsections\ifnum\lastsec>0 \foreach \k in {\the\firstsec,...,\the\lastsec} {\sectiontag{\k}\ }\fi}
 
@@ -175,7 +175,7 @@
   \nointerlineskip
   \begingroup
   \setlength{\fboxsep}{0.9pt}%
-  \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\raggedright #2\strut #3}}%
+  \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\raggedright #2\vphantom{dg}#3}}%
   \endgroup
   \par\nobreak
 }
