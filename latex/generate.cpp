@@ -54,6 +54,39 @@ vector<pair<string, string>> read_lines(const fs::path &path) {
     return res;
 }
 
+// marks the names right before a '(', outside comments, strings and chars, for header.tex to color as functions
+string mark_functions(const string &line, bool &block) {
+    static const set<string> keywords = {"if", "else", "for", "while", "do", "return", "switch", "case", "catch", "throw",
+        "sizeof", "alignof", "decltype", "static_cast", "const_cast", "reinterpret_cast", "dynamic_cast", "and", "or", "not",
+        "int", "long", "short", "char", "bool", "float", "double", "void", "auto", "unsigned", "signed", "new", "delete",
+        "operator", "template", "typename", "array", "vector", "string", "map", "pair", "tuple", "queue", "deque", "stack",
+        "priority_queue", "multiset", "multimap", "unordered_map", "unordered_set"};
+    string res;
+    for (int i = 0; i < line.size(); ++i) {
+        if (block) {
+            if (line.compare(i, 2, "*/") == 0) block = false, res += line[i++];
+        } else if (line.compare(i, 2, "//") == 0) {
+            return res + line.substr(i);
+        } else if (line.compare(i, 2, "/*") == 0) {
+            block = true, res += line[i++];
+        } else if (line[i] == '"' or line[i] == '\'') {
+            int j = i + 1;
+            while (j < line.size() and line[j] != line[i]) j += line[j] == '\\' ? 2 : 1;
+            res += line.substr(i, j - i), i = j;
+        } else if (isalnum(line[i]) or line[i] == '_') {
+            int j = i;
+            while (j < line.size() and (isalnum(line[j]) or line[j] == '_')) j++;
+            string word = line.substr(i, j - i);
+            if (isdigit(word[0]) or j == line.size() or line[j] != '(' or keywords.count(word)) res += word;
+            else res += "(*@\\fn{" + regex_replace(word, regex("_"), "\\_") + "}@*)";
+            i = j - 1;
+            continue;
+        }
+        if (i < line.size()) res += line[i];
+    }
+    return res;
+}
+
 void print_code(const fs::path &path) {
     auto lines = read_lines(path);
     int unit = 0;
@@ -79,6 +112,9 @@ void print_code(const fs::path &path) {
     // C++ is the default language of header.tex, setting it again would drop its extra keywords and colors
     string ext = path.extension(), options = ext == ".py" ? "language=Python" : ext == ".sh" ? "language=bash" : "";
     if (ranges::any_of(out, [](auto &p) { return not p.second.empty(); })) options += (options.empty() ? "" : ", ") + string("style=hashed");
+    bool block = false;
+    if (ext == ".cpp") for (auto &[line, h] : out) line = mark_functions(line, block);
+    if (options.find("hashed") == string::npos and ranges::any_of(out, [](auto &p) { return p.first.find("(*@") != string::npos; })) options += (options.empty() ? "" : ", ") + string("style=hashed");
     cout << "\\begin{lstlisting}" << (options.empty() ? "" : "[" + options + "]") << "\n";
     for (auto &[line, h] : out) cout << line << (h.empty() ? "" : "(*@\\codehash{" + h.substr(1, h.size() - 2) + "}@*)") << '\n';
     cout << "\\end{lstlisting}\n";
@@ -115,7 +151,13 @@ int main(int argc, char **argv) {
     ifstream header("header.tex");
     if (not header) return cerr << "header.tex not found, run from latex/\n", 1;
     auto sections = load_sections();
-    cout << "\\def\\notebooktitle{" << escape(argc > 1 ? argv[1] : "Competitive Programming Library") << "}\n";
+    // arguments: the title and -black, which leaves every section in black
+    string title = "Competitive Programming Library";
+    for (int i = 1; i < argc; ++i) {
+        if (string(argv[i]) == "-black") cout << "\\def\\blacksections{}\n";
+        else title = argv[i];
+    }
+    cout << "\\def\\notebooktitle{" << escape(title) << "}\n";
     cout << "\\def\\numsections{" << sections.size() << "}\n";
     cout << header.rdbuf();
     vector<fs::path> cpps;

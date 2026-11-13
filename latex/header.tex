@@ -17,12 +17,15 @@
 
 \geometry{a4paper, landscape, hmargin={0.4cm, 0.4cm}, top=1.3cm, bottom=0.3cm, footskip=0pt}
 
-\definecolor{vscode_green}{rgb}{0.0, 0.5, 0.0}
-\definecolor{vscode_blue}{rgb}{0.0, 0.0, 0.8}
-\definecolor{vscode_teal}{rgb}{0.0, 0.5, 0.5}
-\definecolor{vscode_red}{rgb}{0.64, 0.08, 0.08}
-\definecolor{vscode_purple}{rgb}{0.43, 0.12, 0.59}
-\definecolor{red_number}{rgb}{0.65, 0.13, 0.20}
+% code colors, vs code light+
+\definecolor{code_comment}{HTML}{008000}
+\definecolor{code_keyword}{HTML}{0000FF}
+\definecolor{code_control}{HTML}{AF00DB}
+\definecolor{code_type}{HTML}{267F99}
+\definecolor{code_string}{HTML}{A31515}
+\definecolor{code_number}{HTML}{098658}
+\definecolor{code_directive}{HTML}{0000FF}
+\definecolor{code_function}{HTML}{9A6700}
 
 % section colors, a gradient through these stops, \numsections comes from generate
 \definecolor{stop1}{HTML}{E11D48}
@@ -41,6 +44,10 @@
   \pgfmathtruncatemacro{\p}{round(100 * (\i - \t))}
   \xglobal\colorlet{sec\k}{stop\i!\p!stop\j}
 }
+% generate -black: every section in black
+\ifdefined\blacksections
+  \foreach \k in {1,...,\numsections} {\xglobal\colorlet{sec\k}{black!85}}
+\fi
 
 \newcommand{\codesize}{6.5pt}
 \newcommand{\codeleading}{6.0pt}
@@ -54,12 +61,15 @@
   showstringspaces=false,
   tabsize=2,
   basicstyle=\codefont,
-  commentstyle=\color{vscode_green},
-  keywordstyle=\color{vscode_blue}\bfseries,
-  keywordstyle=[2]\color{vscode_teal}\bfseries,
-  stringstyle=\color{vscode_red},
-  directivestyle=\color{vscode_purple}\bfseries,
+  commentstyle=\color{code_comment},
+  keywordstyle=\color{code_keyword}\bfseries,
+  keywordstyle=[2]\color{code_type}\bfseries,
+  keywordstyle=[3]\color{code_control}\bfseries,
+  stringstyle=\color{code_string},
+  directivestyle=\color{code_directive}\bfseries,
   morekeywords=[2]{array, vector, string, map, pair, tuple, queue, deque, stack, priority_queue, multiset, multimap, unordered_map, unordered_set},
+  deletekeywords={if, else, for, while, do, return, break, continue, switch, case, default, goto, try, catch, throw},
+  morekeywords=[3]{if, else, for, while, do, return, break, continue, switch, case, default, goto, try, catch, throw},
   numbers=none,
   aboveskip=0pt,
   belowskip=0pt,
@@ -69,10 +79,14 @@
 
 % block hash from extra/hash.py, at the right of the line that closes the block
 \lstdefinestyle{hashed}{escapeinside={(*@}{@*)}}
+% function names marked by generate, each letter in a column of the listing so the text stays aligned
+\makeatletter
+\newcommand{\fn}[1]{{\color{code_function}\@tfor\fn@char:=#1\do{\makebox[\lst@width]{\fn@char}}}}
+\makeatother
 \newcommand{\codehash}[1]{\hspace{0.5em plus 1fill}{\color{black!45}[#1]}}
 
 \makeatletter
-\newcommand{\lst@numberstyle@color}{\color{red_number}}
+\newcommand{\lst@numberstyle@color}{\color{code_number}}
 \newcommand{\lst@startsdigit}[1]{%
   \expandafter\lst@startsdigit@\detokenize\expandafter{#1}\@nil}
 \def\lst@startsdigit@#1#2\@nil{%
@@ -187,12 +201,18 @@
   \vskip 0.8pt\nobreak
 }
 
+% file bars: black with white text, or light gray with black text when the sections are black
+\ifdefined\blacksections
+  \colorlet{filebarbg}{gray!22}\colorlet{filebartext}{black}\colorlet{filebarfolder}{black!60}
+\else
+  \colorlet{filebarbg}{black!85}\colorlet{filebartext}{white}\colorlet{filebarfolder}{white!70!black}
+\fi
 \newcommand{\filebar}[3]{%
   \par\addvspace{1.5pt}%
   \phantomsection\label{f#1}\pdfbookmark[1]{#2}{file#1}%
   \addtofilelist{#2}%
-  \barbox{gray!22}{\fontsize{7pt}{7.6pt}\selectfont\bfseries}%
-    {#2\hfill{\mdseries\tiny\color{black!60}#3}}%
+  \barbox{filebarbg}{\color{filebartext}\fontsize{7pt}{7.6pt}\selectfont\bfseries}%
+    {#2\hfill{\mdseries\tiny\color{filebarfolder}#3}}%
   \vskip 0.8pt\nobreak
 }
 
