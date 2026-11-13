@@ -8,7 +8,7 @@ void fwht(vector<int> &f, char opr, bool inv) {
                 int x = f[j], y = f[j + k];
                 if (opr == '&') x += (inv) ? mod - y : y;
                 if (opr == '|') y += (inv) ? mod - x : x;
-                if (opr == '^') tie(x, y) = pair(x + y, x - y + mod);
+                if (opr == '^') x += y, y = x - 2 * y + mod;
                 f[j] = x - (x >= mod) * mod, f[j + k] = y - (y >= mod) * mod;
             }
         }
