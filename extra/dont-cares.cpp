@@ -12,7 +12,7 @@ struct pattern {
 
     bool contains(int x) const {return (x >> free) == (low >> free);}
 
-    int count(int i, int b) const {return i < free ? size() / 2 : ((low >> i) & 1) == b ? size() : 0;}
+    int count(int i, int b) const {return i < free ? size() / 2 : bit(i) == b ? size() : 0;}
 };
 
 vector<pattern> decompose(int l, int r) {
