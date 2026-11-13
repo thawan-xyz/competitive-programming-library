@@ -114,9 +114,10 @@ vector<pair<string, vector<file>>> load_sections() {
 int main(int argc, char **argv) {
     ifstream header("header.tex");
     if (not header) return cerr << "header.tex not found, run from latex/\n", 1;
-    cout << "\\def\\notebooktitle{" << escape(argc > 1 ? argv[1] : "Competitive Programming Library") << "}\n";
-    cout << header.rdbuf();
     auto sections = load_sections();
+    cout << "\\def\\notebooktitle{" << escape(argc > 1 ? argv[1] : "Competitive Programming Library") << "}\n";
+    cout << "\\def\\numsections{" << sections.size() << "}\n";
+    cout << header.rdbuf();
     vector<fs::path> cpps;
     for (auto &[name, files] : sections) for (auto &f : files) if (f.path.extension() == ".cpp") cpps.push_back(f.path);
     load_hashes(cpps);

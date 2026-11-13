@@ -9,6 +9,8 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{refcount}
 \usepackage{etoolbox}
 \usepackage{atbegshi}
 \usepackage[hidelinks]{hyperref}
@@ -21,6 +23,24 @@
 \definecolor{vscode_red}{rgb}{0.64, 0.08, 0.08}
 \definecolor{vscode_purple}{rgb}{0.43, 0.12, 0.59}
 \definecolor{red_number}{rgb}{0.65, 0.13, 0.20}
+
+% section colors, a gradient through these stops, \numsections comes from generate
+\definecolor{stop1}{HTML}{E11D48}
+\definecolor{stop2}{HTML}{EA580C}
+\definecolor{stop3}{HTML}{CA8A04}
+\definecolor{stop4}{HTML}{65A30D}
+\definecolor{stop5}{HTML}{059669}
+\definecolor{stop6}{HTML}{0891B2}
+\definecolor{stop7}{HTML}{2563EB}
+\definecolor{stop8}{HTML}{4F46E5}
+\definecolor{stop9}{HTML}{9333EA}
+\foreach \k in {1,...,\numsections} {
+  \pgfmathsetmacro{\t}{\numsections > 1 ? (\k - 1) * 8 / (\numsections - 1) : 0}
+  \pgfmathtruncatemacro{\i}{min(floor(\t), 7) + 1}
+  \pgfmathtruncatemacro{\j}{\i + 1}
+  \pgfmathtruncatemacro{\p}{round(100 * (\i - \t))}
+  \xglobal\colorlet{sec\k}{stop\i!\p!stop\j}
+}
 
 \newcommand{\codesize}{6.5pt}
 \newcommand{\codeleading}{6.0pt}
@@ -97,8 +117,51 @@
 \setlength{\headheight}{10pt}
 \setlength{\headsep}{4pt}
 
-\lhead{}
-\chead{\parbox[b]{0.8\textwidth}{\centering\scriptsize\bfseries\pagefilelist}}
+% thumb index: each section has a tab at its own height on the right edge, like a dictionary
+\newlength{\tabwidth}
+\newlength{\tabheight}
+\setlength{\tabwidth}{0.34cm}
+\newsavebox{\tabname}
+\newcommand{\thumbtab}[1]{%
+  \setlength{\tabheight}{\dimexpr(\paperheight - 1.2cm) / \numsections\relax}%
+  % the name shrinks if it is longer than the tab
+  \sbox{\tabname}{\color{white}\fontsize{5pt}{5.5pt}\selectfont\bfseries\csname secname#1\endcsname}%
+  \ifdim\wd\tabname>\dimexpr\tabheight - 6pt\relax
+    \sbox{\tabname}{\resizebox{\dimexpr\tabheight - 6pt\relax}{!}{\usebox{\tabname}}}%
+  \fi
+  % drawn from the upper left corner of the page, at shipout
+  \put(0, 0){\begin{tikzpicture}[overlay]
+    \coordinate (top) at (\paperwidth, {-0.6cm - (#1 - 1) * \tabheight});
+    \fill[sec#1] (top) rectangle ++(-\tabwidth, -\tabheight);
+    \node[rotate=-90, inner sep=0pt] at ($(top) + (-0.5 * \tabwidth, -0.5 * \tabheight)$) {\usebox{\tabname}};
+  \end{tikzpicture}}%
+}
+
+% sections of the page: from the one open at its top to the last one that starts on it
+\newcount\firstsec
+\newcount\lastsec
+\newcommand{\findsections}{%
+  \global\firstsec=0 \global\lastsec=0
+  \foreach \k in {1,...,\numsections} {%
+    \ifnum\getpagerefnumber{s\k}<\value{page}\global\firstsec=\k\fi
+    \ifnum\getpagerefnumber{s\k}>\value{page}\else\global\lastsec=\k\fi
+  }%
+  \ifnum\firstsec=0 \global\firstsec=\lastsec\fi
+  \ifnum\firstsec=0 \else\ifnum\getpagerefnumber{s\the\firstsec}<\value{page}\else
+    \foreach \k in {1,...,\numsections} {\ifnum\getpagerefnumber{s\k}=\value{page}\ifnum\k<\firstsec\global\firstsec=\k\fi\fi}%
+  \fi\fi
+}
+\newcommand{\sectiontag}[1]{{\setlength{\fboxsep}{1.2pt}\colorbox{sec#1}{\color{white}\scriptsize\bfseries\,\csname secname#1\endcsname\,}}}
+
+\lhead{\findsections\ifnum\lastsec>0 \foreach \k in {\the\firstsec,...,\the\lastsec} {\sectiontag{\k}\ }\fi}
+
+% tabs of the sections of the page, the first page has all of them
+\AddToHook{shipout/background}{%
+  \findsections
+  \ifnum\value{page}=1 \global\firstsec=1 \global\lastsec=\numsections\fi
+  \ifnum\lastsec>0 \foreach \k in {\the\firstsec,...,\the\lastsec} {\thumbtab{\k}}\fi
+}
+\chead{\parbox[b]{0.6\textwidth}{\centering\scriptsize\bfseries\pagefilelist}}
 \rhead{\scriptsize \bfseries Page \thepage}
 
 \renewcommand{\footrulewidth}{0pt}
@@ -119,8 +182,8 @@
 
 \newcommand{\secbar}[2]{%
   \par\addvspace{2.5pt}%
-  \pdfbookmark[0]{#2}{sec#1}%
-  \barbox{black!85}{\color{white}\fontsize{7pt}{7.6pt}\selectfont\bfseries}{#2}%
+  \pdfbookmark[0]{#2}{sec#1}\label{s#1}%
+  \barbox{sec#1}{\color{white}\fontsize{7pt}{7.6pt}\selectfont\bfseries}{#2}%
   \vskip 0.8pt\nobreak
 }
 
@@ -142,13 +205,10 @@
 
 \newcommand{\tocstyle}{\fontsize{6.5pt}{7pt}\selectfont\raggedright\clubpenalty=10000 \widowpenalty=10000 }
 
-\newcommand{\tocbarbox}[1]{%
-  \barbox{black!85}{\color{white}\fontsize{6.5pt}{7pt}\selectfont\bfseries}{#1}%
-  \vskip 0.8pt\nobreak
-}
-
 \newcommand{\tocbar}[2]{%
-  \tocbarbox{#2}\nobreak
+  \expandafter\gdef\csname secname#1\endcsname{#2}%
+  \barbox{sec#1}{\color{white}\fontsize{6.5pt}{7pt}\selectfont\bfseries}{#2}%
+  \vskip 0.8pt\nobreak
 }
 \newcommand{\tocgap}{\par\vskip 2pt }
 \newcommand{\tocitem}[3]{%
