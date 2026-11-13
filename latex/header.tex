@@ -201,18 +201,12 @@
   \vskip 0.8pt\nobreak
 }
 
-% file bars: black with white text, or light gray with black text when the sections are black
-\ifdefined\blacksections
-  \colorlet{filebarbg}{gray!22}\colorlet{filebartext}{black}\colorlet{filebarfolder}{black!60}
-\else
-  \colorlet{filebarbg}{black!85}\colorlet{filebartext}{white}\colorlet{filebarfolder}{white!70!black}
-\fi
 \newcommand{\filebar}[3]{%
   \par\addvspace{1.5pt}%
   \phantomsection\label{f#1}\pdfbookmark[1]{#2}{file#1}%
   \addtofilelist{#2}%
-  \barbox{filebarbg}{\color{filebartext}\fontsize{7pt}{7.6pt}\selectfont\bfseries}%
-    {#2\hfill{\mdseries\tiny\color{filebarfolder}#3}}%
+  \barbox{gray!22}{\fontsize{7pt}{7.6pt}\selectfont\bfseries}%
+    {#2\hfill{\mdseries\tiny\color{black!60}#3}}%
   \vskip 0.8pt\nobreak
 }
 
