@@ -1,73 +1,44 @@
-// Dominator Tree: computes immediate dominators in directed graphs
-// Time: build O(V log V + E) | Space: O(V + E)
-// Note: returns the tree where node a immediately dominates its children
-struct dominator_dsu {
-    vector<int> p, c;
-    vector<int> &x;
-
-    dominator_dsu(int n, vector<int> &x): p(n), c(n), x(x) {
-        iota(p.begin(), p.end(), 0);
-        iota(c.begin(), c.end(), 0);
-    }
-
-    int find(int a) {
-        if (p[a] == a) return c[a];
-        int r = p[a];
-        if (p[r] != r) {
-            find(r);
-            if (x[c[r]] < x[c[a]]) c[a] = c[r];
-            p[a] = p[r];
-        }
-        return c[a];
-    }
-
-    void unite(int a, int b) {
-        p[b] = a;
-    }
-};
-
+// Dominator Tree: a dominates b if every path from s to b passes through a, the tree links each vertex to its closest dominator
+// Time: O((V + E) log V) | Space: O(V + E)
+// Note: returns the children of each vertex in the tree rooted at s | vertices not reachable from s are left out
 vector<vector<int>> dominator_tree(int s, vector<vector<int>> &g) {
     int n = g.size();
-    vector<int> tin(n, -1), inv(n), parent(n);
-    int t = 0;
+    vector<int> tin(n, -1), order, parent(n), semi(n), idom(n), anc(n), best(n);
+    vector<vector<int>> rev(n), bucket(n);
     auto dfs = [&](auto &self, int a) -> void {
-        tin[a] = t;
-        inv[t] = a;
-        t++;
-        for (int b : g[a]) if (tin[b] == -1) {
-            parent[b] = a;
-            self(self, b);
+        tin[a] = order.size(), order.push_back(a);
+        for (int b : g[a]) {
+            rev[b].push_back(a);
+            if (tin[b] == -1) parent[b] = a, self(self, b);
         }
     };
     dfs(dfs, s);
-    vector<vector<int>> rev(n);
-    for (int a = 0; a < n; ++a) {
-        for (int b : g[a]) rev[b].push_back(a);
-    }
-    vector<int> semi(n), dom(n);
-    for (int a = 0; a < n; ++a) semi[a] = tin[a];
-    vector<vector<int>> bucket(n);
-    dominator_dsu dsu(n, semi);
-    for (int i = t - 1; i >= 1; --i) {
-        int a = inv[i];
-        for (int b : rev[a]) if (tin[b] != -1) {
-            semi[a] = min(semi[a], semi[dsu.find(b)]);
+    auto find = [&](auto &self, int a) -> int {
+        int p = anc[a];
+        if (anc[p] != p) {
+            self(self, p);
+            if (semi[best[p]] < semi[best[a]]) best[a] = best[p];
+            anc[a] = anc[p];
         }
-        bucket[inv[semi[a]]].push_back(a);
-        int p = parent[a];
-        dsu.unite(p, a);
+        return best[a];
+    };
+    for (int a = 0; a < n; ++a) semi[a] = tin[a], anc[a] = best[a] = a;
+    for (int i = order.size() - 1; i > 0; --i) {
+        int a = order[i], p = parent[a];
+        for (int b : rev[a]) semi[a] = min(semi[a], semi[find(find, b)]);
+        bucket[order[semi[a]]].push_back(a);
+        anc[a] = p;
         for (int b : bucket[p]) {
-            dom[b] = p;
-            int c = dsu.find(b);
-            if (semi[c] < semi[b]) dom[b] = c;
+            int c = find(find, b);
+            idom[b] = semi[c] < semi[b] ? c : p;
         }
         bucket[p].clear();
     }
-    vector<vector<int>> dt(n);
-    for (int i = 1; i < t; ++i) {
-        int a = inv[i];
-        if (dom[a] != inv[semi[a]]) dom[a] = dom[dom[a]];
-        dt[dom[a]].push_back(a);
+    vector<vector<int>> tree(n);
+    for (int i = 1; i < order.size(); ++i) {
+        int a = order[i];
+        if (idom[a] != order[semi[a]]) idom[a] = idom[idom[a]];
+        tree[idom[a]].push_back(a);
     }
-    return dt;
+    return tree;
 }
