@@ -1,11 +1,5 @@
 \section{Trigonometria}
 
-Em C, \texttt{sin}, \texttt{cos}, \texttt{tan}, \texttt{asin}, \texttt{acos}, \texttt{atan} e \texttt{atan2} usam
-radianos. $\pi$ é \texttt{acos(-1.0)} e graus viram radianos com
-$x \cdot \pi / 180$.
-
-\subsection*{Círculo unitário}
-
 \smallskip{\centering
 \begin{tikzpicture}[scale=0.55, >=stealth]
   \draw[->, gray] (-2.6,0) -- (2.9,0) node[right] {\scriptsize $x$};
