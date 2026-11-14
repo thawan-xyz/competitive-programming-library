@@ -57,16 +57,16 @@
   language=C++,
   breaklines=true,
   breakatwhitespace=true,
-  breakindent=6pt,
+  breakindent=12pt,
   showstringspaces=false,
   tabsize=2,
   basicstyle=\codefont,
   commentstyle=\color{code_comment},
-  keywordstyle=\color{code_keyword}\bfseries,
-  keywordstyle=[2]\color{code_type}\bfseries,
-  keywordstyle=[3]\color{code_control}\bfseries,
+  keywordstyle=\color{code_keyword},
+  keywordstyle=[2]\color{code_type},
+  keywordstyle=[3]\color{code_control},
   stringstyle=\color{code_string},
-  directivestyle=\color{code_directive}\bfseries,
+  directivestyle=\color{code_directive},
   morekeywords=[2]{array, vector, string, map, pair, tuple, queue, deque, stack, priority_queue, multiset, multimap, unordered_map, unordered_set},
   deletekeywords={if, else, for, while, do, return, break, continue, switch, case, default, goto, try, catch, throw},
   morekeywords=[3]{if, else, for, while, do, return, break, continue, switch, case, default, goto, try, catch, throw},
@@ -76,6 +76,12 @@
   alsoletter={0123456789},
   literate=*{~}{$\sim$}{1}
 }
+
+% wrapped lines start with gray dots in the indentation, saved in a box because colors
+% cannot go straight into the line break of a listing
+\newsavebox{\breakdots}
+\sbox{\breakdots}{\llap{\color{black!40}\raisebox{0.95pt}{\scalebox{0.8}{\ldots}}\hspace{1.2pt}}}
+\lstset{postbreak=\usebox{\breakdots}}
 
 % block hash from extra/hash.py, at the right of the line that closes the block
 \lstdefinestyle{hashed}{escapeinside={(*@}{@*)}}
