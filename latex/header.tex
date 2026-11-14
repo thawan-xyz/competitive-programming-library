@@ -269,6 +269,15 @@
 \newcommand{\texnumber}[1]{\textcolor{sec\cursec}{\bfseries #1.}}
 \newcommand{\texbox}[1]{{\setlength{\fboxsep}{3pt}\setlength{\fboxrule}{0.6pt}\fcolorbox{sec\cursec}{white}{$\displaystyle #1$}}}
 
+% figures of the .tex files: \begin{drawing} is a centered tikzpicture with the same scale, arrows and labels for all,
+% and the figures use these colors: highlight for results, accent for inputs, extra for a third role and fill for regions
+\colorlet{fig_highlight}{red!70!black}
+\colorlet{fig_accent}{blue!60!black}
+\colorlet{fig_extra}{green!50!black}
+\colorlet{fig_fill}{blue!8}
+\tikzset{drawing/.style={scale=0.55, >=stealth, font=\scriptsize}}
+\NewDocumentEnvironment{drawing}{O{}}{\par\smallskip\centering\tikzpicture[drawing, #1]}{\endtikzpicture\par\smallskip}
+
 % the display skips are set by hand because \fontsize keeps the ones of the normal size, which are too big here
 \NewDocumentCommand{\texfile}{m}{%
   \begingroup
