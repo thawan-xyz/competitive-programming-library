@@ -61,8 +61,3 @@ $R$ o raio do círculo circunscrito e $r$ o do inscrito:
   \item \textbf{Raios:} $r = \frac{S}{s}$ e $R = \frac{abc}{4S}$.
   \item \textbf{Altura e mediana de $a$:} $h_a = \frac{2S}{a}$ e $m_a = \frac{1}{2}\sqrt{2b^2 + 2c^2 - a^2}$.
 \end{itemize}
-
-\subsection*{Funções inversas}
-
-\texttt{atan2(y, x)} é o ângulo do vetor $(x, y)$ em $[-\pi, \pi]$, com o quadrante certo. Em \texttt{acos} e
-\texttt{asin}, um valor como $1 + 10^{-16}$ dá \texttt{NaN}, então use \texttt{acos(clamp(x, -1.0, 1.0))}.
