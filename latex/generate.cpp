@@ -54,8 +54,9 @@ vector<pair<string, string>> read_lines(const fs::path &path) {
     return res;
 }
 
-// marks the names right before a '(', outside comments, strings and chars, for header.tex to color as functions
-string mark_functions(const string &line, bool &block) {
+// marks the names of the structs of the file and the names right before a '(', outside comments, strings and chars,
+// for header.tex to color them as types and functions
+string mark_names(const string &line, const set<string> &types, bool &block) {
     static const set<string> keywords = {"if", "else", "for", "while", "do", "return", "switch", "case", "catch", "throw",
         "sizeof", "alignof", "decltype", "static_cast", "const_cast", "reinterpret_cast", "dynamic_cast", "and", "or", "not",
         "int", "long", "short", "char", "bool", "float", "double", "void", "auto", "unsigned", "signed", "new", "delete",
@@ -77,8 +78,10 @@ string mark_functions(const string &line, bool &block) {
             int j = i;
             while (j < line.size() and (isalnum(line[j]) or line[j] == '_')) j++;
             string word = line.substr(i, j - i);
-            if (isdigit(word[0]) or j == line.size() or line[j] != '(' or keywords.count(word)) res += word;
-            else res += "(*@\\fn{" + regex_replace(word, regex("_"), "\\_") + "}@*)";
+            string name = regex_replace(word, regex("_"), "\\_");
+            if (types.count(word)) res += "(*@\\ty{" + name + "}@*)";
+            else if (isdigit(word[0]) or j == line.size() or line[j] != '(' or keywords.count(word)) res += word;
+            else res += "(*@\\fn{" + name + "}@*)";
             i = j - 1;
             continue;
         }
@@ -112,8 +115,14 @@ void print_code(const fs::path &path) {
     // C++ is the default language of header.tex, setting it again would drop its extra keywords and colors
     string ext = path.extension(), options = ext == ".py" ? "language=Python" : ext == ".sh" ? "language=bash" : "";
     if (ranges::any_of(out, [](auto &p) { return not p.second.empty(); })) options += (options.empty() ? "" : ", ") + string("style=hashed");
+    // the names after struct or class are the types of the file, like dinic and edge
+    set<string> types;
+    regex declaration("\\b(struct|class)\\s+([A-Za-z_]\\w*)");
+    for (auto &[line, h] : out) {
+        for (sregex_iterator it(line.begin(), line.end(), declaration), end; it != end; ++it) types.insert((*it)[2]);
+    }
     bool block = false;
-    if (ext == ".cpp") for (auto &[line, h] : out) line = mark_functions(line, block);
+    if (ext == ".cpp") for (auto &[line, h] : out) line = mark_names(line, types, block);
     if (options.find("hashed") == string::npos and ranges::any_of(out, [](auto &p) { return p.first.find("(*@") != string::npos; })) options += (options.empty() ? "" : ", ") + string("style=hashed");
     cout << "\\begin{lstlisting}" << (options.empty() ? "" : "[" + options + "]") << "\n";
     for (auto &[line, h] : out) cout << line << (h.empty() ? "" : "(*@\\codehash{" + h.substr(1, h.size() - 2) + "}@*)") << '\n';

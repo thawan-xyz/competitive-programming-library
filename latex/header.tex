@@ -1,3 +1,5 @@
+% fix-cm lets the default fonts take any size, without it a size like 6.5pt is silently replaced by 6pt
+\RequirePackage{fix-cm}
 \documentclass[10pt, a4paper, landscape]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -49,7 +51,7 @@
   \foreach \k in {1,...,\numsections} {\xglobal\colorlet{sec\k}{black!85}}
 \fi
 
-\newcommand{\codesize}{6.5pt}
+\newcommand{\codesize}{6pt}
 \newcommand{\codeleading}{6.0pt}
 \newcommand{\codefont}{\ttfamily\fontsize{\codesize}{\codeleading}\selectfont\lineskiplimit=-\maxdimen}
 
@@ -87,6 +89,7 @@
 % function names marked by generate, each letter in a column of the listing so the text stays aligned
 \makeatletter
 \newcommand{\fn}[1]{{\color{code_function}\@tfor\fn@char:=#1\do{\makebox[\lst@width]{\fn@char}}}}
+\newcommand{\ty}[1]{{\color{code_type}\@tfor\fn@char:=#1\do{\makebox[\lst@width]{\fn@char}}}}
 \makeatother
 \newcommand{\codehash}[1]{\hspace{0.5em plus 1fill}{\color{black!45}[#1]}}
 
@@ -222,11 +225,11 @@
 \newdimen\toc@firstht
 \newcount\toccol
 
-\newcommand{\tocstyle}{\fontsize{6.5pt}{7pt}\selectfont\raggedright\clubpenalty=10000 \widowpenalty=10000 }
+\newcommand{\tocstyle}{\fontsize{6pt}{7pt}\selectfont\raggedright\clubpenalty=10000 \widowpenalty=10000 }
 
 \newcommand{\tocbar}[2]{%
   \expandafter\gdef\csname secname#1\endcsname{#2}%
-  \barbox{sec#1}{\color{white}\fontsize{6.5pt}{7pt}\selectfont\bfseries}{#2}%
+  \barbox{sec#1}{\color{white}\fontsize{6pt}{7pt}\selectfont\bfseries}{#2}%
   \vskip 0.8pt\nobreak
 }
 \newcommand{\tocgap}{\par\vskip 2pt }
@@ -261,11 +264,31 @@
 }
 \makeatother
 
+% the text of the .tex files uses the 8pt design of the default font reduced to its size, because the 6pt design is
+% wide and spaced, and the math follows it (indices with the 7pt design), the code keeps the original fonts
+\DeclareFontFamily{T1}{cmrtex}{}
+\DeclareFontShape{T1}{cmrtex}{m}{n}{<-> ecrm0800}{}
+\DeclareFontShape{T1}{cmrtex}{m}{it}{<-> ecti0800}{}
+\DeclareFontShape{T1}{cmrtex}{m}{sl}{<-> ecsl0800}{}
+\DeclareFontShape{T1}{cmrtex}{m}{sc}{<-> eccc0800}{}
+\DeclareFontShape{T1}{cmrtex}{bx}{n}{<-> ecbx0800}{}
+\DeclareFontShape{T1}{cmrtex}{bx}{it}{<-> ecbi0800}{}
+\DeclareFontShape{T1}{cmrtex}{b}{n}{<-> ssub * cmrtex/bx/n}{}
+\DeclareFontShape{OT1}{cmr}{m}{n}{<-5.5> cmr7 <5.5-8.5> cmr8 <8.5-9.5> cmr9 <9.5-> cmr10}{}
+\DeclareFontShape{OT1}{cmr}{bx}{n}{<-5.5> cmbx7 <5.5-8.5> cmbx8 <8.5-9.5> cmbx9 <9.5-> cmbx10}{}
+\DeclareFontShape{OML}{cmm}{m}{it}{<-5.5> cmmi7 <5.5-8.5> cmmi8 <8.5-9.5> cmmi9 <9.5-> cmmi10}{}
+\DeclareFontShape{OMS}{cmsy}{m}{n}{<-5.5> cmsy7 <5.5-8.5> cmsy8 <8.5-9.5> cmsy9 <9.5-> cmsy10}{}
+
+% sizes of the .tex files: text 6pt, subsections 6.5pt and titles 7.5pt, with indices and fractions of at least 5pt
+\DeclareMathSizes{6}{6}{5}{5}
+\DeclareMathSizes{6.5}{6.5}{5}{5}
+\DeclareMathSizes{7.5}{7.5}{5.5}{5}
+
 % style of the .tex files, colored with the section they are in (\cursec, set by \secbar):
 % title with a line below, subsections in color, items with a dash and \boxed with a thin frame
 \newcommand{\texsection}[1]{\par\vspace{3pt}\noindent{\fontsize{7.5pt}{8.5pt}\selectfont\bfseries #1}\par\nobreak\vspace{0.6pt}{\color{sec\cursec}\hrule height 0.8pt}\nobreak\vspace{2pt}}
 \newcommand{\texsubsection}[1]{\par\vspace{2.5pt}\noindent{\fontsize{6.5pt}{7.5pt}\selectfont\bfseries\color{sec\cursec!85!black}#1}\par\nobreak\vspace{1pt}}
-\newcommand{\texbullet}{\textcolor{sec\cursec}{\bfseries\textendash}}
+\newcommand{\texbullet}{\textcolor{sec\cursec}{\rule[1.5pt]{3.2pt}{0.7pt}}}
 \newcommand{\texnumber}[1]{\textcolor{sec\cursec}{\bfseries #1.}}
 \newcommand{\texbox}[1]{{\setlength{\fboxsep}{3pt}\setlength{\fboxrule}{0.6pt}\fcolorbox{sec\cursec}{white}{$\displaystyle #1$}}}
 
@@ -275,12 +298,13 @@
 \colorlet{fig_accent}{blue!60!black}
 \colorlet{fig_extra}{green!50!black}
 \colorlet{fig_fill}{blue!8}
-\tikzset{drawing/.style={scale=0.55, >=stealth, font=\scriptsize}}
+\tikzset{drawing/.style={scale=0.55, >=stealth, font=\fontsize{6pt}{7pt}\selectfont}}
 \NewDocumentEnvironment{drawing}{O{}}{\par\smallskip\centering\tikzpicture[drawing, #1]}{\endtikzpicture\par\smallskip}
 
 % the display skips are set by hand because \fontsize keeps the ones of the normal size, which are too big here
 \NewDocumentCommand{\texfile}{m}{%
   \begingroup
+  \renewcommand{\rmdefault}{cmrtex}\normalfont
   \fontsize{6pt}{7.2pt}\selectfont
   \raggedright\sloppy
   \setlength{\parskip}{1pt plus 0.5pt}%
