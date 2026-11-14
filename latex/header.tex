@@ -201,7 +201,7 @@
 
 \newcommand{\secbar}[2]{%
   \par\addvspace{2.5pt}%
-  \pdfbookmark[0]{#2}{sec#1}\label{s#1}%
+  \gdef\cursec{#1}\pdfbookmark[0]{#2}{sec#1}\label{s#1}%
   \barbox{sec#1}{\color{white}\fontsize{7pt}{7.6pt}\selectfont\bfseries}{#2}%
   \vskip 0.8pt\nobreak
 }
@@ -261,16 +261,30 @@
 }
 \makeatother
 
+% style of the .tex files, colored with the section they are in (\cursec, set by \secbar):
+% title with a line below, subsections in color, items with a dash and \boxed with a thin frame
+\newcommand{\texsection}[1]{\par\vspace{3pt}\noindent{\fontsize{7.5pt}{8.5pt}\selectfont\bfseries #1}\par\nobreak\vspace{0.6pt}{\color{sec\cursec}\hrule height 0.8pt}\nobreak\vspace{2pt}}
+\newcommand{\texsubsection}[1]{\par\vspace{2.5pt}\noindent{\fontsize{6.5pt}{7.5pt}\selectfont\bfseries\color{sec\cursec!85!black}#1}\par\nobreak\vspace{1pt}}
+\newcommand{\texbullet}{\textcolor{sec\cursec}{\bfseries\textendash}}
+\newcommand{\texnumber}[1]{\textcolor{sec\cursec}{\bfseries #1.}}
+\newcommand{\texbox}[1]{{\setlength{\fboxsep}{3pt}\setlength{\fboxrule}{0.6pt}\fcolorbox{sec\cursec}{white}{$\displaystyle #1$}}}
+
+% the display skips are set by hand because \fontsize keeps the ones of the normal size, which are too big here
 \NewDocumentCommand{\texfile}{m}{%
   \begingroup
   \fontsize{6pt}{7.2pt}\selectfont
   \raggedright\sloppy
   \setlength{\parskip}{1pt plus 0.5pt}%
-  \RenewDocumentCommand{\section}{s m}{\par\vspace{3pt}{\fontsize{7pt}{8pt}\bfseries ##2}\par\vspace{1pt}}%
-  \RenewDocumentCommand{\subsection}{s m}{\par\vspace{2pt}{\fontsize{6.5pt}{7.5pt}\bfseries ##2}\par\vspace{1pt}}%
-  \RenewDocumentCommand{\subsubsection}{s m}{\par\vspace{1.5pt}{\fontsize{6pt}{7pt}\bfseries ##2}\par\vspace{1pt}}%
-  \RenewDocumentEnvironment{itemize}{}{\begin{list}{\labelitemi}{\leftmargin=1em \topsep=1.5pt \partopsep=0pt \parsep=0pt \itemsep=1pt}}{\end{list}}%
-  \RenewDocumentEnvironment{enumerate}{}{\begin{list}{\arabic{enumi}.}{\usecounter{enumi} \leftmargin=1em \topsep=1.5pt \partopsep=0pt \parsep=0pt \itemsep=1pt}}{\end{list}}%
+  \setlength{\abovedisplayskip}{3pt plus 1pt minus 1pt}%
+  \setlength{\belowdisplayskip}{3pt plus 1pt minus 1pt}%
+  \setlength{\abovedisplayshortskip}{1pt plus 1pt}%
+  \setlength{\belowdisplayshortskip}{2pt plus 1pt}%
+  \RenewDocumentCommand{\section}{s m}{\texsection{##2}}%
+  \RenewDocumentCommand{\subsection}{s m}{\texsubsection{##2}}%
+  \RenewDocumentCommand{\subsubsection}{s m}{\par\vspace{1.5pt}{\fontsize{6pt}{7pt}\selectfont\bfseries ##2}\par\nobreak\vspace{1pt}}%
+  \RenewDocumentCommand{\boxed}{m}{\texbox{##1}}%
+  \RenewDocumentEnvironment{itemize}{}{\begin{list}{\texbullet}{\leftmargin=1em \labelsep=0.4em \topsep=1.5pt \partopsep=0pt \parsep=0pt \itemsep=1pt}}{\end{list}}%
+  \RenewDocumentEnvironment{enumerate}{}{\begin{list}{\texnumber{\arabic{enumi}}}{\usecounter{enumi} \leftmargin=1em \labelsep=0.4em \topsep=1.5pt \partopsep=0pt \parsep=0pt \itemsep=1pt}}{\end{list}}%
   \input{#1}%
   \par
   \endgroup
