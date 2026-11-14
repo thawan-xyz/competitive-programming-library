@@ -176,7 +176,7 @@
   \ifnum\lastsec>0 \foreach \k in {\the\firstsec,...,\the\lastsec} {\thumbtab{\k}}\fi
 }
 \chead{\parbox[b]{0.6\textwidth}{\centering\scriptsize\bfseries\pagefilelist}}
-\rhead{\scriptsize \bfseries Page \thepage}
+\rhead{{\setlength{\fboxsep}{1.2pt}\colorbox{gray!22}{\scriptsize\bfseries\vphantom{dg}\,\thepage\,}}}
 
 \renewcommand{\footrulewidth}{0pt}
 
