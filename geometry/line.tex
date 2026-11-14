@@ -6,21 +6,19 @@ pela equação $ax + by = c$ com \texttt{line(a, b, c)}.
 
 \subsection*{Lado, distância, projeção e reflexão}
 
-\smallskip{\centering
-\begin{tikzpicture}[scale=0.55, >=stealth]
+\begin{drawing}
   \draw[thick] (-0.5,-0.25) -- (6.5,3.25);
-  \draw[->, very thick, blue!60!black] (0,0) -- (2,1) node[below right] {\scriptsize $v$};
-  \fill (2.6,3.3) circle (1.5pt) node[above] {\scriptsize $p$};
+  \draw[->, very thick, fig_accent] (0,0) -- (2,1) node[below right] {$v$};
+  \fill (2.6,3.3) circle (1.5pt) node[above] {$p$};
   \fill (3.4,1.7) circle (1.5pt);
-  \node[right] at (3.6,1.45) {\scriptsize proj$(p)$};
-  \fill (4.2,0.1) circle (1.5pt) node[right] {\scriptsize refl$(p)$};
+  \node[right] at (3.6,1.45) {proj$(p)$};
+  \fill (4.2,0.1) circle (1.5pt) node[right] {refl$(p)$};
   \draw[dashed] (2.6,3.3) -- (4.2,0.1);
   \draw (3.62,1.81) -- (3.51,2.03) -- (3.29,1.92);
-  \node[red!70!black, right] at (3.0,2.6) {\scriptsize dist};
-  \node at (1.0,2.6) {\scriptsize side $> 0$};
-  \node at (5.8,0.6) {\scriptsize side $< 0$};
-\end{tikzpicture}
-\par}\smallskip
+  \node[fig_highlight, right] at (3.0,2.6) {dist};
+  \node at (1.0,2.6) {side $> 0$};
+  \node at (5.8,0.6) {side $< 0$};
+\end{drawing}
 
 \begin{itemize}
   \item \texttt{side(p)} $=$ \texttt{cross(v, p)} $- c$: positivo se $p$ está à esquerda de $v$, negativo à
@@ -34,18 +32,16 @@ pela equação $ax + by = c$ com \texttt{line(a, b, c)}.
 
 \subsection*{Perpendicular, paralela e deslocamento}
 
-\smallskip{\centering
-\begin{tikzpicture}[scale=0.55, >=stealth]
+\begin{drawing}
   \draw[thick] (-0.5,0) -- (6.5,0);
-  \draw[->, very thick, blue!60!black] (-0.5,0) -- (1,0) node[below] {\scriptsize $v$};
-  \draw[blue!60!black, dashed, thick] (-0.5,1.8) -- (6.5,1.8) node[right] {\scriptsize parallel};
-  \draw[red!70!black, thick] (2.5,-0.8) -- (2.5,2.6) node[above] {\scriptsize perp};
-  \fill (2.5,1.8) circle (2pt) node[above left] {\scriptsize $p$};
+  \draw[->, very thick, fig_accent] (-0.5,0) -- (1,0) node[below] {$v$};
+  \draw[fig_accent, dashed, thick] (-0.5,1.8) -- (6.5,1.8) node[right] {parallel};
+  \draw[fig_highlight, thick] (2.5,-0.8) -- (2.5,2.6) node[above] {perp};
+  \fill (2.5,1.8) circle (2pt) node[above left] {$p$};
   \draw (2.5,0.25) -- (2.75,0.25) -- (2.75,0);
-  \draw[gray, dotted, thick] (-0.5,0.9) -- (6.5,0.9) node[right] {\scriptsize shift$(t)$};
-  \draw[<->] (5.2,0) -- (5.2,0.9) node[midway, left] {\scriptsize $t$};
-\end{tikzpicture}
-\par}\smallskip
+  \draw[gray, dotted, thick] (-0.5,0.9) -- (6.5,0.9) node[right] {shift$(t)$};
+  \draw[<->] (5.2,0) -- (5.2,0.9) node[midway, left] {$t$};
+\end{drawing}
 
 \texttt{perp\_through(p)} é a reta por $p$ que faz $90^\circ$ com esta, e \texttt{parallel\_through(p)} é a reta por
 $p$ com a mesma direção; as duas são exatas com \texttt{T} inteiro. \texttt{shift(t)} desloca a reta $t$ para a
@@ -53,23 +49,21 @@ esquerda de $v$ (para a direita se $t < 0$), útil para faixas de largura fixa; 
 
 \subsection*{Interseções}
 
-\smallskip{\centering
-\begin{tikzpicture}[scale=0.55, >=stealth]
+\begin{drawing}
   \draw[thick] (0,0) -- (3,2.4);
   \draw[thick] (0,2.2) -- (3.2,0.2);
-  \fill[red!70!black] (1.544,1.235) circle (2pt);
-  \node at (1.6,-0.9) {\scriptsize duas retas};
+  \fill[fig_highlight] (1.544,1.235) circle (2pt);
+  \node at (1.6,-0.9) {duas retas};
   \draw[thick] (4.2,0.6) -- (8.6,0.6);
-  \draw[blue!60!black, thick] (5.0,1.8) -- (5.8,-0.4);
-  \fill[red!70!black] (5.44,0.6) circle (2pt);
-  \draw[blue!60!black, thick] (6.6,0.6) -- (7.2,2.0);
-  \fill[red!70!black] (6.6,0.6) circle (2pt);
-  \draw[blue!60!black, very thick] (7.4,0.6) -- (8.4,0.6);
-  \fill[red!70!black] (7.4,0.6) circle (2pt);
-  \fill[red!70!black] (8.4,0.6) circle (2pt);
-  \node at (6.4,-0.9) {\scriptsize reta e segmentos};
-\end{tikzpicture}
-\par}\smallskip
+  \draw[fig_accent, thick] (5.0,1.8) -- (5.8,-0.4);
+  \fill[fig_highlight] (5.44,0.6) circle (2pt);
+  \draw[fig_accent, thick] (6.6,0.6) -- (7.2,2.0);
+  \fill[fig_highlight] (6.6,0.6) circle (2pt);
+  \draw[fig_accent, very thick] (7.4,0.6) -- (8.4,0.6);
+  \fill[fig_highlight] (7.4,0.6) circle (2pt);
+  \fill[fig_highlight] (8.4,0.6) circle (2pt);
+  \node at (6.4,-0.9) {reta e segmentos};
+\end{drawing}
 
 \texttt{line\_inter(l, r)} devolve o ponto de encontro, ou vazio se as retas são paralelas.
 \texttt{line\_segment\_inter(l, a, b)} devolve onde o segmento $[a, b]$ corta a reta: vazio se as pontas estão do

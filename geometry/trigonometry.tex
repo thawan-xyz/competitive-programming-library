@@ -1,31 +1,29 @@
 \section{Trigonometria}
 
-\smallskip{\centering
-\begin{tikzpicture}[scale=0.55, >=stealth]
-  \draw[->, gray] (-2.6,0) -- (2.9,0) node[right] {\scriptsize $x$};
-  \draw[->, gray] (0,-2.4) -- (0,2.6) node[above] {\scriptsize $y$};
+\begin{drawing}
+  \draw[->, gray] (-2.6,0) -- (2.9,0) node[right] {$x$};
+  \draw[->, gray] (0,-2.4) -- (0,2.6) node[above] {$y$};
   \draw (0,0) circle (2);
   \draw[gray] (2,-0.3) -- (2,1.6);
   \draw[thick] (0,0) -- (2,1.400);
   \draw[dashed] (1.638,1.147) -- (1.638,0);
-  \draw[blue!60!black, very thick] (0,0) -- (1.638,0);
-  \node[blue!60!black, below] at (0.82,0) {\scriptsize $\cos\theta$};
+  \draw[fig_accent, very thick] (0,0) -- (1.638,0);
+  \node[fig_accent, below] at (0.82,0) {$\cos\theta$};
   \draw[dashed] (1.638,1.147) -- (0,1.147);
-  \draw[red!70!black, very thick] (0,0) -- (0,1.147);
-  \node[red!70!black, left] at (0,0.57) {\scriptsize $\sin\theta$};
-  \draw[green!50!black, very thick] (2,0) -- (2,1.400);
-  \node[green!50!black, right] at (2,0.7) {\scriptsize $\tan\theta$};
+  \draw[fig_highlight, very thick] (0,0) -- (0,1.147);
+  \node[fig_highlight, left] at (0,0.57) {$\sin\theta$};
+  \draw[fig_extra, very thick] (2,0) -- (2,1.400);
+  \node[fig_extra, right] at (2,0.7) {$\tan\theta$};
   \draw (0.6,0) arc (0:35:0.6);
-  \node at (0.85,0.25) {\scriptsize $\theta$};
+  \node at (0.85,0.25) {$\theta$};
   \fill (1.638,1.147) circle (1.5pt);
   \draw[gray] (1.638,1.147) -- (1.85,1.75);
-  \node[anchor=south west, inner sep=1pt] at (1.75,1.75) {\scriptsize $(\cos\theta, \sin\theta)$};
-  \node[gray] at (0.7,1.55) {\scriptsize I};
-  \node[gray] at (-1.1,1.1) {\scriptsize II};
-  \node[gray] at (-1.1,-1.1) {\scriptsize III};
-  \node[gray] at (1.1,-1.1) {\scriptsize IV};
-\end{tikzpicture}
-\par}\smallskip
+  \node[anchor=south west, inner sep=1pt] at (1.75,1.75) {$(\cos\theta, \sin\theta)$};
+  \node[gray] at (0.7,1.55) {I};
+  \node[gray] at (-1.1,1.1) {II};
+  \node[gray] at (-1.1,-1.1) {III};
+  \node[gray] at (1.1,-1.1) {IV};
+\end{drawing}
 
 O ponto do círculo de raio $1$ no ângulo $\theta$ (anti-horário a partir do eixo $x$) é $(\cos\theta, \sin\theta)$, e
 $\tan\theta = \sin\theta / \cos\theta$ é a altura onde a reta pela origem corta $x = 1$. Também
@@ -61,3 +59,8 @@ $R$ o raio do círculo circunscrito e $r$ o do inscrito:
   \item \textbf{Raios:} $r = \frac{S}{s}$ e $R = \frac{abc}{4S}$.
   \item \textbf{Altura e mediana de $a$:} $h_a = \frac{2S}{a}$ e $m_a = \frac{1}{2}\sqrt{2b^2 + 2c^2 - a^2}$.
 \end{itemize}
+
+\subsection*{Funções inversas}
+
+\texttt{atan2(y, x)} é o ângulo do vetor $(x, y)$ em $[-\pi, \pi]$, com o quadrante certo. Em \texttt{acos} e
+\texttt{asin}, um valor como $1 + 10^{-16}$ dá \texttt{NaN}, então use \texttt{acos(clamp(x, -1.0, 1.0))}.

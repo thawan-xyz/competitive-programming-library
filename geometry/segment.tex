@@ -4,18 +4,16 @@ O segmento $[a, b]$ vai de $a$ até $b$, incluindo as pontas.
 
 \subsection*{Ponto no segmento}
 
-\smallskip{\centering
-\begin{tikzpicture}[scale=0.55, >=stealth]
-  \fill[blue!6] (2,0) circle (2);
-  \draw[blue!60!black, dashed] (2,0) circle (2);
+\begin{drawing}
+  \fill[fig_fill] (2,0) circle (2);
+  \draw[fig_accent, dashed] (2,0) circle (2);
   \draw[thick] (0,0) -- (4,0);
-  \fill (0,0) circle (1.5pt) node[left] {\scriptsize $a$};
-  \fill (4,0) circle (1.5pt) node[right] {\scriptsize $b$};
-  \fill (1.4,1.1) circle (1.5pt) node[above] {\scriptsize $p$};
+  \fill (0,0) circle (1.5pt) node[left] {$a$};
+  \fill (4,0) circle (1.5pt) node[right] {$b$};
+  \fill (1.4,1.1) circle (1.5pt) node[above] {$p$};
   \draw[gray] (0,0) -- (1.4,1.1) -- (4,0);
-  \fill (2.8,0) circle (1.5pt) node[below] {\scriptsize $q$};
-\end{tikzpicture}
-\par}\smallskip
+  \fill (2.8,0) circle (1.5pt) node[below] {$q$};
+\end{drawing}
 
 \texttt{in\_disk(a, b, p)} diz se $p$ está no círculo de diâmetro $ab$: o ângulo $a\,p\,b$ é de pelo menos $90^\circ$,
 ou seja, \texttt{dot(a - p, b - p)} $\le 0$. \texttt{on\_segment(a, b, p)} junta isso com \texttt{orient} $= 0$: o
@@ -23,25 +21,23 @@ ponto está na reta e entre as pontas, como $q$.
 
 \subsection*{Interseções}
 
-\smallskip{\centering
-\begin{tikzpicture}[scale=0.55, >=stealth]
+\begin{drawing}
   \draw[thick] (0,0) -- (2.4,1.8);
   \draw[thick] (0,1.8) -- (2.4,0);
-  \fill[red!70!black] (1.2,0.9) circle (2pt);
-  \node at (1.2,-0.6) {\scriptsize proper};
+  \fill[fig_highlight] (1.2,0.9) circle (2pt);
+  \node at (1.2,-0.6) {proper};
   \draw[thick] (3.4,0) -- (5.8,0);
   \draw[thick] (4.6,0) -- (4.6,1.8);
-  \fill[red!70!black] (4.6,0) circle (2pt);
-  \node at (4.6,-0.6) {\scriptsize encosta};
+  \fill[fig_highlight] (4.6,0) circle (2pt);
+  \node at (4.6,-0.6) {encosta};
   \draw[thick] (6.8,0.75) -- (8.8,0.75);
-  \draw[blue!60!black, thick] (7.8,1.05) -- (9.6,1.05);
-  \draw[red!70!black, dotted] (7.8,0.75) -- (7.8,1.05);
-  \draw[red!70!black, dotted] (8.8,0.75) -- (8.8,1.05);
-  \fill[red!70!black] (7.8,0.9) circle (2pt);
-  \fill[red!70!black] (8.8,0.9) circle (2pt);
-  \node at (8.2,-0.6) {\scriptsize sobrepostos};
-\end{tikzpicture}
-\par}\smallskip
+  \draw[fig_accent, thick] (7.8,1.05) -- (9.6,1.05);
+  \draw[fig_highlight, dotted] (7.8,0.75) -- (7.8,1.05);
+  \draw[fig_highlight, dotted] (8.8,0.75) -- (8.8,1.05);
+  \fill[fig_highlight] (7.8,0.9) circle (2pt);
+  \fill[fig_highlight] (8.8,0.9) circle (2pt);
+  \node at (8.2,-0.6) {sobrepostos};
+\end{drawing}
 
 \begin{itemize}
   \item \texttt{proper(a, b, c, d)}: os segmentos se cruzam num ponto interior aos dois. Acontece quando $c$ e $d$
@@ -57,22 +53,20 @@ ponto está na reta e entre as pontas, como $q$.
 
 \subsection*{Distâncias}
 
-\smallskip{\centering
-\begin{tikzpicture}[scale=0.55, >=stealth]
-  \fill[blue!6] (0,-1.2) rectangle (4,1.8);
+\begin{drawing}
+  \fill[fig_fill] (0,-1.2) rectangle (4,1.8);
   \draw[gray, dashed] (0,-1.2) -- (0,1.8);
   \draw[gray, dashed] (4,-1.2) -- (4,1.8);
   \draw[thick] (0,0) -- (4,0);
-  \fill (0,0) circle (1.5pt) node[above left] {\scriptsize $a$};
-  \fill (4,0) circle (1.5pt) node[below right] {\scriptsize $b$};
-  \fill (2.2,1.4) circle (1.5pt) node[above] {\scriptsize $p$};
-  \draw[red!70!black, thick] (2.2,1.4) -- (2.2,0);
-  \fill (5.6,1.2) circle (1.5pt) node[above] {\scriptsize $p'$};
-  \draw[red!70!black, thick] (5.6,1.2) -- (4,0);
-  \fill (-1.4,-0.9) circle (1.5pt) node[left] {\scriptsize $p''$};
-  \draw[red!70!black, thick] (-1.4,-0.9) -- (0,0);
-\end{tikzpicture}
-\par}\smallskip
+  \fill (0,0) circle (1.5pt) node[above left] {$a$};
+  \fill (4,0) circle (1.5pt) node[below right] {$b$};
+  \fill (2.2,1.4) circle (1.5pt) node[above] {$p$};
+  \draw[fig_highlight, thick] (2.2,1.4) -- (2.2,0);
+  \fill (5.6,1.2) circle (1.5pt) node[above] {$p'$};
+  \draw[fig_highlight, thick] (5.6,1.2) -- (4,0);
+  \fill (-1.4,-0.9) circle (1.5pt) node[left] {$p''$};
+  \draw[fig_highlight, thick] (-1.4,-0.9) -- (0,0);
+\end{drawing}
 
 \texttt{segment\_point(a, b, p)}: se $p$ está na faixa azul (à frente de $a$ e de $b$, olhando para dentro do
 segmento), a distância é até a reta, pela perpendicular; fora dela, é até a ponta mais perto. \\
@@ -81,22 +75,20 @@ das quatro pontas, então é o menor entre as distâncias de cada ponta até o o
 
 \subsection*{Distância até uma semirreta}
 
-\smallskip{\centering
-\begin{tikzpicture}[scale=0.55, >=stealth]
+\begin{drawing}
   \draw[->, thick] (0,0) -- (3.5,0);
-  \fill (0,0) circle (1.5pt) node[below] {\scriptsize $c$};
-  \draw[blue!60!black, thick] (1,-1.2) -- (2.6,1.0);
-  \fill[red!70!black] (1.873,0) circle (2pt);
-  \node at (1.6,-1.8) {\scriptsize se cruzam: 0};
+  \fill (0,0) circle (1.5pt) node[below] {$c$};
+  \draw[fig_accent, thick] (1,-1.2) -- (2.6,1.0);
+  \fill[fig_highlight] (1.873,0) circle (2pt);
+  \node at (1.6,-1.8) {se cruzam: 0};
   \draw[->, thick] (5.5,0) -- (9,0);
-  \fill (5.5,0) circle (1.5pt) node[below] {\scriptsize $c$};
-  \draw[blue!60!black, thick] (6.8,1.6) -- (8.4,0.9);
-  \draw[red!70!black, thick] (8.4,0.9) -- (8.4,0);
-  \draw[blue!60!black, thick] (4.2,-1.5) -- (4.6,0.9);
-  \draw[red!70!black, thick] (5.5,0) -- (4.47,0.17);
-  \node at (7,-1.8) {\scriptsize ponta do segmento ou origem $c$};
-\end{tikzpicture}
-\par}\smallskip
+  \fill (5.5,0) circle (1.5pt) node[below] {$c$};
+  \draw[fig_accent, thick] (6.8,1.6) -- (8.4,0.9);
+  \draw[fig_highlight, thick] (8.4,0.9) -- (8.4,0);
+  \draw[fig_accent, thick] (4.2,-1.5) -- (4.6,0.9);
+  \draw[fig_highlight, thick] (5.5,0) -- (4.47,0.17);
+  \node at (7,-1.8) {ponta do segmento ou origem $c$};
+\end{drawing}
 
 \texttt{segment\_ray(a, b, c, d)} é a distância do segmento $[a, b]$ até a semirreta \texttt{(c, d)}. Usa o mesmo
 teste do \texttt{ray\_ray}, com o segmento escrito como $a + s \cdot w$ e $0 \le s \le 1$: além dos sinais, testa
