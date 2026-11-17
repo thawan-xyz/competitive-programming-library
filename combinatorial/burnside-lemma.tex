@@ -32,7 +32,10 @@ Resposta: $(16 + 2 + 4 + 2)/4 = 6$, que são $0000, 0001, 0011, 0101, 0111, 1111
 \begin{itemize}
   \item \textbf{Colar} (só girar, $|G| = n$): girar $i$ posições forma $\gcd(i, n)$ ciclos.
         Ex.: $n = 6$, girar $2$: $(0\,2\,4)(1\,3\,5)$, e $\gcd(2, 6) = 2$.
-        \[ \frac{1}{n} \sum_{i=0}^{n-1} k^{\gcd(i, n)} = \frac{1}{n} \sum_{d \mid n} \varphi\!\left(\tfrac{n}{d}\right) k^{d}. \]
+        \begin{align*}
+          & \frac{1}{n} \sum_{i=0}^{n-1} k^{\gcd(i, n)} \\
+          = {} & \frac{1}{n} \sum_{d \mid n} \varphi\!\left(\tfrac{n}{d}\right) k^{d}.
+        \end{align*}
         A segunda forma agrupa as rotações pelo número de ciclos $d$: exatamente $\varphi(n/d)$ valores de $i$ têm
         $\gcd(i, n) = d$. Ela só passa pelos divisores de $n$, útil para $n$ grande.
 
@@ -41,7 +44,7 @@ Resposta: $(16 + 2 + 4 + 2)/4 = 6$, que são $0000, 0001, 0011, 0101, 0111, 1111
         Com $n$ ímpar, cada eixo passa por $1$ conta: $\frac{n+1}{2}$ ciclos. Com $n$ par, metade dos eixos passa por
         $2$ contas ($\frac{n}{2} + 1$ ciclos) e metade passa entre contas ($\frac{n}{2}$ ciclos). Somando as reflexões em $R$:
         \[
-        \frac{1}{2n}\left(\sum_{i=0}^{n-1} k^{\gcd(i, n)} + R\right), \qquad
+        \frac{1}{2n}\left(\sum_{i=0}^{n-1} k^{\gcd(i, n)} + R\right), \quad
         R = \begin{cases}
           n\,k^{(n+1)/2}, & n \text{ ímpar} \\
           \frac{n}{2}\left(k^{n/2+1} + k^{n/2}\right), & n \text{ par}
