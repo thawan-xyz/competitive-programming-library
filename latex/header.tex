@@ -1,6 +1,11 @@
 % fix-cm lets the default fonts take any size, without it a size like 6.5pt is silently replaced by 6pt
 \RequirePackage{fix-cm}
-\documentclass[10pt, a4paper, landscape]{article}
+% generate -half: each page is half of a landscape a4 (an a5 in portrait), printed two by sheet to fold in the middle
+\ifdefined\halfpage
+  \documentclass[10pt, a5paper, twoside]{article}
+\else
+  \documentclass[10pt, a4paper, landscape]{article}
+\fi
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath, amssymb, amsfonts}
@@ -17,7 +22,13 @@
 \usepackage{atbegshi}
 \usepackage[hidelinks]{hyperref}
 
-\geometry{a4paper, landscape, hmargin={0.4cm, 0.4cm}, top=1.3cm, bottom=0.3cm, footskip=0pt}
+\ifdefined\halfpage
+  \geometry{a5paper, hmargin={0.4cm, 0.4cm}, top=1.3cm, bottom=0.3cm, footskip=0pt}
+  % even pages are the right half of the sheet: their left margin, on the fold, is smaller, the tabs keep the right one
+  \AtBeginDocument{\setlength{\evensidemargin}{\dimexpr\oddsidemargin - 0.25cm\relax}}
+\else
+  \geometry{a4paper, landscape, hmargin={0.4cm, 0.4cm}, top=1.3cm, bottom=0.3cm, footskip=0pt}
+\fi
 
 % code colors, vs code light+
 \definecolor{code_comment}{HTML}{008000}
@@ -52,7 +63,8 @@
 \fi
 
 \newcommand{\codesize}{6pt}
-\newcommand{\codeleading}{6.0pt}
+% generate -compact: for contests with a page limit, code lines and characters closer
+\newcommand{\codeleading}{\ifdefined\compactmode 5.6pt\else 6.0pt\fi}
 \newcommand{\codefont}{\ttfamily\fontsize{\codesize}{\codeleading}\selectfont\lineskiplimit=-\maxdimen}
 
 \lstset{
@@ -83,6 +95,8 @@
 \newsavebox{\breakdots}
 \sbox{\breakdots}{\llap{\color{black!40}\raisebox{0.95pt}{\scalebox{0.8}{\ldots}}\hspace{1.2pt}}}
 \lstset{postbreak=\usebox{\breakdots}}
+% with -compact the code characters are 0.53em apart instead of the 0.6em of listings, close to the 0.525em of the font
+\ifdefined\compactmode\lstset{basewidth=0.53em}\fi
 
 % block hash from extra/hash.py, at the right of the line that closes the block
 \lstdefinestyle{hashed}{escapeinside={(*@}{@*)}}
@@ -183,7 +197,14 @@
   \ifnum\value{page}=1 \global\firstsec=1 \global\lastsec=\numsections\fi
   \ifnum\lastsec>0 \foreach \k in {\the\firstsec,...,\the\lastsec} {\thumbtab{\k}}\fi
 }
-\chead{\parbox[b]{0.6\textwidth}{\centering\scriptsize\bfseries\pagefilelist}}
+% with -half the list of files of the page always fits in one line, shrinking when it is too long
+\newsavebox{\filelistbox}
+\ifdefined\halfpage
+  \chead{\sbox{\filelistbox}{\scriptsize\bfseries\pagefilelist}%
+    \ifdim\wd\filelistbox>0.6\textwidth\resizebox{0.6\textwidth}{!}{\usebox{\filelistbox}}\else\usebox{\filelistbox}\fi}
+\else
+  \chead{\parbox[b]{0.6\textwidth}{\centering\scriptsize\bfseries\pagefilelist}}
+\fi
 \rhead{{\setlength{\fboxsep}{1.2pt}\colorbox{gray!22}{\scriptsize\bfseries\vphantom{dg}\,\thepage\,}}}
 
 \renewcommand{\footrulewidth}{0pt}
@@ -298,14 +319,22 @@
 \colorlet{fig_accent}{blue!60!black}
 \colorlet{fig_extra}{green!50!black}
 \colorlet{fig_fill}{blue!8}
-\tikzset{drawing/.style={scale=0.55, >=stealth, font=\fontsize{6pt}{7pt}\selectfont}}
+\ifdefined\compactmode
+  \tikzset{drawing/.style={scale=0.45, >=stealth, font=\fontsize{6pt}{7pt}\selectfont}}
+\else
+  \tikzset{drawing/.style={scale=0.55, >=stealth, font=\fontsize{6pt}{7pt}\selectfont}}
+\fi
 \NewDocumentEnvironment{drawing}{O{}}{\par\smallskip\centering\tikzpicture[drawing, #1]}{\endtikzpicture\par\smallskip}
+
+% \fitwidth{...} shrinks its content only when it is wider than the column, for tables in narrow columns
+\newsavebox{\fitbox}
+\newcommand{\fitwidth}[1]{\sbox{\fitbox}{#1}\ifdim\wd\fitbox>\linewidth\resizebox{\linewidth}{!}{\usebox{\fitbox}}\else\usebox{\fitbox}\fi}
 
 % the display skips are set by hand because \fontsize keeps the ones of the normal size, which are too big here
 \NewDocumentCommand{\texfile}{m}{%
   \begingroup
   \renewcommand{\rmdefault}{cmrtex}\normalfont
-  \fontsize{6pt}{7.2pt}\selectfont
+  \fontsize{6pt}{\ifdefined\compactmode 6.8pt\else 7.2pt\fi}\selectfont
   \raggedright\sloppy
   \setlength{\parskip}{1pt plus 0.5pt}%
   \setlength{\abovedisplayskip}{3pt plus 1pt minus 1pt}%
@@ -348,5 +377,5 @@
 \hrule
 \vspace*{0.2em}
 
-\begin{multicols*}{3}
+\begin{multicols*}{\ifdefined\halfpage 2\else 3\fi}
 \raggedcolumns

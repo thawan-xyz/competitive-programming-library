@@ -24,6 +24,7 @@ string escape(const string &s) {
 }
 
 map<fs::path, vector<pair<string, string>>> hashed;
+bool compact = false;
 
 // runs hash.py on every .cpp in a single python, each file ends with a line "\x01"
 // hash.py prints each line followed by " [hash]" if it closes a block or by " " otherwise
@@ -100,10 +101,10 @@ void print_code(const fs::path &path) {
         tabs |= line.starts_with('\t');
         if (not line.empty()) unit = gcd(unit, (int) line.find_first_not_of(' '));
     }
-    // indentation of 4 spaces becomes 2, blank lines in sequence become one
+    // indentation of 4 spaces becomes 2, blank lines in sequence become one, or none with -compact
     vector<pair<string, string>> out;
     for (auto &[line, h] : lines) {
-        if (line.empty() and (out.empty() or out.back().first.empty())) continue;
+        if (line.empty() and (compact or out.empty() or out.back().first.empty())) continue;
         if (not tabs and unit > 2 and unit % 2 == 0 and not line.empty()) {
             int k = line.find_first_not_of(' ');
             line.erase(0, k - k / (unit / 2));
@@ -160,10 +161,13 @@ int main(int argc, char **argv) {
     ifstream header("header.tex");
     if (not header) return cerr << "header.tex not found, run from latex/\n", 1;
     auto sections = load_sections();
-    // arguments: the title and -black, which leaves every section in black
+    // arguments: the title, -black, which leaves every section in black, -half, with pages of half a sheet, and
+    // -compact, with everything closer and no blank lines in the code
     string title = "Competitive Programming Library";
     for (int i = 1; i < argc; ++i) {
         if (string(argv[i]) == "-black") cout << "\\def\\blacksections{}\n";
+        else if (string(argv[i]) == "-half") cout << "\\def\\halfpage{}\n";
+        else if (string(argv[i]) == "-compact") cout << "\\def\\compactmode{}\n", compact = true;
         else title = argv[i];
     }
     cout << "\\def\\notebooktitle{" << escape(title) << "}\n";
