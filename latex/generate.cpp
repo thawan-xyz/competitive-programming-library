@@ -161,13 +161,16 @@ int main(int argc, char **argv) {
     ifstream header("header.tex");
     if (not header) return cerr << "header.tex not found, run from latex/\n", 1;
     auto sections = load_sections();
-    // arguments: the title, -black, which leaves every section in black, -half, with pages of half a sheet, and
-    // -compact, with everything closer and no blank lines in the code
+    // arguments: the title, -black, which leaves every section in black, -half, with pages of half a sheet,
+    // -compact, with everything closer and no blank lines in the code, -modern, with the text of the .tex in a sans serif
+    // font, and -jetbrains, with the code in JetBrains Mono (given by generate.sh with -modern when the font was found)
     string title = "Competitive Programming Library";
     for (int i = 1; i < argc; ++i) {
         if (string(argv[i]) == "-black") cout << "\\def\\blacksections{}\n";
         else if (string(argv[i]) == "-half") cout << "\\def\\halfpage{}\n";
         else if (string(argv[i]) == "-compact") cout << "\\def\\compactmode{}\n", compact = true;
+        else if (string(argv[i]) == "-modern") cout << "\\def\\modernmode{}\n";
+        else if (string(argv[i]) == "-jetbrains") cout << "\\def\\jetbrainsfont{}\n";
         else title = argv[i];
     }
     cout << "\\def\\notebooktitle{" << escape(title) << "}\n";

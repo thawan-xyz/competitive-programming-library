@@ -8,6 +8,20 @@
 \fi
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+% generate -modern: text of the .tex in helvetica, a sans serif font like the one of markdown, it comes with latex
+\usepackage[scaled=0.92]{helvet}
+% and code in JetBrains Mono, if generate.sh found it: the .tfm and .ttf are made in temp from the fonts of the computer
+\ifdefined\jetbrainsfont
+  \pdfmapline{+jbm-regular <ec.enc <JetBrainsMono-Regular.ttf}
+  \pdfmapline{+jbm-bold <ec.enc <JetBrainsMono-Bold.ttf}
+  \DeclareFontFamily{T1}{jbm}{\hyphenchar\font=-1}
+  \DeclareFontShape{T1}{jbm}{m}{n}{<-> jbm-regular}{}
+  \DeclareFontShape{T1}{jbm}{b}{n}{<-> jbm-bold}{}
+  \DeclareFontShape{T1}{jbm}{bx}{n}{<-> ssub * jbm/b/n}{}
+  \DeclareFontShape{T1}{jbm}{m}{it}{<-> ssub * jbm/m/n}{}
+  \DeclareFontShape{T1}{jbm}{m}{sl}{<-> ssub * jbm/m/n}{}
+  \renewcommand{\ttdefault}{jbm}
+\fi
 \usepackage{amsmath, amssymb, amsfonts}
 \usepackage{listings}
 \usepackage{multicol}
@@ -64,7 +78,8 @@
 
 \newcommand{\codesize}{6pt}
 % generate -compact: for contests with a page limit, code lines and characters closer
-\newcommand{\codeleading}{\ifdefined\compactmode 5.6pt\else 6.0pt\fi}
+% with -font the lines are a bit farther apart, the letters of JetBrains Mono are taller
+\newcommand{\codeleading}{\ifdefined\compactmode 5.6pt\else\ifdefined\jetbrainsfont 6.6pt\else 6.0pt\fi\fi}
 \newcommand{\codefont}{\ttfamily\fontsize{\codesize}{\codeleading}\selectfont\lineskiplimit=-\maxdimen}
 
 \lstset{
@@ -95,8 +110,13 @@
 \newsavebox{\breakdots}
 \sbox{\breakdots}{\llap{\color{black!40}\raisebox{0.95pt}{\scalebox{0.8}{\ldots}}\hspace{1.2pt}}}
 \lstset{postbreak=\usebox{\breakdots}}
-% with -compact the code characters are 0.53em apart instead of the 0.6em of listings, close to the 0.525em of the font
-\ifdefined\compactmode\lstset{basewidth=0.53em}\fi
+% with -compact the code characters are 0.53em apart instead of the 0.6em of listings, close to the 0.525em of the font,
+% JetBrains Mono is 0.6em wide, so with -font they are 0.63em apart, or the 0.6em of listings with -compact
+\ifdefined\jetbrainsfont
+  \ifdefined\compactmode\else\lstset{basewidth=0.63em}\fi
+\else
+  \ifdefined\compactmode\lstset{basewidth=0.53em}\fi
+\fi
 
 % block hash from extra/hash.py, at the right of the line that closes the block
 \lstdefinestyle{hashed}{escapeinside={(*@}{@*)}}
@@ -197,11 +217,18 @@
   \ifnum\value{page}=1 \global\firstsec=1 \global\lastsec=\numsections\fi
   \ifnum\lastsec>0 \foreach \k in {\the\firstsec,...,\the\lastsec} {\thumbtab{\k}}\fi
 }
-% with -half the list of files of the page always fits in one line, shrinking when it is too long
+% with -half the list of files of the page always fits in one line, in the space between the tags of the sections and
+% the page number, shrinking when it is too long
+\newsavebox{\tagsbox}
 \newsavebox{\filelistbox}
+\newlength{\filelistwidth}
 \ifdefined\halfpage
-  \chead{\sbox{\filelistbox}{\scriptsize\bfseries\pagefilelist}%
-    \ifdim\wd\filelistbox>0.6\textwidth\resizebox{0.6\textwidth}{!}{\usebox{\filelistbox}}\else\usebox{\filelistbox}\fi}
+  \lhead{\findsections\sbox{\tagsbox}{\ifnum\lastsec>0 \foreach \k in {\the\firstsec,...,\the\lastsec} {\sectiontag{\k}\ }\fi}%
+    \sbox{\filelistbox}{\scriptsize\bfseries\pagefilelist}%
+    \setlength{\filelistwidth}{\dimexpr\textwidth-\wd\tagsbox-0.9cm\relax}%
+    \usebox{\tagsbox}\makebox[\filelistwidth]{\ifdim\wd\filelistbox>\filelistwidth
+      \resizebox{\filelistwidth}{!}{\usebox{\filelistbox}}\else\usebox{\filelistbox}\fi}}
+  \chead{}
 \else
   \chead{\parbox[b]{0.6\textwidth}{\centering\scriptsize\bfseries\pagefilelist}}
 \fi
@@ -333,7 +360,7 @@
 % the display skips are set by hand because \fontsize keeps the ones of the normal size, which are too big here
 \NewDocumentCommand{\texfile}{m}{%
   \begingroup
-  \renewcommand{\rmdefault}{cmrtex}\normalfont
+  \ifdefined\modernmode\renewcommand{\rmdefault}{phv}\else\renewcommand{\rmdefault}{cmrtex}\fi\normalfont
   \fontsize{6pt}{\ifdefined\compactmode 6.8pt\else 7.2pt\fi}\selectfont
   \raggedright\sloppy
   \setlength{\parskip}{1pt plus 0.5pt}%
