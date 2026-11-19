@@ -389,23 +389,25 @@
 \begin{document}
 \thispagestyle{firstpage}
 
+% the % at the end of the lines remove the spaces between the boxes, their width depends on the font and would move the
+% logos when -modern changes it
 \begin{center}
-  \hspace*{0.5cm}
+  \hspace*{0.5cm}%
   \begin{minipage}{0.18\textwidth}
     \raggedright
     \includegraphics[height=1.0cm, keepaspectratio]{logo.png}
-  \end{minipage}
+  \end{minipage}%
   \hfill
   \begin{minipage}{0.54\textwidth}
     \centering
     {\large\bfseries \notebooktitle}
-  \end{minipage}
+  \end{minipage}%
   \hfill
   \begin{minipage}{0.18\textwidth}
     \raggedleft
     \includegraphics[height=1.0cm, keepaspectratio]{team.png}
-  \end{minipage}
-  \hspace*{0.5cm}
+  \end{minipage}%
+  \hspace*{0.5cm}%
 \end{center}
 \vspace*{-0.6em}
 \hrule
