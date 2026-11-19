@@ -8,7 +8,7 @@
 \fi
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-% generate -modern: text of the .tex in helvetica, a sans serif font like the one of markdown, it comes with latex
+% generate -modern: text in helvetica, a sans serif font like the one of markdown, it comes with latex
 \usepackage[scaled=0.92]{helvet}
 % and code in JetBrains Mono, if generate.sh found it: the .tfm and .ttf are made in temp from the fonts of the computer
 \ifdefined\jetbrainsfont
@@ -108,7 +108,8 @@
 % wrapped lines start with gray dots in the indentation, saved in a box because colors
 % cannot go straight into the line break of a listing
 \newsavebox{\breakdots}
-\sbox{\breakdots}{\llap{\color{black!40}\raisebox{0.95pt}{\scalebox{0.8}{\ldots}}\hspace{1.2pt}}}
+% made at the start of the document, so the dots are in the font of the document, which -modern changes
+\AtBeginDocument{\sbox{\breakdots}{\llap{\color{black!40}\raisebox{0.95pt}{\scalebox{0.8}{\ldots}}\hspace{1.2pt}}}}
 \lstset{postbreak=\usebox{\breakdots}}
 % with -compact the code characters are 0.53em apart instead of the 0.6em of listings, close to the 0.525em of the font,
 % JetBrains Mono is 0.6em wide, so with -font they are 0.63em apart, or the 0.6em of listings with -compact
@@ -379,6 +380,12 @@
   \endgroup
 }
 
+% generate -modern: the whole document in helvetica, the bars, the header, the index and the letters, digits and signs
+% of the formulas too, with mathastext, the greek letters and the big symbols stay in the default math font
+\ifdefined\modernmode
+  \renewcommand{\rmdefault}{phv}
+  \usepackage[italic]{mathastext}
+\fi
 \begin{document}
 \thispagestyle{firstpage}
 
