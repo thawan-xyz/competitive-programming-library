@@ -12,10 +12,10 @@ for arg in "$@"; do
     if [ "$arg" != "-modern" ]; then args+=("$arg"); continue; fi
     args+=("-modern")
     find_font() {
-        local file=$(fc-list ":family=JetBrains Mono:style=$1" file 2>/dev/null | grep -i "\.ttf" | grep -v "\[" | head -n 1 | cut -d: -f1)
-        [ -z "$file" ] && file=$(find ~/.local/share/fonts ~/.fonts ~/Library/Fonts /Library/Fonts /usr/share/fonts \
-            /usr/local/share/fonts /c/Windows/Fonts -iname "JetBrainsMono-$1.ttf" 2>/dev/null | head -n 1)
-        echo "$file"
+        { fc-list ":family=JetBrains Mono" file 2>/dev/null | cut -d: -f1
+          find ~/.local/share/fonts ~/.fonts ~/Library/Fonts /Library/Fonts /usr/share/fonts /usr/local/share/fonts \
+              /c/Windows/Fonts "$LOCALAPPDATA/Microsoft/Windows/Fonts" -iname "*.ttf" 2>/dev/null
+        } | grep -i "/JetBrainsMono-$1\.ttf$" | head -n 1
     }
     regular=$(find_font Regular)
     bold=$(find_font Bold)
@@ -29,7 +29,7 @@ for arg in "$@"; do
         export TFMFONTS="temp:" TTFONTS="temp:"
         args+=("-jetbrains")
     else
-        echo "JetBrains Mono (or ttf2tfm) not found, the code keeps the default font"
+        echo "jetBrains mono (or ttf2tfm) not found, the code keeps the default font"
     fi
 done
 g++ -std=c++20 generate.cpp -o temp/generate
