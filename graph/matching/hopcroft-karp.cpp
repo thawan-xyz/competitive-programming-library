@@ -1,17 +1,26 @@
-// Hopcroft-Karp: maximum bipartite matching, augmenting along shortest paths in phases
+// Hopcroft-Karp: maximum matching in a bipartite graph, augmenting along shortest paths in phases
 // Time: O(E sqrt(V)) | Space: O(V + E)
-// Note: g[a] has the right neighbors of left vertex a | returns match[b], the left vertex of b or -1, for b up to the largest right vertex
+// Note: returns match[a], the vertex matched with a or -1
 vector<int> hopcroft_karp(vector<vector<int>> &g) {
-    int n = g.size(), m = 0, lim = -1;
-    for (int a = 0; a < n; ++a) for (int b : g[a]) m = max(m, b + 1);
-    vector<int> match(m, -1), d(n), itr(n);
-    vector<bool> used(n);
+    int n = g.size(), lim = -1;
+    vector<int> match(n, -1), d(n), itr(n), side(n, -1);
+    for (int s = 0; s < n; ++s) {
+        if (side[s] != -1) continue;
+        vector<int> q = {s};
+        side[s] = 0;
+        for (int i = 0; i < q.size(); ++i) {
+            for (int b : g[q[i]]) if (side[b] == -1) {
+                side[b] = side[q[i]] ^ 1;
+                q.push_back(b);
+            }
+        }
+    }
 
     auto bfs = [&]() -> bool {
         queue<int> q;
         for (int a = 0; a < n; ++a) {
             d[a] = -1;
-            if (not used[a]) d[a] = 0, q.push(a);
+            if (side[a] == 0 and match[a] == -1) d[a] = 0, q.push(a);
         }
         lim = -1;
         while (q.size()) {
@@ -30,14 +39,20 @@ vector<int> hopcroft_karp(vector<vector<int>> &g) {
         for (int &i = itr[a]; i < g[a].size(); ++i) {
             int b = g[a][i], c = match[b];
             if (c == -1 and d[a] + 1 != lim) continue;
-            if (c == -1 or (d[c] == d[a] + 1 and self(self, c))) return used[a] = true, match[b] = a, true;
+            if (c == -1 or (d[c] == d[a] + 1 and self(self, c))) {
+                match[a] = b;
+                match[b] = a;
+                return true;
+            }
         }
         return d[a] = -1, false;
     };
 
     while (bfs()) {
         fill(itr.begin(), itr.end(), 0);
-        for (int a = 0; a < n; ++a) if (not used[a]) dfs(dfs, a);
+        for (int a = 0; a < n; ++a) if (side[a] == 0 and match[a] == -1) {
+            dfs(dfs, a);
+        }
     }
     return match;
 }
