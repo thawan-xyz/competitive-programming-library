@@ -4,7 +4,7 @@ using namespace __gnu_pbds;
 
 struct safe_hash {
     static uint mix(uint x) {
-        static const uint seed = chrono::steady_clock::now().time_since_epoch().count();
+        static const uint seed = rng();
         x += seed;
         x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
         x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
