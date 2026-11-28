@@ -1,4 +1,4 @@
-vector<int> find_cycle(vector<vector<int>> &g, bool undirected = false) {
+vector<int> find_cycle(vector<vector<int>> &g, bool undirected) {
     int n = g.size();
     vector<int> state(n), parent(n), cycle;
 

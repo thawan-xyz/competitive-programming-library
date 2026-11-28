@@ -1,4 +1,4 @@
-vector<int> tarjan(const vector<vector<int>> &g, bool undirected = false) {
+vector<int> tarjan(const vector<vector<int>> &g, bool undirected) {
     int n = g.size(), timer = 0, m = 0;
     vector<int> in(n, -1), low(n), comp(n, -1), path;
     auto dfs = [&](auto &dfs, int a, int p) -> void {
