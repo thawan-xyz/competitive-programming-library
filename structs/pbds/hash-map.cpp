@@ -13,7 +13,13 @@ struct safe_hash {
 
     uint operator()(const auto &x) const {
         uint h = 0;
-        if constexpr (requires { x.begin(); }) {
+        if constexpr (is_same_v<decay_t<decltype(x)>, string>) {
+            for (int i = 0; i < x.size(); i += 8) {
+                uint w = 0;
+                memcpy(&w, x.data() + i, min<int>(8, x.size() - i));
+                h = mix(h + w);
+            }
+        } else if constexpr (requires { x.begin(); }) {
             for (auto &y : x) h = mix(h + (*this)(y));
         } else if constexpr (requires { get<0>(x); }) {
             apply([&](auto &...y) { ((h = mix(h + (*this)(y))), ...); }, x);
