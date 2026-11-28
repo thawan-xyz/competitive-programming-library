@@ -1,10 +1,10 @@
-vector<int> find_cycle(bool directed, vector<vector<int>> &g) {
+vector<int> find_cycle(vector<vector<int>> &g, bool undirected = false) {
     int n = g.size();
     vector<int> state(n), parent(n), cycle;
 
     auto dfs = [&](auto &self, int a, int p) -> bool {
         state[a] = 1;
-        bool skip = not directed;
+        bool skip = undirected;
         for (int b : g[a]) {
             if (b == p and skip) {
                 skip = false;
